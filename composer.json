@@ -8,9 +8,6 @@
             "email": "avil@swew.app"
         }
     ],
-    "require": {
-        "php": "^8.0.2"
-    },
     "autoload": {
         "psr-4": {
             "SWEW\\Framework\\": "src/"
@@ -19,6 +16,7 @@
             "src/helpers.php"
         ],
         "exclude-from-classmap": [
+            "spec",
             "/Tests/",
             "/test/",
             "/tests/"
@@ -30,5 +28,14 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "require": {
+        "php": "^8.0.2",
+        "psr/log": "^3.0",
+        "psr/simple-cache": "^3.0",
+        "psr/http-message": "^1.0"
+    },
+    "require-dev": {
+        "kahlan/kahlan": "^5.2"
+    }
 }

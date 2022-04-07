@@ -1,0 +1,8 @@
+{
+    "ignore": ["vendor"],
+    "watch": ["src", "spec"],
+    "exec": "./test --spec=spec/Router",
+    "_exec": "./test --spec=spec/Support",
+    "ext": "php",
+    "delay": 1000
+}

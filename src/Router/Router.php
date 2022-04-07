@@ -98,6 +98,9 @@ class Router
                     ? implode('@', $route['controller'])
                     : $route['controller'];
 
+                $middlewares = $route['middlewares'] ?? [];
+                $handlerItem = $handlerItem . '|' . implode('|', $middlewares);
+
                 $r->addRoute(explode('|', $method), $path, $handlerItem);
             }
         });
@@ -118,7 +121,9 @@ class Router
             return [];
         }
 
-        $items = explode('@', $param[1]);
+        [$classAndMethod, $middlewares] = explode('|', $param[1], 2);
+
+        $items = explode('@', $classAndMethod);
 
         $method = $items[1] ?? $this->getMethodByUri($httpMethod, $uri);
 
@@ -126,6 +131,7 @@ class Router
             'class' => $items[0],
             'method' => $method,
             'params' => $param[2] ?? [],
+            'middlewares' => array_filter(explode('|', $middlewares)),
         ];
     }
 

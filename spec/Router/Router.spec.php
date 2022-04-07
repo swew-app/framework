@@ -5,8 +5,6 @@ use SWEW\Framework\Router\Router;
 include 'stub/router_stubs.php';
 
 describe("SwewApplication", function () {
-    //*/
-
     it('validate [GOOD]', function () {
         $router = new Router([
             '/' => [
@@ -84,14 +82,12 @@ describe("SwewApplication", function () {
             'class' => 'Router\\stub\\ControllerStub',
             'method' => 'getIndex',
             'params' => [],
+            'middlewares' => [],
         ]);
     });
-
-    //*/
 });
 
 describe('Route Search', function () {
-/*
     it('findRouteByFastRouter [GOOD]', function () {
         $router = new Router(routerStub());
 
@@ -99,7 +95,7 @@ describe('Route Search', function () {
 
         expect($res)->toBe([
             FastRoute\Dispatcher::FOUND,
-            'Router\\stub\\ControllerStub@blogListPage',
+            'Router\\stub\\ControllerStub@blogListPage|auth|admin',
             ['id' => '2'],
         ]);
     });
@@ -137,11 +133,10 @@ describe('Route Search', function () {
             'class' => 'Router\\stub\\ControllerStub',
             'method' => 'blogListPage',
             'params' => ['id' => '101'],
+            'middlewares' => ['auth', 'admin'],
         ]);
     });
-//*/
 
-//*
     it('toRouteFromFastRoute [GOOD] resourceMethod', function () {
         $router = new Router(routerStub());
         $uri = '/';
@@ -154,7 +149,7 @@ describe('Route Search', function () {
             'class' => 'Router\\stub\\ControllerStub',
             'method' => 'postIndex',
             'params' => [],
+            'middlewares' => [],
         ]);
     });
-// */
 });

@@ -18,6 +18,7 @@ function routerStub($wantType = 'config')
             '/blog/{id}' => [
                 'name' => 'Blog',
                 'controller' => [ControllerStub::class, 'blogListPage'],
+                'middlewares' => ['auth', 'admin'],
             ],
             '/admin' => [
                 'name' => 'AdminPage',
@@ -55,7 +56,7 @@ function routerStub($wantType = 'config')
                 "Blog",
                 "/blog/{id}",
                 ["Router\\stub\\ControllerStub", "blogListPage"],
-                "",
+                "auth,admin",
                 "FALSE"
             ],
             [

@@ -23,12 +23,13 @@ class SwewApplication
     // [?]: создать объект Response
     //      - [ ]: Response - в зависимости от типа Request - выбирает тип ответа
     //      - [ ]: Response - если необходимо, то создает viewRenderer
-    // [ ]: создать Router
-    // [ ]: Найти нужный роут и построить цепочку Middleware + Controller добавляя рефлексию методов
+    // [x]: создать Router
+    // [x]: Найти нужный роут
+    // [ ]: Построить цепочку Middleware + Controller добавляя рефлексию методов
 
     // [ ]: Объекты DTO - методы для заполнения и валидации validate, getRules, setData, getData
     // [ ]: Events - синхронные и асинхронные, подписка на синхронные
-    // [ ]: Поиск в текущей фиче фабрик и view если нет, то поиск в Common
+    // [ ]: Поиск в текущей фиче "фабрик" и "view" если нет, то поиск в Common
     public function run(): Http\Response
     {
 //        set_error_handler($this->errorHandler);

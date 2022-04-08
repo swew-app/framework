@@ -19,11 +19,14 @@ class Router
 
     public function __construct(
         private readonly array $routes,
-        public readonly string $host = ''
+        public  readonly string $host = ''
     )
     {
     }
 
+    /**
+     * @throws Exception
+     */
     public function validate(): bool
     {
         $route_keys = [];
@@ -44,6 +47,9 @@ class Router
         return true;
     }
 
+    /**
+     * @throws Exception
+     */
     private function isValidRoute(array $route): bool
     {
         if (!array_key_exists('name', $route)) {
@@ -63,6 +69,11 @@ class Router
         return true;
     }
 
+    /**
+     * Method for CLI route list
+     *
+     * @return \string[][]
+     */
     public function getInfoList(): array
     {
         $list = [
@@ -82,6 +93,13 @@ class Router
         return $list;
     }
 
+    /**
+     * Get route creation config
+     *
+     * @param string $httpMethod
+     * @param string $uri
+     * @return array
+     */
     public function getRoute(string $httpMethod, string $uri): array
     {
         $found = $this->findRouteByFastRouter($httpMethod, $uri);
@@ -89,6 +107,55 @@ class Router
         return $this->toRouteFromFastRoute($found, $httpMethod, $uri);
     }
 
+    /**
+     * Create url link path
+     *
+     * @throws Exception
+     */
+    public function url(string $routeName, array $params = []): string
+    {
+        foreach ($this->routes as $routePath => $route) {
+            if ($route['name'] === $routeName) {
+                $path = $routePath;
+                break;
+            }
+        }
+
+        if (!isset($path)) {
+            throw  new Exception("Route with name: '{$routeName}' not found");
+        }
+
+        $path = preg_replace_callback(
+            '/\{([^:]+)(.+)?\}/i',
+            function ($matches) use ($params) {
+                if (!key_exists($matches[1], $params)) {
+                    throw  new Exception('Router->url $params[' . $matches[1] . '] not found');
+                }
+                return $params[$matches[1]];
+            },
+            $path
+        );
+
+        return $this->host . $path;
+    }
+
+    /**
+     * Get merged router configs
+     *
+     * @param array $routeConfigPaths
+     * @return array
+     */
+    public static function getRoutesFromPaths(array $routeConfigPaths): array
+    {
+        $list = array_map(
+            fn($path) => include_once($path),
+            $routeConfigPaths
+        );
+
+        return array_merge(...$list);
+    }
+
+    # region [Internal methods]
     public function findRouteByFastRouter(string $httpMethod, string $uri): array
     {
         $routes = $this->routes;
@@ -168,44 +235,5 @@ class Router
         }
         return $uri;
     }
-
-    /**
-     * @throws Exception
-     */
-    public function url(string $routeName, array $params = []): string
-    {
-        foreach ($this->routes as $routePath => $route) {
-            if ($route['name'] === $routeName) {
-                $path = $routePath;
-                break;
-            }
-        }
-
-        if (!isset($path)) {
-            throw  new Exception("Route with name: '{$routeName}' not found");
-        }
-
-        $path = preg_replace_callback(
-            '/\{([^:]+)(.+)?\}/i',
-            function ($matches) use ($params) {
-                if (!key_exists($matches[1], $params)) {
-                    throw  new Exception('Router->url $params[' . $matches[1] . '] not found');
-                }
-                return $params[$matches[1]];
-            },
-            $path
-        );
-
-        return $this->host . $path;
-    }
-
-    public static function getRoutesFromPaths(array $routeConfigPaths): array
-    {
-        $list = array_map(
-            fn ($path) => include_once($path),
-            $routeConfigPaths
-        );
-
-        return array_merge(...$list);
-    }
+    # endregion
 }

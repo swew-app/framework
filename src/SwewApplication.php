@@ -49,13 +49,37 @@ class SwewApplication
             $this->host
         );
 
-//        $this->response->init('', '', $this);
+        if ($this->DEV) {
+            $this->router->validate();
+        }
+
+        $routeItem = $this->router->getRoute(
+            $this->request->getMethod(),
+            $this->request->getBasePath()
+        );
+
+        // if Not Found - return 404 page
+        if (empty($routeItem['class']) || empty($routeItem['method'])) {
+            return $this->send404();
+        }
+
+//        $this->response->setResponseConfig; // На основе пришедшего запроса, создаем конфиг с ответом html/json
 
         return $this->response->send();
-
     }
 
-    // Parameters that must be changed during installation
+    private function send404(): Http\Response
+    {
+        $this->response->setStatusCode(404);
+        // TODO: load contend
+        $this->response->setContent('Not found: 404');
+
+        return $this->response->send();
+    }
+
+    # Parameters that must be changed during installation
+
+    public bool $DEV = true; // DEV mode change before deploy
 
     public string $host = '';
 

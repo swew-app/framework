@@ -63,9 +63,13 @@ class SwewApplication
             return $this->send404();
         }
 
-//        $this->response->setResponseConfig; // На основе пришедшего запроса, создаем конфиг с ответом html/json
+        // На основе пришедшего запроса, создаем конфиг с ответом html/json
+        $this->response->setResponseConfig(
+            $this->request->getContentType()
+        );
 
-        return $this->response->send();
+        // Перед отправкой, проверить вызвался ли view, если нет, то делаем проверку хэдера ответа
+        return $this->response->finalSendResponse();
     }
 
     private function send404(): Http\Response
@@ -74,7 +78,7 @@ class SwewApplication
         // TODO: load contend
         $this->response->setContent('Not found: 404');
 
-        return $this->response->send();
+        return $this->response->finalSendResponse();
     }
 
     # Parameters that must be changed during installation

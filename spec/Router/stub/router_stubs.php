@@ -2,6 +2,10 @@
 
 use Router\stub\ControllerStub;
 
+/**
+ * @param {'config'|'infoList'|'mergedConfig'} $wantType
+ * @return array|void
+ */
 function routerStub($wantType = 'config')
 {
     if ($wantType === 'config')
@@ -68,4 +72,22 @@ function routerStub($wantType = 'config')
             ]
         ];
 
+    // Merged from: stub/routes_stub_1.php & stub/routes_stub_2.php
+    if ($wantType === 'mergedConfig')
+        return [
+            '/' => [
+                'name' => 'MainPage',
+                'controller' => 'SomeClass::class'
+            ],
+            '/about' => [
+                'name' => 'AboutPage',
+                'controller' => ['SomeClass::class', 'about']
+            ],
+            '/admin' => [
+                'name' => 'AdminPage',
+                'controller' => 'SomeAdminClass::class',
+                'method' => 'GET|HEAD',
+                'middlewares' => ['auth', 'admin']
+            ]
+        ];
 }

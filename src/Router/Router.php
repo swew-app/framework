@@ -198,4 +198,14 @@ class Router
 
         return $this->host . $path;
     }
+
+    public static function getRoutesFromPaths(array $routeConfigPaths): array
+    {
+        $list = array_map(
+            fn ($path) => include_once($path),
+            $routeConfigPaths
+        );
+
+        return array_merge(...$list);
+    }
 }

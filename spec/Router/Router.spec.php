@@ -167,3 +167,14 @@ describe('Router utils', function () {
         expect($url)->toBe('https://example.com/blog/102');
     });
 });
+
+describe('Route::getRoutesFromPaths', function () {
+    it('[1]', function () {
+        $list = Router::getRoutesFromPaths([
+            __DIR__ . '/stub/routes_stub_1.php',
+            __DIR__ . '/stub/routes_stub_2.php',
+        ]);
+
+        expect($list)->toBe(routerStub('mergedConfig'));
+    });
+});

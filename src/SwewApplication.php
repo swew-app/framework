@@ -6,6 +6,7 @@ namespace SWEW\Framework;
 
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
+use SWEW\Framework\Router\Router;
 use SWEW\Framework\Traits\ContextTrait;
 use SWEW\Framework\Traits\CreateRequestTrait;
 use SWEW\Framework\Traits\CreateResponseTrait;
@@ -30,6 +31,8 @@ class SwewApplication
     // [ ]: Объекты DTO - методы для заполнения и валидации validate, getRules, setData, getData
     // [ ]: Events - синхронные и асинхронные, подписка на синхронные
     // [ ]: Поиск в текущей фиче "фабрик" и "view" если нет, то поиск в Common
+    private Router $router;
+
     public function run(): Http\Response
     {
 //        set_error_handler($this->errorHandler);
@@ -41,12 +44,20 @@ class SwewApplication
         $this->request = $this->createRequest();
         $this->response = $this->createResponse();
 
+        $this->router = new Router(
+            Router::getRoutesFromPaths($this->routers),
+            $this->host
+        );
 
 //        $this->response->init('', '', $this);
 
         return $this->response->send();
 
     }
+
+    // Parameters that must be changed during installation
+
+    public string $host = '';
 
     /**
      * Path to the features folder

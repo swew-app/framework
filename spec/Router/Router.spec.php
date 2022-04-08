@@ -4,7 +4,7 @@ use SWEW\Framework\Router\Router;
 
 include 'stub/router_stubs.php';
 
-describe("SwewApplication", function () {
+describe("Router create", function () {
     it('validate [GOOD]', function () {
         $router = new Router([
             '/' => [
@@ -31,7 +31,7 @@ describe("SwewApplication", function () {
         ]);
 
 
-        expect(fn () => $router->validate())->toThrow(new Error("Not allowed key 'someKey' in router"));
+        expect(fn () => $router->validate())->toThrow(new Exception("Not allowed key 'someKey' in router"));
     });
 
     it('validate [BAD 2]: Same Name', function () {
@@ -46,7 +46,7 @@ describe("SwewApplication", function () {
             ],
         ]);
 
-        expect(fn () => $router->validate())->toThrow(new Error("Route name 'MainPage' already used"));
+        expect(fn () => $router->validate())->toThrow(new Exception("Route name 'MainPage' already used"));
     });
 
     it('validate [BAD 3]: Empty Controller', function () {
@@ -56,7 +56,7 @@ describe("SwewApplication", function () {
             ],
         ]);
 
-        expect(fn () => $router->validate())->toThrow(new Error("Route key 'name' is required"));
+        expect(fn () => $router->validate())->toThrow(new Exception("Route key 'name' is required"));
     });
 
     it('validate [BAD 4]: Empty Name', function () {
@@ -66,7 +66,7 @@ describe("SwewApplication", function () {
             ],
         ]);
 
-        expect(fn () => $router->validate())->toThrow(new Error("Route key 'controller' is required"));
+        expect(fn () => $router->validate())->toThrow(new Exception("Route key 'controller' is required"));
     });
 
     it('getInfoList', function () {
@@ -151,5 +151,19 @@ describe('Route Search', function () {
             'params' => [],
             'middlewares' => [],
         ]);
+    });
+});
+
+describe('Router utils', function () {
+    it('url [name]', function () {
+        $router = new Router(routerStub());
+        $url = $router->url('Blog', ['id'=>'101']);
+        expect($url)->toBe('/blog/101');
+    });
+
+    it('url [name] with Host', function () {
+        $router = new Router(routerStub(), 'https://example.com');
+        $url = $router->url('Blog', ['id'=>'102']);
+        expect($url)->toBe('https://example.com/blog/102');
     });
 });

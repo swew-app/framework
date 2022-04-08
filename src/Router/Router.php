@@ -2,6 +2,7 @@
 
 namespace SWEW\Framework\Router;
 
+use Exception;
 use FastRoute\Dispatcher as FastRouteDispatcher;
 use SWEW\Framework\Support\Str;
 use function FastRoute\simpleDispatcher;
@@ -16,7 +17,10 @@ class Router
         'dev',
     ];
 
-    public function __construct(private readonly array $routes)
+    public function __construct(
+        private readonly array $routes,
+        public readonly string $host = ''
+    )
     {
     }
 
@@ -30,7 +34,7 @@ class Router
             }
 
             if (in_array($route['name'], $route_keys)) {
-                throw new \Error("Route name '{$route['name']}' already used");
+                throw new Exception("Route name '{$route['name']}' already used");
             }
 
             $route_keys[] = $route['name'];
@@ -43,16 +47,16 @@ class Router
     private function isValidRoute(array $route): bool
     {
         if (!array_key_exists('name', $route)) {
-            throw new \Error("Route key 'name' is required");
+            throw new Exception("Route key 'name' is required");
         }
 
         if (!array_key_exists('controller', $route)) {
-            throw new \Error("Route key 'controller' is required");
+            throw new Exception("Route key 'controller' is required");
         }
 
         foreach ($route as $key => $val) {
             if (!in_array($key, $this->allowed_keys)) {
-                throw new \Error("Not allowed key '{$key}' in router");
+                throw new Exception("Not allowed key '{$key}' in router");
             }
         }
 
@@ -163,5 +167,35 @@ class Router
             return substr($uri, 0, $pos);
         }
         return $uri;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function url(string $routeName, array $params = []): string
+    {
+        foreach ($this->routes as $routePath => $route) {
+            if ($route['name'] === $routeName) {
+                $path = $routePath;
+                break;
+            }
+        }
+
+        if (!isset($path)) {
+            throw  new Exception("Route with name: '{$routeName}' not found");
+        }
+
+        $path = preg_replace_callback(
+            '/\{([^:]+)(.+)?\}/i',
+            function ($matches) use ($params) {
+                if (!key_exists($matches[1], $params)) {
+                    throw  new Exception('Router->url $params[' . $matches[1] . '] not found');
+                }
+                return $params[$matches[1]];
+            },
+            $path
+        );
+
+        return $this->host . $path;
     }
 }

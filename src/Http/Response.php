@@ -45,7 +45,7 @@ final class Response extends SymfonyResponse
     public function finalSendResponse(): Response
     {
          if (is_null($this->rawData)) {
-            throw new Exception('Please set data with: "$this->req(DTO|[]);"');
+            throw new Exception('Please set data with: "$this->res(DTO|string|[]);"');
          }
 
         if (is_array($this->rawData)) {

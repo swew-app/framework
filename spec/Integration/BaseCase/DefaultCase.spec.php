@@ -8,10 +8,10 @@ describe('Default Case', function () {
 
         $appTest->addRoute(getBaseStub());
 
-        expect($appTest->app->routers)->toBe(getBaseStub());
+        expect($appTest->app->router->routes)->toBe(getBaseStub());
     });
 
-    fit('Call Request', function () {
+    it('Call Request', function () {
         $appTest = new SWEW\Framework\AppTest\AppTest();
 
         $appTest->setApp(getBaseStub('app'));

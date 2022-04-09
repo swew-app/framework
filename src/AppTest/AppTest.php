@@ -12,6 +12,7 @@ use SWEW\Framework\SwewApplication;
 class AppTest
 {
     public SwewApplication $app;
+    public string $content = '';
 
     /**
      * @throws Exception
@@ -52,16 +53,22 @@ class AppTest
         return $this;
     }
 
-    public function call(string $method, string $uri, $data = []): static
+    public function call(string $method, string $uri, $post = [], $server = []): static
     {
-        $_SERVER['REQUEST_METHOD'] = $method;
+        $_SERVER['REQUEST_METHOD'] = strtoupper($method);
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['HTTP_ACCEPT'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9';
 
-        $_POST = array_merge($_POST, $data);
+        $_SERVER = array_merge_recursive($_SERVER, $server);
+
+        $_POST = array_merge($_POST, $post);
         $_REQUEST = array_merge($_REQUEST, $_POST);
 
+        ob_start(function ($c) {
+            $this->content = $c;
+        });
         $this->app->run();
+        ob_end_flush();
 
         return $this;
     }

@@ -1,7 +1,7 @@
 <?php
 
-
-use Integration\BaseCase\stubs\ExampleApp;
+include_once 'ExampleApp.php';
+include_once 'controllers/ExampleController.php';
 
 function getBaseStub($type = 'route')
 {
@@ -14,7 +14,7 @@ function getBaseStub($type = 'route')
         ];
 
     if ($type === 'app')
-        return new ExampleApp();
+        return new Integration\BaseCase\stubs\ExampleApp();
 
     throw new Error('Choose type from "route" | "app" ');
 }

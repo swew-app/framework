@@ -20,7 +20,7 @@ class Router
     ];
 
     public function __construct(
-        private array $routes,
+        public array $routes,
         public string $host = ''
     )
     {

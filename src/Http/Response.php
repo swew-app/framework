@@ -9,9 +9,9 @@ use SWEW\Framework\DTO\BaseDTO;
 use SWEW\Framework\SwewApplication;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
-class Response extends SymfonyResponse
+final class Response extends SymfonyResponse
 {
-    public RespType $responseType = RespType::JSON;
+    public RespType $responseType = RespType::HTML;
 
     private string $featureViewPath = '';
 
@@ -19,7 +19,7 @@ class Response extends SymfonyResponse
 
     private SwewApplication $app;
 
-    private BaseDTO|array|string|null $data = null;
+    public BaseDTO|array|string|null $rawData = null;
 
     // []: в зависимости от типа Request - выбирает тип ответа
     // []: если необходимо, то создает viewRenderer
@@ -30,42 +30,37 @@ class Response extends SymfonyResponse
         $this->app = $app;
     }
 
-    /**
-     *
-     *
-     * @param array|BaseDTO|null $dto
-     * @return $this
-     */
-    public function res(BaseDTO|array|string $dto = null)
+    public function setRawData(number|string|array|BaseDTO $data): static
     {
-        if ($dto instanceof BaseDTO) {
-            $this->data = $dto->getData();
-        } else {
-            $this->data = $dto;
-        }
+        $this->rawData = $data;
 
         return $this;
     }
 
+    /**
+     * Финальный метод, в нем данные отправляются пользователю
+     *
+     * @throws Exception
+     */
     public function finalSendResponse(): Response
     {
-        // TODO: Раскомментить после добавления контроллеров
-        // if (is_null($this->data)) {
-        //    throw new Exception('Please set data with: "$this->req(DTO|[]);"');
-        // }
-        if (is_array($this->data)) {
+         if (is_null($this->rawData)) {
+            throw new Exception('Please set data with: "$this->req(DTO|[]);"');
+         }
+
+        if (is_array($this->rawData)) {
             // Если не заполнили контент до этого, то это JSON
-            $this->json($this->data);
+            $this->json($this->rawData);
         }
 
-        $this->setContent($this->data);
+        $this->setContent($this->rawData);
 
         return $this->send();
     }
 
     public function json(array $data = []): static
     {
-        $this->data = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
+        $this->rawData = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
 
         $this->headers->set('Content-Type', 'application/json');
         return $this;
@@ -81,8 +76,8 @@ class Response extends SymfonyResponse
      */
     public function view(string $file, array $data = []): static
     {
-        if (is_array($this->data)) {
-            $data = array_merge($this->data, $data);
+        if (is_array($this->rawData)) {
+            $data = array_merge($this->rawData, $data);
         }
 
         if ($this->isJson() || $this->responseType === RespType::JSON) {
@@ -92,7 +87,7 @@ class Response extends SymfonyResponse
         $filePathFeature = $this->featureViewPath . DIRECTORY_SEPARATOR . $file;
 
         if (file_exists($filePathFeature)) {
-            $this->data = $this->app->renderView($filePathFeature, $data);
+            $this->rawData = $this->app->renderView($filePathFeature, $data);
 
             return $this;
         }
@@ -100,7 +95,7 @@ class Response extends SymfonyResponse
         $filePathCommon = $this->commonViewPath . DIRECTORY_SEPARATOR . $file;
 
         if (file_exists($filePathCommon)) {
-            $this->data = $this->app->renderView($filePathCommon, $data);
+            $this->rawData = $this->app->renderView($filePathCommon, $data);
 
             return $this;
         }
@@ -108,12 +103,12 @@ class Response extends SymfonyResponse
         throw new Exception("Not found view file\n - '{$filePathFeature}'\n - '{$filePathCommon}'");
     }
 
-    public function setResponseConfig(string $headerContentType): void
+    public function setResponseConfig(array $headerContentTypes): void
     {
-        if ($this->isJson($headerContentType)) {
-            $this->responseType = RespType::JSON;
-        } else {
-            $this->responseType = RespType::HTML;
+        foreach ($headerContentTypes as $type) {
+            if ($this->isJson($type)) {
+                $this->responseType = RespType::JSON;
+            }
         }
     }
 

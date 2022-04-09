@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SWEW\Framework\Traits;
 
 use SWEW\Framework\Http\Request;
 
 trait CreateRequestTrait
 {
-    protected Request $request;
+    public Request $request;
 
     protected function createRequest(): Request
     {

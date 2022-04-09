@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SWEW\Framework\DTO;
 
 abstract class BaseDTO

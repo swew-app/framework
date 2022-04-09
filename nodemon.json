@@ -1,10 +1,11 @@
 {
     "ignore": ["vendor"],
     "watch": ["src", "spec"],
-    "exec": "./test --spec=spec/",
-    "_exec": "./test --spec=spec/Http",
-    "_exec": "./test --spec=spec/Router",
-    "_exec": "./test --spec=spec/Support",
+    "_exec": "./test --spec=spec/",
+    "exec": "./test --spec=spec/Integration",
+    "_exec": "./test --spec=spec/Features/Http",
+    "_exec": "./test --spec=spec/Features/Router",
+    "_exec": "./test --spec=spec/Features/Support",
     "ext": "php",
     "delay": 1000
 }

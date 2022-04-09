@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
 use SWEW\Framework\Router\Router;
 use SWEW\Framework\Traits\ContextTrait;
+use SWEW\Framework\Traits\CreateControllerTrait;
 use SWEW\Framework\Traits\CreateRequestTrait;
 use SWEW\Framework\Traits\CreateResponseTrait;
 
@@ -16,6 +17,7 @@ class SwewApplication
     use ContextTrait;
     use CreateRequestTrait;
     use CreateResponseTrait;
+    use CreateControllerTrait;
 
     // [?]: Инициализировать errorHandler и exceptionHandler
     // [?]: Инициализировать логгер
@@ -31,9 +33,41 @@ class SwewApplication
     // [ ]: Объекты DTO - методы для заполнения и валидации validate, getRules, setData, getData
     // [ ]: Events - синхронные и асинхронные, подписка на синхронные
     // [ ]: Поиск в текущей фиче "фабрик" и "view" если нет, то поиск в Common
-    private Router $router;
+    public Router $router;
 
     public function run(): Http\Response
+    {
+        $this->initialize();
+
+        $routeItem = $this->router->getRoute(
+            $this->request->getMethod(),
+            $this->request->getRequestUri()
+        );
+
+        // if Not Found - return 404 page
+        if (empty($routeItem['class']) || empty($routeItem['method'])) {
+            return $this->send404();
+        }
+
+        // На основе пришедшего запроса, создаем конфиг с ответом html/json
+        $this->response->setResponseConfig(
+            $this->request->getAcceptableContentTypes()
+        );
+
+        // Создаем класс контроллера и вызываем его метод
+        $this->runController(
+            $routeItem['class'],
+            $routeItem['method'],
+            $routeItem['params'],
+            $routeItem['middlewares'],
+        );
+
+
+        // Перед отправкой, проверить вызвался ли view, если нет, то делаем проверку хэдера ответа
+        return $this->response->finalSendResponse();
+    }
+
+    public function initialize()
     {
 //        set_error_handler($this->errorHandler);
 //        set_exception_handler($this->exceptionHandler);
@@ -52,24 +86,6 @@ class SwewApplication
         if ($this->DEV) {
             $this->router->validate();
         }
-
-        $routeItem = $this->router->getRoute(
-            $this->request->getMethod(),
-            $this->request->getBasePath()
-        );
-
-        // if Not Found - return 404 page
-        if (empty($routeItem['class']) || empty($routeItem['method'])) {
-            return $this->send404();
-        }
-
-        // На основе пришедшего запроса, создаем конфиг с ответом html/json
-        $this->response->setResponseConfig(
-            $this->request->getContentType()
-        );
-
-        // Перед отправкой, проверить вызвался ли view, если нет, то делаем проверку хэдера ответа
-        return $this->response->finalSendResponse();
     }
 
     private function send404(): Http\Response

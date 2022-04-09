@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SWEW\Framework\Router;
 
 use Exception;
@@ -18,10 +20,15 @@ class Router
     ];
 
     public function __construct(
-        private readonly array $routes,
-        public  readonly string $host = ''
+        private array $routes,
+        public string $host = ''
     )
     {
+    }
+
+    public function addRoute(array $route)
+    {
+        $this->routes += $route;
     }
 
     /**
@@ -148,7 +155,7 @@ class Router
     public static function getRoutesFromPaths(array $routeConfigPaths): array
     {
         $list = array_map(
-            fn($path) => include_once($path),
+            fn($path) => include($path),
             $routeConfigPaths
         );
 

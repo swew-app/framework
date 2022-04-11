@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SWEW\Framework\Controller;
 
 use SWEW\Framework\DTO\BaseDTO;
+use SWEW\Framework\Http\Request;
 use SWEW\Framework\Http\Response;
 use SWEW\Framework\SwewApplication;
 use Symfony\Component\HttpFoundation\ParameterBag;
@@ -12,6 +13,10 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 abstract class BaseController
 {
     protected SwewApplication $app;
+
+    public Request $req;
+
+    public Response $res;
 
     public ParameterBag $ctx;
 
@@ -36,27 +41,24 @@ abstract class BaseController
     final public function setApp(SwewApplication $app): void
     {
         $this->app = $app;
+        $this->req = $app->request;
+        $this->res = $app->response;
     }
 
-//    final public function req(?BaseDTO $dto)
-//    {
-//        if ($dto) {
-//            //$this->app->request->query->all();
-//            $dto->setData([]);
-//
-//            return $dto;
-//        }
-//
-//        return $this->app->request;
-//    }
+    final public function req(BaseDTO $dto = null): Request|BaseDTO
+    {
+        if ($dto) {
+            $dto->setData($this);
+
+            return $dto;
+        }
+
+        return $this->app->request;
+    }
 
     final public function res(BaseDTO|array|string $dto = null): Response
     {
-        if ($dto instanceof BaseDTO) {
-            $this->app->response->rawData = $dto->getData();
-        } else {
-            $this->app->response->rawData = $dto;
-        }
+        $this->app->response->setRawData($dto);
 
         return $this->app->response;
     }

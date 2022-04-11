@@ -13,7 +13,7 @@ if (!function_exists('d')) {
     {
         $str = '';
         foreach (func_get_args() as $x) {
-            $str = $str . "\n" . print_r($x, true);
+            $str = $str . "\n" . var_export($x, true);
         }
 
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
@@ -21,7 +21,7 @@ if (!function_exists('d')) {
         $file = $backtrace[1]['file'];
 
         if (defined('STDIN')) {
-            echo ">>> $file:$line\n";
+            echo "\n 🔍 >>> $file:$line\n";
             echo $str . "\n";
             return;
         }
@@ -31,7 +31,7 @@ if (!function_exists('d')) {
             '<b style="color:#888">[</b><span style="color:#17661c">$1</span><b style="color:#888">]</b> <span style="color:#999">=></span>',
             $str
         );
-        echo "<pre> >>> $file:$line \n";
+        echo "<pre> 🔍 >>> $file:$line \n";
         echo $str . "</pre>";
     }
 }

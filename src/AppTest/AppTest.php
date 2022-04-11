@@ -64,13 +64,19 @@ class AppTest
         $_POST = array_merge($_POST, $post);
         $_REQUEST = array_merge($_REQUEST, $_POST);
 
-        ob_start(function ($c) {
-            $this->content = $c;
-        });
+
+        $this->app->initialize();
+        $this->app->TEST = true;
         $this->app->run();
-        ob_end_flush();
 
         return $this;
+    }
+
+    public function ajax(string $method, string $uri, $post = [])
+    {
+        return $this->call($method, $uri, $post, [
+            'CONTENT_TYPE' => 'application/json;charset=UTF-8'
+        ]);
     }
 
     public function getResponse(): Response

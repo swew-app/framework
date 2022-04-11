@@ -35,6 +35,8 @@ class SwewApplication
     // [ ]: Поиск в текущей фиче "фабрик" и "view" если нет, то поиск в Common
     public Router $router;
 
+    private bool $isInitialized = false;
+
     public function run(): Http\Response
     {
         $this->initialize();
@@ -62,13 +64,16 @@ class SwewApplication
             $routeItem['middlewares'],
         );
 
-
         // Перед отправкой, проверить вызвался ли view, если нет, то делаем проверку хэдера ответа
-        return $this->response->finalSendResponse();
+        return $this->response->finalSendResponse(!$this->TEST);
     }
 
-    public function initialize()
+    public function initialize(): static
     {
+        if ($this->isInitialized) {
+            return $this;
+        }
+
 //        set_error_handler($this->errorHandler);
 //        set_exception_handler($this->exceptionHandler);
 
@@ -79,13 +84,17 @@ class SwewApplication
         $this->response = $this->createResponse();
 
         $this->router = new Router(
-            Router::getRoutesFromPaths($this->routers),
+            Router::getRoutesFromPaths($this->routeFiles),
             $this->host
         );
 
         if ($this->DEV) {
             $this->router->validate();
         }
+
+        $this->isInitialized = true;
+
+        return $this;
     }
 
     private function send404(): Http\Response
@@ -94,14 +103,16 @@ class SwewApplication
         // TODO: load contend
         $this->response->setContent('Not found: 404');
 
-        return $this->response->finalSendResponse();
+        return $this->response->finalSendResponse(!$this->TEST);
     }
 
     # Parameters that must be changed during installation
 
     public bool $DEV = true; // DEV mode change before deploy
 
-    public string $host = '';
+    public bool $TEST = false; // TEST mode
+
+    public string $host = ''; // TODO: добавить в роутер и респонз
 
     /**
      * Path to the features folder
@@ -123,7 +134,7 @@ class SwewApplication
      *      __DIR__ . '/../router/router.php',
      * ];
      */
-    public array $routers = [];
+    public array $routeFiles = [];
 
     /**
      * @example

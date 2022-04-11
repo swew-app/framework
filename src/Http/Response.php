@@ -19,7 +19,7 @@ final class Response extends SymfonyResponse
 
     private SwewApplication $app;
 
-    public BaseDTO|array|string|null $rawData = null;
+    public array|string|null $rawData = null;
 
     // []: в зависимости от типа Request - выбирает тип ответа
     // []: если необходимо, то создает viewRenderer
@@ -30,9 +30,13 @@ final class Response extends SymfonyResponse
         $this->app = $app;
     }
 
-    public function setRawData(number|string|array|BaseDTO $data): static
+    public function setRawData(number|string|array|BaseDTO $data): Response
     {
-        $this->rawData = $data;
+        if ($data && isset($data->isDTO)) {
+            $this->rawData = $data->getData();
+        } else {
+            $this->rawData = $data;
+        }
 
         return $this;
     }
@@ -42,7 +46,7 @@ final class Response extends SymfonyResponse
      *
      * @throws Exception
      */
-    public function finalSendResponse(): Response
+    public function finalSendResponse($isSendData = true): Response
     {
          if (is_null($this->rawData)) {
             throw new Exception('Please set data with: "$this->res(DTO|string|[]);"');
@@ -54,6 +58,10 @@ final class Response extends SymfonyResponse
         }
 
         $this->setContent($this->rawData);
+
+        if (!$isSendData) {
+            return $this;
+        }
 
         return $this->send();
     }

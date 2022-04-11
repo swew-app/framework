@@ -4,14 +4,13 @@ declare(strict_types=1);
 
 namespace SWEW\Framework\DTO;
 
+use SWEW\Framework\Controller\BaseController;
+
 abstract class BaseDTO
 {
-    private mixed $rawData = null;
+    public bool $isDTO = true;
 
-    public function setData($data): void
-    {
-        $this->rawData = $data;
-    }
+    abstract public function setData(BaseController $controller): void;
 
     abstract public function getData(): array;
 

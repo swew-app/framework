@@ -8,7 +8,8 @@ describe("SwewApplication", function () {
     given('app', fn() => new SwewApplication());
 
     it("App->run [No exception]", function () {
-        expect(fn () => $this->app->run())
-            ->toThrow('Please set data with: "$this->res(DTO|string|[]);"');
+        expect(
+            fn() => $this->app->run()
+        )->toThrow('Please set data with: "$this->res(DTO|string|[]);"');
     });
 });

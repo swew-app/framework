@@ -12,4 +12,17 @@ return [
         'name' => 'AboutExamplePage',
         'controller' => [ExampleController::class, 'about'],
     ],
+
+
+    '/blog/{id}' => [
+        'name' => 'BlogExamplePage',
+        'controller' => [ExampleController::class, 'blog'],
+        'method' => 'GET',
+    ],
+
+    '/blog/{postId}' => [
+        'name' => 'BlogAddPage',
+        'controller' => [ExampleController::class, 'storePost'],
+        'method' => 'POST'
+    ],
 ];

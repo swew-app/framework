@@ -169,7 +169,7 @@ class Router
 
         $dispatcher = simpleDispatcher(function ($r) use ($routes) {
             foreach ($routes as $path => $route) {
-                $method = $route['method'] ?? 'GET|POST|PUT|DELETE|HEAD';
+                $method = $route['method'] ?? 'GET|HEAD';
 
                 # /Path/To/Class::class|methodName OR /Path/To/Class::class
                 $handlerItem = is_array($route['controller'])

@@ -112,7 +112,7 @@ class SwewApplication
 
     public bool $TEST = false; // TEST mode
 
-    public string $host = ''; // TODO: добавить в роутер и респонз
+    public string $host = ''; // TODO: добавить в роутер и респонз // $_SERVER[HTTP_HOST]
 
     /**
      * Path to the features folder

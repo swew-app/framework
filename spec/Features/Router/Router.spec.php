@@ -125,7 +125,7 @@ describe('Route Search', function () {
         $router = new Router(routerStub());
         $uri = '/blog/101';
 
-        $r = $router->findRouteByFastRouter('POST', $uri);
+        $r = $router->findRouteByFastRouter('GET', $uri);
 
         $item = $router->toRouteFromFastRoute($r, 'GET', $uri);
 
@@ -141,13 +141,13 @@ describe('Route Search', function () {
         $router = new Router(routerStub());
         $uri = '/';
 
-        $r = $router->findRouteByFastRouter('POST', $uri);
+        $r = $router->findRouteByFastRouter('GET', $uri);
 
-        $item = $router->toRouteFromFastRoute($r, 'POST', $uri);
+        $item = $router->toRouteFromFastRoute($r, 'GET', $uri);
 
         expect($item)->toBe([
             'class' => 'Router\\stub\\ControllerStub',
-            'method' => 'postIndex',
+            'method' => 'getIndex',
             'params' => [],
             'middlewares' => [],
         ]);

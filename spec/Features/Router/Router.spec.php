@@ -94,9 +94,15 @@ describe('Route Search', function () {
         $res = $router->findRouteByFastRouter('GET', '/blog/2');
 
         expect($res)->toBe([
-            FastRoute\Dispatcher::FOUND,
-            'Router\\stub\\ControllerStub@blogListPage|auth|admin',
-            ['id' => '2'],
+            "class" => "Router\\stub\\ControllerStub",
+            "method" => "blogListPage",
+            "params" => [
+                "id" => "2"
+            ],
+            "middlewares" => [
+                "auth",
+                "admin"
+            ]
         ]);
     });
 
@@ -105,9 +111,7 @@ describe('Route Search', function () {
 
         $res = $router->findRouteByFastRouter('GET', '/wrong');
 
-        expect($res)->toBe([
-            FastRoute\Dispatcher::NOT_FOUND,
-        ]);
+        expect($res)->toBe([]);
     });
 
     it('findRouteByFastRouter [METHOD_NOT_ALLOWED]: method', function () {
@@ -115,19 +119,14 @@ describe('Route Search', function () {
 
         $res = $router->findRouteByFastRouter('POST', '/about');
 
-        expect($res)->toBe([
-            FastRoute\Dispatcher::METHOD_NOT_ALLOWED,
-            ['GET']
-        ]);
+        expect($res)->toBe([]);
     });
 
     it('toRouteFromFastRoute [GOOD]', function () {
         $router = new Router(routerStub());
         $uri = '/blog/101';
 
-        $r = $router->findRouteByFastRouter('GET', $uri);
-
-        $item = $router->toRouteFromFastRoute($r, 'GET', $uri);
+        $item = $router->getRoute( 'GET', $uri);
 
         expect($item)->toBe([
             'class' => 'Router\\stub\\ControllerStub',
@@ -141,9 +140,7 @@ describe('Route Search', function () {
         $router = new Router(routerStub());
         $uri = '/';
 
-        $r = $router->findRouteByFastRouter('GET', $uri);
-
-        $item = $router->toRouteFromFastRoute($r, 'GET', $uri);
+        $item = $router->getRoute('GET', $uri);
 
         expect($item)->toBe([
             'class' => 'Router\\stub\\ControllerStub',

@@ -13,6 +13,7 @@ class Router
 {
     private array $allowed_keys = [
         'name',
+        'path',
         'controller',
         'middlewares',
         'method',
@@ -38,7 +39,7 @@ class Router
     {
         $route_keys = [];
 
-        foreach ($this->routes as $path => $route) {
+        foreach ($this->routes as $route) {
             if (!$this->isValidRoute($route)) {
                 return false;
             }
@@ -87,10 +88,10 @@ class Router
             ['Name', 'Path', 'Controller', 'Middlewares', 'DEV'],
         ];
 
-        foreach ($this->routes as $path => $route) {
+        foreach ($this->routes as $route) {
             $list[] = [
                 $route['name'],
-                $path,
+                $route['path'],
                 $route['controller'],
                 implode(',', $route['middlewares'] ?? []),
                 empty($route['dev']) ? 'FALSE' : 'TRUE',
@@ -109,9 +110,7 @@ class Router
      */
     public function getRoute(string $httpMethod, string $uri): array
     {
-        $found = $this->findRouteByFastRouter($httpMethod, $uri);
-
-        return $this->toRouteFromFastRoute($found, $httpMethod, $uri);
+        return $this->findRouteByFastRouter($httpMethod, $uri);
     }
 
     /**
@@ -121,9 +120,9 @@ class Router
      */
     public function url(string $routeName, array $params = []): string
     {
-        foreach ($this->routes as $routePath => $route) {
+        foreach ($this->routes as $route) {
             if ($route['name'] === $routeName) {
-                $path = $routePath;
+                $path = $route['path'];
                 break;
             }
         }
@@ -168,7 +167,7 @@ class Router
         $routes = $this->routes;
 
         $dispatcher = simpleDispatcher(function ($r) use ($routes) {
-            foreach ($routes as $path => $route) {
+            foreach ($routes as $route) {
                 $method = $route['method'] ?? 'GET|HEAD';
 
                 # /Path/To/Class::class|methodName OR /Path/To/Class::class
@@ -179,21 +178,24 @@ class Router
                 $middlewares = $route['middlewares'] ?? [];
                 $handlerItem = $handlerItem . '|' . implode('|', $middlewares);
 
-                $r->addRoute(explode('|', $method), $path, $handlerItem);
+                $r->addRoute(explode('|', $method), $route['path'], $handlerItem);
             }
         });
 
         $uri = $this->normalizeUri($uri);
 
-        return $dispatcher->dispatch($httpMethod, $uri);
+        $found = $dispatcher->dispatch($httpMethod, $uri);
+
+        return $this->toRouteFromFastRoute($found, $httpMethod, $uri);
     }
 
     /**
      * @param array $param [ FastRouterStatus, Controller@Method, [params]]
+     * @param string $httpMethod
      * @param string $uri
      * @return array
      */
-    public function toRouteFromFastRoute(array $param, string $httpMethod, string $uri): array
+    private function toRouteFromFastRoute(array $param, string $httpMethod, string $uri): array
     {
         if ($param[0] !== FastRouteDispatcher::FOUND) {
             return [];

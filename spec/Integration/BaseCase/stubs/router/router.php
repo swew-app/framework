@@ -3,31 +3,36 @@
 use Integration\BaseCase\stubs\controllers\ExampleController;
 
 return [
-    '/' => [
+    [
         'name' => 'MainExamplePage',
+        'path' => '/',
         'controller' => ExampleController::class,
     ],
 
-    '/about' => [
+    [
         'name' => 'AboutExamplePage',
+        'path' => '/about',
         'controller' => [ExampleController::class, 'about'],
     ],
 
 
-    '/blog/{id}' => [
+    [
         'name' => 'BlogExamplePage',
+        'path' => '/blog/{id}',
         'controller' => [ExampleController::class, 'blog'],
         'method' => 'GET',
     ],
 
-    '/blog/{postId}' => [
+    [
         'name' => 'BlogAddPage',
+        'path' => '/blog/{postId}',
         'controller' => [ExampleController::class, 'storePost'],
         'method' => 'POST'
     ],
 
-    '/admin' => [
+    [
         'name' => 'AdminPage',
+        'path' => '/admin',
         'controller' => ExampleController::class,
         'method' => 'GET',
         'middlewares' => ['cors'],

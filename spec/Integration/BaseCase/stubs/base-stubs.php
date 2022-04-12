@@ -7,8 +7,9 @@ function getBaseStub($type = 'route')
 {
     if ($type === 'route')
         return [
-            '/' => [
+            [
                 'name' => 'MainPage',
+                'path' => '/',
                 'controller' => '',
             ],
         ];

@@ -10,22 +10,26 @@ function routerStub($wantType = 'config')
 {
     if ($wantType === 'config')
         return [
-            '/' => [
+            [
                 'name' => 'Main',
+                'path' => '/',
                 'controller' => ControllerStub::class,
             ],
-            '/about' => [
+            [
                 'name' => 'About',
+                'path' => '/about',
                 'controller' => [ControllerStub::class, 'aboutPage'],
                 'method' => 'GET',
             ],
-            '/blog/{id}' => [
+            [
                 'name' => 'Blog',
+                'path' => '/blog/{id}',
                 'controller' => [ControllerStub::class, 'blogListPage'],
                 'middlewares' => ['auth', 'admin'],
             ],
-            '/admin' => [
+            [
                 'name' => 'AdminPage',
+                'path' => '/admin',
                 'middlewares' => [],
                 'controller' => [],
                 'dev' => true,
@@ -75,16 +79,19 @@ function routerStub($wantType = 'config')
     // Merged from: stub/routes_stub_1.php & stub/routes_stub_2.php
     if ($wantType === 'mergedConfig')
         return [
-            '/' => [
+            [
                 'name' => 'MainPage',
+                'path' => '/',
                 'controller' => 'SomeClass::class'
             ],
-            '/about' => [
+            [
                 'name' => 'AboutPage',
+                'path' => '/about',
                 'controller' => ['SomeClass::class', 'about']
             ],
-            '/admin' => [
+            [
                 'name' => 'AdminPage',
+                'path' => '/admin',
                 'controller' => 'SomeAdminClass::class',
                 'method' => 'GET|HEAD',
                 'middlewares' => ['auth', 'admin']

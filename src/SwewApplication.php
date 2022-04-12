@@ -6,11 +6,14 @@ namespace SWEW\Framework;
 
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
+use SWEW\Framework\Http\Request;
+use SWEW\Framework\Http\Response;
 use SWEW\Framework\Router\Router;
 use SWEW\Framework\Traits\ContextTrait;
 use SWEW\Framework\Traits\CreateControllerTrait;
 use SWEW\Framework\Traits\CreateRequestTrait;
 use SWEW\Framework\Traits\CreateResponseTrait;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class SwewApplication
 {
@@ -42,18 +45,18 @@ class SwewApplication
         $this->initialize();
 
         $routeItem = $this->router->getRoute(
-            $this->request->getMethod(),
-            $this->request->getRequestUri()
+            $this->req->getMethod(),
+            $this->req->getRequestUri()
         );
 
         // if Not Found - return 404 page
         if (empty($routeItem['class']) || empty($routeItem['method'])) {
-            return $this->send404();
+            return $this->res->send404(!$this->TEST);
         }
 
         // На основе пришедшего запроса, создаем конфиг с ответом html/json
-        $this->response->setResponseConfig(
-            $this->request->getAcceptableContentTypes()
+        $this->res->setResponseConfig(
+            $this->req->getAcceptableContentTypes()
         );
 
         // Создаем класс контроллера и вызываем его метод
@@ -65,7 +68,7 @@ class SwewApplication
         );
 
         // Перед отправкой, проверить вызвался ли view, если нет, то делаем проверку хэдера ответа
-        return $this->response->finalSendResponse(!$this->TEST);
+        return $this->res->finalSendResponse(!$this->TEST);
     }
 
     public function initialize(): static
@@ -80,8 +83,10 @@ class SwewApplication
         $this->logger = $this->initLogger();
         $this->cache = $this->initCache();
 
-        $this->request = $this->createRequest();
-        $this->response = $this->createResponse();
+        $this->req = $this->createRequest();
+        $this->res = $this->createResponse();
+
+        $this->ctx = new ParameterBag([]);
 
         $this->router = new Router(
             Router::getRoutesFromPaths($this->routeFiles),
@@ -97,14 +102,11 @@ class SwewApplication
         return $this;
     }
 
-    private function send404(): Http\Response
-    {
-        $this->response->setStatusCode(404);
-        // TODO: load contend
-        $this->response->setContent('Not found: 404');
+    public Request $req;
 
-        return $this->response->finalSendResponse(!$this->TEST);
-    }
+    public Response $res;
+
+    public ParameterBag $ctx;
 
     # Parameters that must be changed during installation
 

@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SWEW\Framework\DTO;
-
-use SWEW\Framework\Controller\BaseController;
+namespace SWEW\Framework\Base;
 
 abstract class BaseDTO
 {

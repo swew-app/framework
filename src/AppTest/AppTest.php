@@ -64,7 +64,6 @@ class AppTest
         $_POST = array_merge($_POST, $post);
         $_REQUEST = array_merge($_REQUEST, $_POST);
 
-
         $this->app->initialize();
         $this->app->TEST = true;
         $this->app->run();
@@ -81,11 +80,11 @@ class AppTest
 
     public function getResponse(): Response
     {
-        return $this->app->response;
+        return $this->app->res;
     }
 
     public function getRequest(): Request
     {
-        return $this->app->request;
+        return $this->app->req;
     }
 }

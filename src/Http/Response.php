@@ -5,19 +5,19 @@ declare(strict_types=1);
 namespace SWEW\Framework\Http;
 
 use Exception;
-use SWEW\Framework\DTO\BaseDTO;
+use SWEW\Framework\Base\BaseDTO;
 use SWEW\Framework\SwewApplication;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 final class Response extends SymfonyResponse
 {
+    private SwewApplication $app;
+
     public RespType $responseType = RespType::HTML;
 
     private string $featureViewPath = '';
 
     private string $commonViewPath = '';
-
-    private SwewApplication $app;
 
     public array|string|null $rawData = null;
 
@@ -41,6 +41,15 @@ final class Response extends SymfonyResponse
         return $this;
     }
 
+    public function send404($isSendData = true): Response
+    {
+        $this->setStatusCode(404);
+        // TODO: load contend
+        $this->setContent('Not found: 404');
+
+        return $this->finalSendResponse($isSendData);
+    }
+
     /**
      * Финальный метод, в нем данные отправляются пользователю
      *
@@ -48,9 +57,9 @@ final class Response extends SymfonyResponse
      */
     public function finalSendResponse($isSendData = true): Response
     {
-         if (is_null($this->rawData)) {
+        if (is_null($this->rawData)) {
             throw new Exception('Please set data with: "$this->res(DTO|string|[]);"');
-         }
+        }
 
         if (is_array($this->rawData)) {
             // Если не заполнили контент до этого, то это JSON
@@ -111,6 +120,7 @@ final class Response extends SymfonyResponse
         throw new Exception("Not found view file\n - '{$filePathFeature}'\n - '{$filePathCommon}'");
     }
 
+    // TODO: кажется не нужно
     public function setResponseConfig(array $headerContentTypes): void
     {
         foreach ($headerContentTypes as $type) {

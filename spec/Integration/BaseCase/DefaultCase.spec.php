@@ -49,3 +49,17 @@ describe('Default Case', function () {
         expect($res->getContent())->toBe('{"saved":true,"id":102,"text":"Hello"}');
     });
 });
+
+//describe('Case with Middleware', function () {
+//    it('Middleware', function () {
+//        $appTest = new SWEW\Framework\AppTest\AppTest();
+//
+//        $appTest->setApp(getBaseStub('app'));
+//
+//        $appTest->ajax('GET', '/blog/101');
+//
+//        $res = $appTest->getResponse();
+//
+//        expect($res->getContent())->toBe('{"id":101}');
+//    });
+//});

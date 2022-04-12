@@ -25,4 +25,11 @@ return [
         'controller' => [ExampleController::class, 'storePost'],
         'method' => 'POST'
     ],
+
+    '/admin' => [
+        'name' => 'AdminPage',
+        'controller' => ExampleController::class,
+        'method' => 'GET',
+        'middlewares' => ['cors'],
+    ]
 ];

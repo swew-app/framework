@@ -2,10 +2,10 @@
 
 namespace Integration\BaseCase\stubs\controllers;
 
-use \Integration\BaseCase\stubs\DTO\PostDTO;
+use Integration\BaseCase\stubs\DTO\PostDTO;
 
 
-final class ExampleController extends \SWEW\Framework\Controller\BaseController
+final class ExampleController extends \SWEW\Framework\Base\BaseController
 {
     public function about()
     {
@@ -15,7 +15,7 @@ final class ExampleController extends \SWEW\Framework\Controller\BaseController
     public function blog()
     {
         $this->res(
-            $this->params->all()
+            $this->app->req->params->all()
         );
     }
 

@@ -8,8 +8,6 @@ use SWEW\Framework\Http\Request;
 
 trait CreateRequestTrait
 {
-    public Request $request;
-
     protected function createRequest(): Request
     {
         return new Request(

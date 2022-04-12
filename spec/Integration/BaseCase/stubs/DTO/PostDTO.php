@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Integration\BaseCase\stubs\DTO;
 
-use SWEW\Framework\Controller\BaseController;
-use SWEW\Framework\DTO\BaseDTO;
+use SWEW\Framework\Base\BaseController;
+use SWEW\Framework\Base\BaseDTO;
 
 final class PostDTO extends BaseDTO
 {
@@ -25,8 +25,8 @@ final class PostDTO extends BaseDTO
     {
         $this->data = [
             'saved' => true,
-            'id' => $controller->params->get('postId'),
-            'text' => $controller->req->request->get('text'),
+            'id' => $controller->app->req->params->get('postId'),
+            'text' => $controller->app->req->request->get('text'),
         ];
     }
 

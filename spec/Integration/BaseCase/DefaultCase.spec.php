@@ -50,16 +50,29 @@ describe('Default Case', function () {
     });
 });
 
-//describe('Case with Middleware', function () {
-//    it('Middleware', function () {
-//        $appTest = new SWEW\Framework\AppTest\AppTest();
-//
-//        $appTest->setApp(getBaseStub('app'));
-//
-//        $appTest->ajax('GET', '/blog/101');
-//
-//        $res = $appTest->getResponse();
-//
-//        expect($res->getContent())->toBe('{"id":101}');
-//    });
-//});
+describe('Case with Middleware', function () {
+    it('Middleware CORS', function () {
+        $appTest = new SWEW\Framework\AppTest\AppTest();
+
+        $appTest->setApp(getBaseStub('app'));
+
+        $appTest->ajax('GET', '/admin');
+
+        $res = $appTest->getResponse();
+
+        expect($res->headers->all('Access-Control-Max-Age'))->toBe(['86400']);
+        expect($res->headers->all('x-test-after'))->toBe(['true']);
+    });
+
+    it('Middleware BREAK', function () {
+        $appTest = new SWEW\Framework\AppTest\AppTest();
+
+        $appTest->setApp(getBaseStub('app'));
+
+        $appTest->ajax('GET', '/admin/not-allowed');
+
+        $res = $appTest->getResponse();
+
+        expect($res->headers->all('Access-Control-Max-Age'))->not->toBe(['86400']);
+    });
+});

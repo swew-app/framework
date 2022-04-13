@@ -25,4 +25,11 @@ final class ExampleController extends \SWEW\Framework\Base\BaseController
 
         $this->res($dto);
     }
+
+    public function getAdmin()
+    {
+        $dto = $this->req(new PostDTO);
+
+        $this->res($dto);
+    }
 }

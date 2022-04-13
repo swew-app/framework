@@ -9,6 +9,8 @@ use SWEW\Framework\Base\BaseController;
 
 trait CreateControllerTrait
 {
+    private array $middlewareInstances = [];
+
     /**
      * @example
      *  $middlewares = [
@@ -30,6 +32,12 @@ trait CreateControllerTrait
      */
     public function runController(string $class, string $method, array $params, array $middlewareNames): void
     {
+        $this->req->setParams($params);
+
+        if ($this->runMiddlewares($middlewareNames) === false) {
+            return;
+        }
+
         $classInstance = new $class($params);
 
         if ($this->DEV) {
@@ -38,17 +46,32 @@ trait CreateControllerTrait
             }
         }
 
-        $this->req->setParams($params);
         $classInstance->setApp($this);
 
         $classInstance->$method();
+
+        $this->runPostMiddlewares();
     }
 
-    private function loadMiddlewares(array $middlewareNames)
+    private function runMiddlewares(array $middlewareNames): bool
     {
         foreach ($middlewareNames as $key) {
-            $instance = new $this->middlewares[$key];
+            $this->middlewareInstances[$key] = new $this->middlewares[$key];
 
+            $this->middlewareInstances[$key]->setApp($this);
+
+            if ($this->middlewareInstances[$key]->handle() === false) {
+                return false;
+            }
+        }
+
+        return  true;
+    }
+
+    private function runPostMiddlewares(): void
+    {
+        foreach ($this->middlewareInstances as $middleware) {
+            $middleware->beforeResponse();
         }
     }
 }

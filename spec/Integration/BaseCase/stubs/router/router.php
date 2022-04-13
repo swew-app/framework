@@ -36,5 +36,12 @@ return [
         'controller' => ExampleController::class,
         'method' => 'GET',
         'middlewares' => ['cors'],
-    ]
+    ],
+    [
+        'name' => 'AdminBadPage',
+        'path' => '/admin/not-allowed',
+        'controller' => ExampleController::class,
+        'method' => 'GET',
+        'middlewares' => ['break', 'cors'],
+    ],
 ];

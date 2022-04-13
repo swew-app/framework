@@ -2,12 +2,18 @@
 
 namespace SWEW\Framework\Base;
 
+use SWEW\Framework\Base\Traits\AppActionsTrait;
 use SWEW\Framework\SwewApplication;
 
 abstract class BaseMiddleware
 {
-    protected SwewApplication $app;
+    use AppActionsTrait;
 
+    /**
+     * Method called before run controller
+     *
+     * @return bool
+     */
     abstract public function handle(): bool;
 
     /**
@@ -15,5 +21,5 @@ abstract class BaseMiddleware
      *
      * @return void
      */
-    public function beforeResponse(): void {}
+    abstract function beforeResponse(): void;
 }

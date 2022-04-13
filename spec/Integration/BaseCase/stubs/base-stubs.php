@@ -2,6 +2,8 @@
 
 include_once 'ExampleApp.php';
 include_once 'controllers/ExampleController.php';
+include_once 'middlewares/CorsMiddleware.php';
+include_once 'middlewares/BreakMiddleware.php';
 
 function getBaseStub($type = 'route')
 {

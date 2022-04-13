@@ -2,15 +2,11 @@
 
 namespace Integration\BaseCase\stubs\middlewares;
 
-use SWEW\Framework\Http\Request;
+use SWEW\Framework\Base\BaseMiddleware;
 
-final class CorsMiddleware
+final class CorsMiddleware extends BaseMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     */
-    public function handle(Request $request, Closure $next)
+    public function handle(): bool
     {
         $headers = [
             'Access-Control-Allow-Origin' => $_SERVER['HTTP_ORIGIN'] ?? '*',
@@ -19,20 +15,22 @@ final class CorsMiddleware
             'Access-Control-Allow-Credentials' => 'true',
             'Access-Control-Max-Age' => '86400',
         ];
-//
-//        if ($request->isMethod('OPTIONS')) {
-//            return $this->resp
-//                response('{"method":"OPTIONS"}', 200, $headers);
-//        }
-//
-//        $response = $next($request);
-//
-//        if (!empty($response)) {
-//            foreach ($headers as $key => $value) {
-//                $response->header($key, $value);
-//            }
-//        }
 
-//        return $response;
+        if ($this->app->req->isMethod('OPTIONS')) {
+            $this->app->res
+                ->setContent('{"method":"OPTIONS"}')
+                ->setStatusCode(200);
+        }
+
+        foreach ($headers as $key => $value) {
+            $this->app->res->headers->set($key, $value);
+        }
+
+        return true;
+    }
+
+    public function beforeResponse(): void
+    {
+        $this->app->res->headers->set('x-test-after', 'true');
     }
 }

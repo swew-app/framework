@@ -10,6 +10,6 @@ describe("SwewApplication", function () {
     it("App->run [No exception]", function () {
         expect(
             fn() => $this->app->run()
-        )->toThrow('Please set data with: "$this->res(DTO|string|[]);"');
+        )->not->toThrow();
     });
 });

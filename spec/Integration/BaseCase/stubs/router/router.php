@@ -34,7 +34,7 @@ return [
         'name' => 'AdminPage',
         'path' => '/admin',
         'controller' => ExampleController::class,
-        'method' => 'GET',
+        'method' => 'GET|POST|PUT|DELETE',
         'middlewares' => ['cors'],
     ],
     [

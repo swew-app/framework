@@ -11,6 +11,7 @@ use SWEW\Framework\SwewApplication;
 
 trait AppActionsTrait
 {
+    // TODO: private
     public SwewApplication $app;
 
     final public function setApp(SwewApplication $app): void
@@ -18,15 +19,14 @@ trait AppActionsTrait
         $this->app = $app;
     }
 
-    final public function req(BaseDTO $dto): Request|BaseDTO
+    final public function req(): Request
     {
-        $dto->setData($this);
-        return $dto;
+        return $this->app->req;
     }
 
-    final public function res(BaseDTO|array|string $dto = null): Response
+    final public function res(array|string $data = null): Response
     {
-        $this->app->res->setRawData($dto);
+        $this->app->res->setRawData($data);
 
         return $this->app->res;
     }

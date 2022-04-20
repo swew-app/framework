@@ -12,8 +12,17 @@ if (!function_exists('d')) {
     function d()
     {
         $str = '';
-        foreach (func_get_args() as $x) {
-            $str = $str . "\n" . var_export($x, true);
+        try {
+            foreach (func_get_args() as $x) {
+                $str = $str . "\n" . var_export($x, true);
+            }
+        } catch (Exception) {
+            ob_start();
+            foreach (func_get_args() as $x) {
+                echo "\n";
+                var_dump($x);
+            }
+            $str = ob_get_clean();
         }
 
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT, 2);
@@ -42,5 +51,18 @@ if (!function_exists('dd')) {
         $args = func_get_args();
         d(...$args);
         die(0);
+    }
+}
+
+if (!function_exists('ddIf')) {
+    function ddIf(bool $assert)
+    {
+        if ($assert) {
+            return function () {
+                $args = func_get_args();
+                d(...$args);
+                die(0);
+            };
+        }
     }
 }

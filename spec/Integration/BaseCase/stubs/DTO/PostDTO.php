@@ -9,25 +9,9 @@ use SWEW\Framework\Base\BaseDTO;
 
 final class PostDTO extends BaseDTO
 {
-    private array $data = [];
-
-    public function getRules(): array
+    public function rules(): array
     {
         return [];
-    }
-
-    public function validate(): bool
-    {
-        return true;
-    }
-
-    public function setData(BaseController $controller): void
-    {
-        $this->data = [
-            'saved' => true,
-            'id' => $controller->app->req->params->get('postId'),
-            'text' => $controller->app->req->request->get('text'),
-        ];
     }
 
     public function getData(): array

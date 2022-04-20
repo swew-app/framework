@@ -55,6 +55,12 @@ class AppTest
 
     public function call(string $method, string $uri, $post = [], $server = []): static
     {
+        $old = json_encode([
+            $_SERVER,
+            $_POST,
+            $_REQUEST,
+        ]);
+
         $_SERVER['REQUEST_METHOD'] = strtoupper($method);
         $_SERVER['REQUEST_URI'] = $uri;
         $_SERVER['HTTP_ACCEPT'] = 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9';
@@ -67,6 +73,11 @@ class AppTest
         $this->app->initialize();
         $this->app->TEST = true;
         $this->app->run();
+
+        $data = json_decode($old, true);
+        $_SERVER = $data[0];
+        $_POST = $data[1];
+        $_REQUEST = $data[2];
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 namespace Integration\BaseCase\stubs\controllers;
 
+use Integration\BaseCase\stubs\DTO\AdminDTO;
 use Integration\BaseCase\stubs\DTO\PostDTO;
 
 
@@ -21,15 +22,32 @@ final class ExampleController extends \SWEW\Framework\Base\BaseController
 
     public function storePost()
     {
-        $dto = $this->req(new PostDTO);
+        $dto = new PostDTO;
 
-        $this->res($dto);
+        $dto->setData(
+            [
+                'saved' => true,
+                'id' => $this->req()->params->get('postId'),
+                'text' => $this->req()->get('text'),
+            ]
+        );
+
+        $this->res($dto->getData());
     }
 
     public function getAdmin()
     {
-        $dto = $this->req(new PostDTO);
+        $dto = $this->req()->map(new PostDTO);
 
-        $this->res($dto);
+        $this->res($dto->getData());
+    }
+
+    public function postAdmin()
+    {
+        $dto = $this->req()->map(new AdminDTO());
+
+        $dto->validate();
+
+        $this->res($dto->getData());
     }
 }

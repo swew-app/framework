@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SWEW\Framework\Http;
 
 use Exception;
-use SWEW\Framework\Base\BaseDTO;
 use SWEW\Framework\SwewApplication;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
@@ -30,13 +29,9 @@ final class Response extends SymfonyResponse
         $this->app = $app;
     }
 
-    public function setRawData(number|string|array|BaseDTO $data): Response
+    public function setRawData(string|array $data): Response
     {
-        if ($data && isset($data->isDTO)) {
-            $this->rawData = $data->getData();
-        } else {
-            $this->rawData = $data;
-        }
+        $this->rawData = $data;
 
         return $this;
     }
@@ -57,16 +52,14 @@ final class Response extends SymfonyResponse
      */
     public function finalSendResponse($isSendData = true): Response
     {
-        if (is_null($this->rawData)) {
-            throw new Exception('Please set data with: "$this->res(DTO|string|[]);"');
-        }
+        if (!empty($this->rawData)) {
+            if (is_array($this->rawData)) {
+                // Если не заполнили контент до этого, то это JSON
+                $this->rawData = $this->ajax($this->rawData);
+            }
 
-        if (is_array($this->rawData)) {
-            // Если не заполнили контент до этого, то это JSON
-            $this->json($this->rawData);
+            $this->setContent($this->rawData);
         }
-
-        $this->setContent($this->rawData);
 
         if (!$isSendData) {
             return $this;
@@ -75,12 +68,11 @@ final class Response extends SymfonyResponse
         return $this->send();
     }
 
-    public function json(array $data = []): static
+    public function ajax(array $data = []): string
     {
-        $this->rawData = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
-
         $this->headers->set('Content-Type', 'application/json');
-        return $this;
+
+        return json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
     }
 
     /**
@@ -98,7 +90,7 @@ final class Response extends SymfonyResponse
         }
 
         if ($this->isJson() || $this->responseType === RespType::JSON) {
-            return $this->json($data);
+            return $this->ajax($data);
         }
 
         $filePathFeature = $this->featureViewPath . DIRECTORY_SEPARATOR . $file;

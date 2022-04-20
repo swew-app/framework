@@ -179,6 +179,8 @@ class Router
                 $handlerItem = $handlerItem . '|' . implode('|', $middlewares);
 
                 $r->addRoute(explode('|', $method), $route['path'], $handlerItem);
+//                $r->addRoute('POST', $route['path'], $handlerItem);
+
             }
         });
 
@@ -222,6 +224,10 @@ class Router
      */
     public function getMethodByUri(string $httpMethod, string $uri): string
     {
+        if (!in_array($httpMethod, ['GET', 'POST', 'PUT', 'DELETE'])) {
+            throw new Exception("Wrong http method '$httpMethod'");
+        }
+
         $uri = $this->normalizeUri($uri);
 
         if ($uri === '' || $uri === '/') {

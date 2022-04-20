@@ -5,8 +5,6 @@ namespace Integration\BaseCase\stubs;
 use Integration\BaseCase\stubs\middlewares\CorsMiddleware;
 use Integration\BaseCase\stubs\middlewares\BreakMiddleware;
 
-include_once 'DTO/PostDTO.php';
-
 class ExampleApp extends \SWEW\Framework\SwewApplication
 {
     public array $routeFiles = [

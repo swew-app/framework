@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace SWEW\Framework\Http;
 
+use SWEW\Framework\Base\BaseDTO;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
 final class Request extends SymfonyRequest
 {
-
     public ParameterBag $params;
 
     public function setParams(array $params): void
@@ -33,5 +33,12 @@ final class Request extends SymfonyRequest
         }
 
         return $data;
+    }
+
+    public function map(BaseDTO $dto)
+    {
+        $dto->setData($this->input());
+
+        return $dto;
     }
 }

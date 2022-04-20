@@ -48,6 +48,46 @@ describe('Default Case', function () {
 
         expect($res->getContent())->toBe('{"saved":true,"id":102,"text":"Hello"}');
     });
+
+    it('DTO validate data [GOOD]', function () {
+        $appTest = new SWEW\Framework\AppTest\AppTest();
+
+        $appTest->setApp(getBaseStub('app'));
+
+        $appTest->ajax('POST', '/admin', [
+            'name' => 'Leo',
+            'text' => 'Hello world',
+        ]);
+
+        $res = $appTest->getResponse();
+
+        $json = "{\"data\":{\"text\":\"Hello world\",\"name\":\"Leo\"},\"errors\":[]}";
+
+        expect($res->getContent())->toBe($json);
+    });
+
+    it('DTO validate data [BAD]', function () {
+        $appTest = new SWEW\Framework\AppTest\AppTest();
+
+        $appTest->setApp(getBaseStub('app'));
+
+        $appTest->ajax('POST', '/admin', [
+            'text' => 'Hello',
+        ]);
+
+        $res = $appTest->getResponse();
+
+        $json = json_encode([
+            'data' => [
+                'text' => 'Hello',
+            ],
+            'errors' => [
+                'name' => 'Field Name is required!!!',
+            ],
+        ]);
+
+        expect($res->getContent())->toBe($json);
+    });
 });
 
 describe('Case with Middleware', function () {

@@ -24,7 +24,7 @@ trait AppActionsTrait
         return $this->app->req;
     }
 
-    final public function res(array|string $data = null): Response
+    final public function res(BaseDTO|array|string $data = null): Response
     {
         $this->app->res->setRawData($data);
 

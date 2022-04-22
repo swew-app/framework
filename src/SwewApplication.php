@@ -6,6 +6,7 @@ namespace SWEW\Framework;
 
 use Psr\Log\LoggerInterface;
 use Psr\SimpleCache\CacheInterface;
+use SWEW\Framework\Base\BaseDTO;
 use SWEW\Framework\Http\Request;
 use SWEW\Framework\Http\Response;
 use SWEW\Framework\Router\Router;
@@ -189,5 +190,15 @@ class SwewApplication
     public function renderView(string $filePath, array $data = []): string
     {
         return include($filePath);
+    }
+
+    public function dtoMapper(BaseDTO $dto): array
+    {
+        return [
+            'data' => $dto->getData(),
+            'message' => $dto->getMessage(),
+            'error' => $dto->getErrorMessage(),
+            'errors' => $dto->getErrors(),
+        ];
     }
 }

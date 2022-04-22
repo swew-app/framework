@@ -1,8 +1,8 @@
 {
     "ignore": ["vendor"],
     "watch": ["src", "spec"],
-    "exec": "./test --spec=spec/Features/DTO",
-    "_exec": "./test --spec=spec",
+    "exec": "./test --spec=spec",
+    "_exec": "./test --spec=spec/Features/DTO",
     "_exec": "./test --spec=spec/Integration",
     "_exec": "./test --spec=spec/Features/Http",
     "_exec": "./test --spec=spec/Features/Router",

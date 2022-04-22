@@ -48,15 +48,32 @@ abstract class BaseDTO
 
     private function setDataWithCast(array $data): void
     {
-
         $currentData = $this->getData();
+        $casts = $this->castTypes();
 
         foreach ($currentData as $key => $value) {
             if (isset($data[$key])) {
-                // TODO: cast types
-                $this->$key = $data[$key];
+
+                if (isset($casts[$key])) {
+                    $this->$key = $casts[$key]($data[$key]);
+
+                    continue;
+                }
+
+                $this->$key = match (gettype($currentData[$key])) {
+                    'boolean' => (bool)$data[$key],
+                    'integer' => (int)$data[$key],
+                    'double' => (double)$data[$key],
+                    'string' => (string)$data[$key],
+                    default => $data[$key],
+                };
             }
         }
+    }
+
+    public function castTypes(): array
+    {
+        return [];
     }
 
     # region [validation]
@@ -117,6 +134,7 @@ abstract class BaseDTO
         if ($this->isNeedValidate() === false) {
             return $this->isValid();
         }
+
 
         $data = $data ?? $this->getData();
         $rules = $this->rules();

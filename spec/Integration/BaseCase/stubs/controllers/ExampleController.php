@@ -22,32 +22,30 @@ final class ExampleController extends \SWEW\Framework\Base\BaseController
 
     public function storePost()
     {
+        $data = [
+            'saved' => true,
+            'id' => $this->req()->params->get('postId'),
+            'text' => $this->req()->get('text'),
+        ];
+
         $dto = new PostDTO;
 
-        $dto->setData(
-            [
-                'saved' => true,
-                'id' => $this->req()->params->get('postId'),
-                'text' => $this->req()->get('text'),
-            ]
-        );
+        $dto->setData($data);
 
-        $this->res($dto->getData());
+        $this->res($dto);
     }
 
     public function getAdmin()
     {
         $dto = $this->req()->map(new PostDTO);
 
-        $this->res($dto->getData());
+        $this->res($dto);
     }
 
     public function postAdmin()
     {
         $dto = $this->req()->map(new AdminDTO());
 
-        $dto->validate();
-
-        $this->res($dto->getData());
+        $this->res($dto);
     }
 }

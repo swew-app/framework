@@ -4,18 +4,29 @@ declare(strict_types=1);
 
 namespace Integration\BaseCase\stubs\DTO;
 
-use SWEW\Framework\Base\BaseController;
 use SWEW\Framework\Base\BaseDTO;
 
 final class PostDTO extends BaseDTO
 {
-    public function rules(): array
+    public bool $saved = false;
+
+    public int|null $id = null;
+
+    public string $text = '';
+
+    public function castTypes(): array
     {
-        return [];
+        return [
+            'id' => fn($id) => intval($id),
+        ];
     }
 
-    public function getData(): array
+    public function rules(): array
     {
-        return $this->data;
+        return [
+            'saved' => '',
+            'id' => 'required',
+            'text' => 'required',
+        ];
     }
 }

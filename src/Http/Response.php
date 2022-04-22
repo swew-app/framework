@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SWEW\Framework\Http;
 
 use Exception;
+use SWEW\Framework\Base\BaseDTO;
 use SWEW\Framework\SwewApplication;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
@@ -18,18 +19,20 @@ final class Response extends SymfonyResponse
 
     private string $commonViewPath = '';
 
-    public array|string|null $rawData = null;
+    public BaseDTO|array|string|null $rawData = null;
 
     // []: в зависимости от типа Request - выбирает тип ответа
     // []: если необходимо, то создает viewRenderer
-    public function init(string $featureViewPath, string $commonViewPath, SwewApplication $app)
+    public function init(SwewApplication $app)
     {
-        $this->featureViewPath = $featureViewPath;
-        $this->commonViewPath = $commonViewPath;
+        // TODO: добавить после
+        // $this->featureViewPath = $featureViewPath;
+        // $this->commonViewPath = $commonViewPath;
+
         $this->app = $app;
     }
 
-    public function setRawData(string|array $data): Response
+    public function setRawData(BaseDTO|string|array $data): Response
     {
         $this->rawData = $data;
 
@@ -53,6 +56,10 @@ final class Response extends SymfonyResponse
     public function finalSendResponse($isSendData = true): Response
     {
         if (!empty($this->rawData)) {
+            if ($this->rawData instanceof BaseDTO) {
+                $this->rawData = $this->app->dtoMapper($this->rawData);
+            }
+
             if (is_array($this->rawData)) {
                 // Если не заполнили контент до этого, то это JSON
                 $this->rawData = $this->ajax($this->rawData);

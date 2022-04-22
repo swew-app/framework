@@ -46,7 +46,20 @@ describe('Default Case', function () {
 
         $res = $appTest->getResponse();
 
-        expect($res->getContent())->toBe('{"saved":true,"id":102,"text":"Hello"}');
+        $json =  [
+            "data" => [
+                "saved" => true,
+                "id" => 102,
+                "text" => "Hello"
+            ],
+            "message" => "",
+            "error" => "",
+            "errors" => []
+        ];
+
+        expect(
+            json_decode($res->getContent(), true)
+        )->toBe($json);
     });
 
     it('DTO validate data [GOOD]', function () {
@@ -61,9 +74,20 @@ describe('Default Case', function () {
 
         $res = $appTest->getResponse();
 
-        $json = "{\"data\":{\"text\":\"Hello world\",\"name\":\"Leo\"},\"errors\":[]}";
+        $json = [
+            "data" => [
+                'name' => 'Leo',
+                'text' => 'Hello world',
+            ],
+            "message" => "",
+            "error" => "",
+            "errors" => []
+        ];
 
-        expect($res->getContent())->toBe($json);
+
+        expect(
+            json_decode($res->getContent(), true)
+        )->toBe($json);
     });
 
     it('DTO validate data [BAD]', function () {
@@ -77,16 +101,21 @@ describe('Default Case', function () {
 
         $res = $appTest->getResponse();
 
-        $json = json_encode([
-            'data' => [
+        $json = [
+            "data" => [
+                'name' => '',
                 'text' => 'Hello',
             ],
-            'errors' => [
-                'name' => 'Field Name is required!!!',
-            ],
-        ]);
+            "message" => "",
+            "error" => "",
+            "errors" => [
+                "name" => "Field Name is required!!!"
+            ]
+        ];
 
-        expect($res->getContent())->toBe($json);
+        expect(
+            json_decode($res->getContent(), true)
+        )->toBe($json);
     });
 });
 

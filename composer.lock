@@ -4,8 +4,59 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "be80fd22e7f5e097d974fc1ab4236a1d",
-    "packages": [],
+    "content-hash": "5dd78837ebd983716925d0136791546d",
+    "packages": [
+        {
+            "name": "nikic/fast-route",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nikic/FastRoute.git",
+                "reference": "181d480e08d9476e61381e04a71b34dc0432e812"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nikic/FastRoute/zipball/181d480e08d9476e61381e04a71b34dc0432e812",
+                "reference": "181d480e08d9476e61381e04a71b34dc0432e812",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35|~5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/functions.php"
+                ],
+                "psr-4": {
+                    "FastRoute\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Nikita Popov",
+                    "email": "nikic@php.net"
+                }
+            ],
+            "description": "Fast request router for PHP",
+            "keywords": [
+                "router",
+                "routing"
+            ],
+            "support": {
+                "issues": "https://github.com/nikic/FastRoute/issues",
+                "source": "https://github.com/nikic/FastRoute/tree/master"
+            },
+            "time": "2018-02-13T20:26:39+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "amphp/amp",
@@ -1218,16 +1269,16 @@
         },
         {
             "name": "swew/test",
-            "version": "v1.0.4",
+            "version": "v1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swew-app/test.git",
-                "reference": "96bf224f5714e8eee993a9f4fd40bd2bfa0eaab9"
+                "reference": "9711c4f318b3640420a777488eef55277e964a06"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swew-app/test/zipball/96bf224f5714e8eee993a9f4fd40bd2bfa0eaab9",
-                "reference": "96bf224f5714e8eee993a9f4fd40bd2bfa0eaab9",
+                "url": "https://api.github.com/repos/swew-app/test/zipball/9711c4f318b3640420a777488eef55277e964a06",
+                "reference": "9711c4f318b3640420a777488eef55277e964a06",
                 "shasum": ""
             },
             "require": {
@@ -1275,9 +1326,9 @@
             "description": "A test framework that is designed to fix the fatal flaw of other test frameworks.",
             "support": {
                 "issues": "https://github.com/swew-app/test/issues",
-                "source": "https://github.com/swew-app/test/tree/v1.0.4"
+                "source": "https://github.com/swew-app/test/tree/v1.0.5"
             },
-            "time": "2022-07-21T10:02:08+00:00"
+            "time": "2022-07-22T16:46:05+00:00"
         },
         {
             "name": "symfony/console",
@@ -2247,7 +2298,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=8.1"
+    },
     "platform-dev": [],
     "platform-overrides": {
         "php": "8.1"

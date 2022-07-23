@@ -27,11 +27,11 @@ final class ControllerHandlerMiddleware implements \Psr\Http\Server\MiddlewareIn
             return $result;
         }
 
-        throw new \Exception('Add BaseDTO class Master!!!');
 //        if (is_string($result) || $result instanceof BaseDTO) {
-//            return res($result);
-//        }
-//
-//        return res();
+        if (is_string($result)) {
+            return res($result);
+        }
+
+        return res();
     }
 }

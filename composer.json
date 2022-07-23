@@ -21,7 +21,8 @@
             "Swew\\Framework\\": "src/"
         },
         "files": [
-            "src/dd.php"
+            "src/dd.php",
+            "src/Functions.php"
         ],
         "exclude-from-classmap": [
             "spec",

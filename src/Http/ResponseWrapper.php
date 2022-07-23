@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Http;
 
+use Swew\Framework\Http\Partials\Stream;
+
 final class ResponseWrapper extends Response
 {
     private static ?ResponseWrapper $instance = null;
@@ -54,5 +56,12 @@ final class ResponseWrapper extends Response
     public function sendContent(): void
     {
         echo $this->getBody();
+    }
+
+    public function setBody(string $data): self
+    {
+        $stream = Stream::create($data);
+
+        return $this->withBody($stream);
     }
 }

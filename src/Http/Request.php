@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Http;
 
-use Exception;
+use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -19,7 +19,9 @@ class Request extends MessageMethods implements ServerRequestInterface
     private string $method = '';
 
     private array $serverParams = [];
+
     private string $requestTarget = '/';
+
     private array $cookieParams = [];
     private array $queryParams = [];
     private array $uploadedFiles = [];
@@ -34,8 +36,14 @@ class Request extends MessageMethods implements ServerRequestInterface
      * @param string $version Protocol version
      * @param array $serverParams Typically the $_SERVER superglobal
      */
-    public function __construct(string $method, string|UriInterface $uri, array $headers = [], string|StreamInterface|null $body = null, string $version = '1.1', array $serverParams = [])
-    {
+    public function __construct(
+        string                      $method,
+        string|UriInterface         $uri,
+        array                       $headers = [],
+        string|StreamInterface|null $body = null,
+        string                      $version = '1.1',
+        array                       $serverParams = []
+    ) {
         $this->serverParams = $serverParams;
 
         if (!($uri instanceof UriInterface)) {
@@ -60,7 +68,14 @@ class Request extends MessageMethods implements ServerRequestInterface
             $this->stream = Stream::create($body);
         }
 
-        // TODO: add cookie params
+        $this->withCookieParams($_COOKIE);
+
+        parse_str($this->uri->getQuery(), $query);
+        $this->withQueryParams($query);
+
+        $this->withUploadedFiles($_FILES);
+
+        $this->withParsedBody($_REQUEST);
     }
 
     public function getRequestTarget(): string
@@ -81,12 +96,12 @@ class Request extends MessageMethods implements ServerRequestInterface
     }
 
     /**
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function withMethod($method): self
     {
         if (!is_string($method)) {
-            throw new Exception("Invalid method '$method'");
+            throw new InvalidArgumentException("Invalid method '$method'");
         }
 
         $this->method = strtoupper($method);
@@ -161,12 +176,12 @@ class Request extends MessageMethods implements ServerRequestInterface
     }
 
     /**
-     * @throws Exception
+     * @throws InvalidArgumentException
      */
     public function withParsedBody($data): self
     {
         if (!\is_array($data) && !\is_object($data) && null !== $data) {
-            throw new Exception('First parameter to withParsedBody MUST be object, array or null');
+            throw new InvalidArgumentException('First parameter to withParsedBody MUST be object, array or null');
         }
 
         $this->parsedBody = $data;

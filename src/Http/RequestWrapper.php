@@ -35,4 +35,27 @@ final class RequestWrapper extends Request
 
         RequestWrapper::$instance = $this;
     }
+
+    /**
+     * Retrieve an input item from the request.
+     *
+     * @param string|null $key
+     * @param mixed|null $default
+     * @return mixed
+     */
+    public function input(string $key = null, mixed $default = null): mixed
+    {
+        $data = $this->getQueryParams();
+        $body = $this->getParsedBody();
+
+        if (is_array($body)) {
+            $data = $data + $body;
+        }
+
+        if ($key) {
+            return $data[$key] ?? $default;
+        }
+
+        return $data;
+    }
 }

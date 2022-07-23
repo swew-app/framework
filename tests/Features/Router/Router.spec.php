@@ -34,7 +34,7 @@ it('validate [BAD 1]: Has wrong key', function () {
     ]);
 
 
-    expect(fn() => $router->validate())->toThrow(Exception::class, "Not allowed key 'someKey' in router");
+    expect(fn () => $router->validate())->toThrow(Exception::class, "Not allowed key 'someKey' in router");
 });
 
 it('validate [BAD 2]: Same Name', function () {
@@ -51,7 +51,7 @@ it('validate [BAD 2]: Same Name', function () {
         ],
     ]);
 
-    expect(fn() => $router->validate())->toThrow(Exception::class, "Route name 'MainPage' already used");
+    expect(fn () => $router->validate())->toThrow(Exception::class, "Route name 'MainPage' already used");
 });
 
 it('validate [BAD 3]: Empty Controller', function () {
@@ -62,7 +62,7 @@ it('validate [BAD 3]: Empty Controller', function () {
         ],
     ]);
 
-    expect(fn() => $router->validate())->toThrow(Exception::class, "Route key 'name' is required");
+    expect(fn () => $router->validate())->toThrow(Exception::class, "Route key 'name' is required");
 });
 
 it('validate [BAD 4]: Empty Name', function () {
@@ -73,7 +73,7 @@ it('validate [BAD 4]: Empty Name', function () {
         ],
     ]);
 
-    expect(fn() => $router->validate())->toThrow(Exception::class, "Route key 'controller' is required");
+    expect(fn () => $router->validate())->toThrow(Exception::class, "Route key 'controller' is required");
 });
 
 it('getInfoList', function () {

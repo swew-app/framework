@@ -2,7 +2,6 @@
 
 use Router\stub\ControllerStub;
 
-
 /**
  * @param string $wantType
  * @return array

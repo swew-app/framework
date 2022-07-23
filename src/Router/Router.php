@@ -27,8 +27,7 @@ class Router
     public function __construct(
         public array  $routes,
         public string $host = ''
-    )
-    {
+    ) {
     }
 
     public function setRootPath(string $rootPath): void
@@ -293,7 +292,7 @@ class Router
     public static function getRoutesFromPaths(array $routeConfigPaths): array
     {
         $list = array_map(
-            fn($path) => include($path),
+            fn ($path) => include($path),
             $routeConfigPaths
         );
 

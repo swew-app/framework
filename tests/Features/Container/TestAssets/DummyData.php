@@ -1,6 +1,6 @@
 <?php
 
-namespace Swew\Testing\Container\TestAssets;
+namespace Swew\Testing\Features\Container\TestAssets;
 
 class DummyData
 {

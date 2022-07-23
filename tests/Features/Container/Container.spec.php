@@ -1,11 +1,11 @@
 <?php
 
 use Swew\Framework\Container\Container;
-use Swew\Testing\Container\TestAssets\AutoWiring;
-use Swew\Testing\Container\TestAssets\AutoWiringSimple;
-use Swew\Testing\Container\TestAssets\DummyData;
-use Swew\Testing\Container\TestAssets\DummyEmpty;
-use Swew\Testing\Container\TestAssets\DummyName;
+use Swew\Testing\Features\Container\TestAssets\AutoWiring;
+use Swew\Testing\Features\Container\TestAssets\AutoWiringSimple;
+use Swew\Testing\Features\Container\TestAssets\DummyData;
+use Swew\Testing\Features\Container\TestAssets\DummyEmpty;
+use Swew\Testing\Features\Container\TestAssets\DummyName;
 
 it('SetAndGetScalarDefinition', function () {
     $container = new Container();

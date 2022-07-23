@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SWEW\Framework\Http;
+namespace Swew\Framework\Http\Partials;
 
 use Psr\Http\Message\StreamInterface;
 
@@ -260,9 +260,6 @@ class Stream implements StreamInterface
         return $contents;
     }
 
-    /**
-     * @return mixed
-     */
     public function getMetadata($key = null): mixed
     {
         if (!isset($this->stream)) {

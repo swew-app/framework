@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SWEW\Framework\Middleware\Exception;
+namespace Swew\Framework\Middleware\Exception;
 
 use DomainException;
 

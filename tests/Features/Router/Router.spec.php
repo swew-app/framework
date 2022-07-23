@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use SWEW\Framework\Router\Router;
+use Swew\Framework\Router\Router;
 
 include_once 'stub/router_stubs.php';
 

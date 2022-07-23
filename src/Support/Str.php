@@ -1,6 +1,6 @@
 <?php
 
-namespace SWEW\Framework\Support;
+namespace Swew\Framework\Support;
 
 class Str
 {

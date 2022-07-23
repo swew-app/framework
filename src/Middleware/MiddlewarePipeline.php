@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace SWEW\Framework\Middleware;
+namespace Swew\Framework\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SplQueue;
-use SWEW\Framework\Http\Response;
+use Swew\Framework\Http\Response;
 
 final class MiddlewarePipeline implements MiddlewareInterface, RequestHandlerInterface
 {

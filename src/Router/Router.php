@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace SWEW\Framework\Router;
+namespace Swew\Framework\Router;
 
 use Exception;
 use FastRoute\Dispatcher as FastRouteDispatcher;
-use SWEW\Framework\Support\Str;
+use Swew\Framework\Support\Str;
 
 use function FastRoute\simpleDispatcher;
 

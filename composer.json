@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "SWEW\\Framework\\": "src/"
+            "Swew\\Framework\\": "src/"
         },
         "files": [
             "src/dd.php"

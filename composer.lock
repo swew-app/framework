@@ -1436,16 +1436,16 @@
         },
         {
             "name": "swew/test",
-            "version": "v1.0.5",
+            "version": "v1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swew-app/test.git",
-                "reference": "9711c4f318b3640420a777488eef55277e964a06"
+                "reference": "dce1f64fb0ab483c0cf5e8b8f31d58e85f6165ce"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swew-app/test/zipball/9711c4f318b3640420a777488eef55277e964a06",
-                "reference": "9711c4f318b3640420a777488eef55277e964a06",
+                "url": "https://api.github.com/repos/swew-app/test/zipball/dce1f64fb0ab483c0cf5e8b8f31d58e85f6165ce",
+                "reference": "dce1f64fb0ab483c0cf5e8b8f31d58e85f6165ce",
                 "shasum": ""
             },
             "require": {
@@ -1471,7 +1471,7 @@
                     "src/dd.php"
                 ],
                 "psr-4": {
-                    "SWEW\\Test\\": "src/"
+                    "Swew\\Test\\": "src/"
                 },
                 "exclude-from-classmap": [
                     "spec",
@@ -1493,9 +1493,9 @@
             "description": "A test framework that is designed to fix the fatal flaw of other test frameworks.",
             "support": {
                 "issues": "https://github.com/swew-app/test/issues",
-                "source": "https://github.com/swew-app/test/tree/v1.0.5"
+                "source": "https://github.com/swew-app/test/tree/v1.0.6"
             },
-            "time": "2022-07-22T16:46:05+00:00"
+            "time": "2022-07-23T15:04:36+00:00"
         },
         {
             "name": "symfony/console",

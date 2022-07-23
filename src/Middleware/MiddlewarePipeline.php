@@ -9,7 +9,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use SplQueue;
-use Swew\Framework\Http\Response;
+use Swew\Framework\Http\ResponseWrapper;
 
 final class MiddlewarePipeline implements MiddlewareInterface, RequestHandlerInterface
 {
@@ -20,7 +20,7 @@ final class MiddlewarePipeline implements MiddlewareInterface, RequestHandlerInt
     public function __construct(array $middlewares = [])
     {
         $this->queue = new SplQueue();
-        $this->response = new Response();
+        $this->response = new ResponseWrapper();
 
         if (count($middlewares) > 0) {
             foreach ($middlewares as $middleware) {

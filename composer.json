@@ -34,7 +34,10 @@
     "autoload-dev": {
         "files": [
             "src/dd.php"
-        ]
+        ],
+        "psr-4": {
+            "Swew\\Testing\\": "tests/"
+        }
     },
     "require": {
         "php": ">=8.1",

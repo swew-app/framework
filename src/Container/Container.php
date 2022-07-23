@@ -42,10 +42,11 @@ class Container extends AbstractCacheState implements ContainerInterface
     /**
      * Gets instance by definition from the container by ID.
      *
-     * @param  string  $id
+     * @param string $id
      * @return mixed
+     * @throws Exception
      */
-    public function get(string $id)
+    public function get(string $id): mixed
     {
         if ($this->hasInstance($id)) {
             return $this->instances[$id];

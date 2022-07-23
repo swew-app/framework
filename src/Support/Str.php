@@ -2,8 +2,12 @@
 
 namespace Swew\Framework\Support;
 
-class Str
+final class Str
 {
+    private function __construct()
+    {
+    }
+
     public static function camelCase(string $str): string
     {
         $wordWithSpace = ucwords(

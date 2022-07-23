@@ -5,10 +5,23 @@ declare(strict_types=1);
 namespace Swew\Framework\Env;
 
 use Swew\Framework\Base\AbstractCacheState;
+use Swew\Framework\Support\Arr;
 
 final class EnvContainer extends AbstractCacheState
 {
+    private static ?EnvContainer $instance;
+
     private array $envVars = [];
+
+
+    public function __construct()
+    {
+        if (!is_null(self::$instance)) {
+            return self::$instance;
+        }
+
+        self::$instance = $this;
+    }
 
     public function get(string $key, mixed $default = null): mixed
     {
@@ -22,7 +35,7 @@ final class EnvContainer extends AbstractCacheState
             return $this->envVars;
         }
 
-        return $this->envVars[$key] ?? $default;
+        return Arr::get($this->envVars, $key) ?? $default;
     }
 
     public function set(string $key, mixed $value): void
@@ -105,26 +118,19 @@ final class EnvContainer extends AbstractCacheState
             return intval($value);
         }
 
-        switch (strtolower($value)) {
-            case 'true':
-                return true;
-
-            case 'false':
-                return false;
-
-            case 'null':
-                return null;
-
-            default:
-                return $this->stripQuotes($value);
-        }
+        return match (strtolower($value)) {
+            'true' => true,
+            'false' => false,
+            'null' => null,
+            default => $this->stripQuotes($value),
+        };
     }
 
     private function stripQuotes(string $value): string
     {
         if (
-            ($value[0] === '"' && substr($value, -1) === '"')
-            || ($value[0] === "'" && substr($value, -1) === "'")
+            ($value[0] === '"' && str_ends_with($value, '"'))
+            || ($value[0] === "'" && str_ends_with($value, "'"))
         ) {
             return substr($value, 1, -1);
         }
@@ -134,6 +140,6 @@ final class EnvContainer extends AbstractCacheState
 
     private function getStringWithoutComment(string $str): string
     {
-        return preg_split('/#/', $str, 2)[0];
+        return explode('#', $str, 2)[0];
     }
 }

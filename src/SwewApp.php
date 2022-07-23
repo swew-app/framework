@@ -56,7 +56,7 @@ class SwewApp
      */
     protected string $features = '';
 
-    private ?Router $router = null;
+    public ?Router $router = null;
 
     public function __construct()
     {

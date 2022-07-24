@@ -45,6 +45,13 @@ class Router
      */
     public function validate(): bool
     {
+        // validate child structure before create router list
+        foreach ($this->routes as $route) {
+            if (isset($route['children'])) {
+                $this->validateChildren($route['children']);
+            }
+        }
+
         $route_keys = [];
 
         $routes = $this->getRoutes();
@@ -61,9 +68,27 @@ class Router
             $route_keys[] = $route['name'];
         }
 
-
         return true;
     }
+
+    /**
+     * @throws Exception
+     */
+    private function validateChildren(array $childrenRoutes): void
+    {
+        foreach ($childrenRoutes as $route) {
+            if (!is_array($route)) {
+                throw new Exception("Route must be Array. Got '$route'");
+            }
+
+            $this->isValidRoute($route);
+
+            if (isset($route['children'])) {
+                $this->validateChildren($route['children']);
+            }
+        }
+    }
+
 
     /**
      * @throws Exception

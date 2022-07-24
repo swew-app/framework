@@ -22,6 +22,14 @@ it('DemoApp: admin page content', function () {
     expect($res->getBody()->getContents())->toBe('Hello from Admin page');
 });
 
+it('DemoApp: admin child', function () {
+    $app = new AppTest(DemoApp::class);
+
+    $res = $app->call('GET', '/admin/manager')->getResponse();
+
+    expect($res->getBody()->getContents())->toBe('Hello from Dashboard');
+});
+
 it('DemoApp: CORS global middleware', function () {
     $app = new AppTest(DemoApp::class);
 

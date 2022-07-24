@@ -19,11 +19,13 @@ return [
         'name' => 'Admin',
         'path' => '/admin',
         'controller' => [AdminController::class, 'getIndex'],
-//        'children' => [
-//            'name' => 'Manager',
-//            'path' => '/manager',
-//            'controller' => [ManagerController::class, 'dashboard'],
-//        ]
+        'children' => [
+            [
+                'name' => 'Manager',
+                'path' => '/manager',
+                'controller' => [ManagerController::class, 'dashboard'],
+            ]
+        ]
     ],
     [
         'name' => 'BadTestPage',

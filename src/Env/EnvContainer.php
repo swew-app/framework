@@ -35,6 +35,10 @@ final class EnvContainer extends AbstractCacheState
             return $this->envVars;
         }
 
+        if (!str_contains($key, '.')) {
+            return $this->envVars[$key] ?? $default;
+        }
+
         return Arr::get($this->envVars, $key) ?? $default;
     }
 

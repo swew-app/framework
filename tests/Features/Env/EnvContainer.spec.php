@@ -22,11 +22,11 @@ it('Env Parse', function (string $text, array $vars) {
 it('Evn Load Global envs', function () {
     $env = new EnvContainer();
 
-    expect($env->get('TMPDIR'))->toBeFalsy();
+    expect($env->get('HOME'))->toBeFalsy();
 
     $env->loadGlobalEnvs();
 
-    expect($env->get('TMPDIR'))->toBeTruthy();
+    expect($env->get('HOME'))->toBeTruthy();
 });
 
 /*/

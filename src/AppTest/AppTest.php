@@ -98,7 +98,8 @@ class AppTest
     public function ajax(string $method, string $uri, $post = []): static
     {
         return $this->call($method, $uri, $post, [
-            'CONTENT_TYPE' => 'application/json;charset=UTF-8'
+            'CONTENT_TYPE' => 'application/json;charset=UTF-8',
+            'HTTP_ACCEPT' => 'application/json;charset=UTF-8',
         ]);
     }
 

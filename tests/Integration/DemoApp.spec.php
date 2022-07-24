@@ -14,12 +14,14 @@ it('DemoApp: save content in stream', function () {
     expect($res->getBody()->getContents())->toBe('Hello world!');
 });
 
-it('DemoApp: admin page content', function () {
+it('DemoApp: admin page content by Ajax', function () {
     $app = new AppTest(DemoApp::class);
 
-    $res = $app->call('GET', '/admin')->getResponse();
+    $res = $app->ajax('GET', '/admin')->getResponse();
 
-    expect($res->getBody()->getContents())->toBe('Hello from Admin page');
+    expect($res->getBody()->getContents())->toBe('{"message":"Hello from Admin page"}');
+
+    expect($res->getHeader('Content-Type'))->toBe(['application/json']);
 });
 
 it('DemoApp: admin child', function () {

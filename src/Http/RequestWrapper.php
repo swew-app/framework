@@ -77,4 +77,15 @@ final class RequestWrapper extends Request
 
         return $data;
     }
+
+    public function isAjax(): bool
+    {
+        $contentType = $_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
+
+        $contentType = strtolower($contentType);
+
+        return str_contains($contentType, 'json')
+            || str_contains($contentType, 'javascript')
+            || str_contains($contentType, 'xmlhttprequest');
+    }
 }

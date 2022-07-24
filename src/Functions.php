@@ -12,9 +12,17 @@ function req(): RequestWrapper
     return RequestWrapper::getInstance();
 }
 
-function res(?string $data = null): ResponseWrapper
+function res(string|array|null $data = null): ResponseWrapper
 {
     $response = ResponseWrapper::getInstance();
+
+    if (is_array($data)) {
+        $data = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
+
+        if (req()->isAjax()) {
+            $response->withHeader('Content-Type', 'application/json');
+        }
+    }
 
     if (is_string($data)) {
         $response->getBody()->write($data);

@@ -6,9 +6,10 @@ namespace Swew\Testing\Integration\stubs\Controllers;
 
 class AdminController
 {
-    public function getIndex(): string
+    // Return JSON
+    public function getIndex(): void
     {
-        return 'Hello from Admin page';
+        res(['message' => 'Hello from Admin page']);
     }
 
     public function getSomePage(): string

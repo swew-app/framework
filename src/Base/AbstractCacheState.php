@@ -51,7 +51,7 @@ abstract class AbstractCacheState
 
     private function writeCacheFile(): void
     {
-        $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn ".var_export($this->getCacheData(), true).";\n";
+        $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn " . var_export($this->getCacheData(), true) . ";\n";
 
         $hash1 = md5($content);
         $hash2 = is_readable($this->cacheFilePath) ? md5(file_get_contents($this->cacheFilePath)) : '';
@@ -74,7 +74,7 @@ abstract class AbstractCacheState
                 if (file_exists($cacheFilePath)) {
                     $data = include $cacheFilePath;
 
-                    if (! is_array($data)) {
+                    if (!is_array($data)) {
                         throw new \Error();
                     }
 

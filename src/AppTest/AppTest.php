@@ -36,11 +36,8 @@ class AppTest
     public function removeSingletons(): void
     {
         RequestWrapper::removeInstance();
-        ;
         ResponseWrapper::removeInstance();
-        ;
         Stream::removeInstance();
-        ;
     }
 
     public function setApp(SwewApp $app): static

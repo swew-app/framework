@@ -78,7 +78,7 @@ final class EnvContainer extends AbstractCacheState
 
     public function loadFromFile(string $filePath): void
     {
-        if (! is_readable($filePath) || is_dir($filePath)) {
+        if (!is_readable($filePath) || is_dir($filePath)) {
             throw new \Exception("Env file path exception: '${filePath}' ");
         }
 

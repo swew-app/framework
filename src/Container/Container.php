@@ -32,7 +32,7 @@ class Container extends AbstractCacheState implements ContainerInterface
     private array $instances = [];
 
     /**
-     * @param  array<string, mixed>  $definitions
+     * @param array<string, mixed> $definitions
      */
     public function __construct(array $definitions = [])
     {
@@ -60,7 +60,7 @@ class Container extends AbstractCacheState implements ContainerInterface
     /**
      * Returns 'true' if the dependency with this ID was sets, otherwise 'false'.
      *
-     * @param  string  $id
+     * @param string $id
      * @return bool
      */
     public function has(string $id): bool
@@ -71,8 +71,8 @@ class Container extends AbstractCacheState implements ContainerInterface
     /**
      * Sets definition to the container.
      *
-     * @param  string  $id
-     * @param  mixed  $definition
+     * @param string $id
+     * @param mixed $definition
      */
     public function set(string $id, $definition): void
     {
@@ -96,7 +96,7 @@ class Container extends AbstractCacheState implements ContainerInterface
     {
         $instance = $this->createInstance($id);
 
-        if (! is_null($method) && method_exists($instance, $method)) {
+        if (!is_null($method) && method_exists($instance, $method)) {
             return $instance->$method($this);
         }
 
@@ -106,7 +106,7 @@ class Container extends AbstractCacheState implements ContainerInterface
     /**
      * Sets multiple definitions at once.
      *
-     * @param  array<string, mixed>  $definitions
+     * @param array<string, mixed> $definitions
      * @psalm-suppress MixedAssignment
      */
     public function setMultiple(array $definitions): void
@@ -119,7 +119,7 @@ class Container extends AbstractCacheState implements ContainerInterface
     /**
      * Create instance by definition from the container by ID.
      *
-     * @param  string  $id
+     * @param string $id
      * @return mixed
      *
      * @throws Exception
@@ -127,7 +127,7 @@ class Container extends AbstractCacheState implements ContainerInterface
      */
     private function createInstance(string $id): mixed
     {
-        if (! $this->has($id)) {
+        if (!$this->has($id)) {
             if (class_exists($id)) {
                 return $this->createObject($id);
             }
@@ -159,7 +159,7 @@ class Container extends AbstractCacheState implements ContainerInterface
      *
      * If the object has dependencies in the constructor, it tries to create them too.
      *
-     * @param  string  $className
+     * @param string $className
      * @return object
      *
      * @throws ContainerException If unable to create object.
@@ -192,12 +192,12 @@ class Container extends AbstractCacheState implements ContainerInterface
 
                 $typeName = $type->getName();
 
-                if (! $type->isBuiltin() && ($this->has($typeName) || class_exists($typeName))) {
+                if (!$type->isBuiltin() && ($this->has($typeName) || class_exists($typeName))) {
                     $arguments[] = $this->get($typeName);
                     continue;
                 }
 
-                if ($type->isBuiltin() && $typeName === 'array' && ! $parameter->isDefaultValueAvailable()) {
+                if ($type->isBuiltin() && $typeName === 'array' && !$parameter->isDefaultValueAvailable()) {
                     $arguments[] = [];
                     continue;
                 }
@@ -231,7 +231,7 @@ class Container extends AbstractCacheState implements ContainerInterface
     /**
      * Returns `true` if the container can return an instance for this ID, otherwise `false`.
      *
-     * @param  string  $id
+     * @param string $id
      * @return bool
      */
     private function hasInstance(string $id): bool

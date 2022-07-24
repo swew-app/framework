@@ -301,7 +301,7 @@ class Uri implements UriInterface
             return null;
         }
 
-        $port = (int) $port;
+        $port = (int)$port;
         if (0 > $port || 0xffff < $port) {
             throw new \InvalidArgumentException(\sprintf('Invalid port: %d. Must be between 0 and 65535', $port));
         }

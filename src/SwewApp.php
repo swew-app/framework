@@ -72,8 +72,12 @@ class SwewApp
         }
 
         $this->host = $env->get('host', '');
+    }
 
+    public function run(): void
+    {
         $this->initRouter();
+
         $route = $this->findRoute();
 
         if (is_null($route)) {

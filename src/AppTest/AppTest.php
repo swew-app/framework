@@ -16,9 +16,14 @@ class AppTest
 
     public string $content = '';
 
-    public function __construct(?SwewApp $app = null)
+    public function __construct(SwewApp|string|null $app = null)
     {
-        if (!empty($app)) {
+        if (is_string($app) && class_exists($app)) {
+
+            /** @var SwewApp $instance */
+            $instance = new $app();
+            $this->app = $instance;
+        } elseif ($app instanceof SwewApp) {
             $this->app = $app;
         } else {
             $this->app = new SwewApp();
@@ -30,6 +35,11 @@ class AppTest
         $this->app = $app;
 
         return $this;
+    }
+
+    public function run(): void
+    {
+        $this->app->run();
     }
 
     /**
@@ -64,6 +74,8 @@ class AppTest
 
         $_POST = array_merge($_POST, $post);
         $_REQUEST = array_merge($_REQUEST, $_POST);
+
+        $this->run();
 
         $data = json_decode($old, true);
         $_SERVER = $data[0];

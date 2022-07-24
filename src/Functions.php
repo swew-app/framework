@@ -17,7 +17,7 @@ function res(?string $data = null): ResponseWrapper
     $response = new ResponseWrapper();
 
     if (is_string($data)) {
-        $response->setBody($data);
+        $response->getBody()->write($data);
     }
 
     return $response;

@@ -149,7 +149,7 @@ class MessageMethods
     public function getBody(): StreamInterface
     {
         if (null === $this->stream) {
-            $this->stream = Stream::create('');
+            $this->stream = Stream::create();
         }
 
         return $this->stream;

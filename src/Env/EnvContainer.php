@@ -16,7 +16,7 @@ final class EnvContainer extends AbstractCacheState
 
     public function __construct()
     {
-        if (!is_null(self::$instance)) {
+        if (isset(self::$instance)) {
             return self::$instance;
         }
 

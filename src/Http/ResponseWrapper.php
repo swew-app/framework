@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Http;
 
+use Exception;
 use Swew\Framework\Http\Partials\Stream;
 
 final class ResponseWrapper extends Response
@@ -25,6 +26,7 @@ final class ResponseWrapper extends Response
      * Sends HTTP headers and content.
      *
      * @return $this
+     * @throws Exception
      */
     public function send(): ResponseWrapper
     {
@@ -53,8 +55,15 @@ final class ResponseWrapper extends Response
         }
     }
 
+    /**
+     * @throws Exception
+     */
     public function sendContent(): void
     {
+        if (connection_aborted() !== CONNECTION_NORMAL) {
+            throw new Exception('Connection Aborted');
+        }
+
         echo $this->getBody();
     }
 

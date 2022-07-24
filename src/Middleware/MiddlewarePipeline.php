@@ -20,12 +20,10 @@ final class MiddlewarePipeline implements MiddlewareInterface, RequestHandlerInt
     public function __construct(array $middlewares = [])
     {
         $this->queue = new SplQueue();
-        $this->response = new ResponseWrapper();
+        $this->response = ResponseWrapper::getInstance();
 
-        if (count($middlewares) > 0) {
-            foreach ($middlewares as $middleware) {
-                $this->pipe($middleware);
-            }
+        foreach ($middlewares as $middleware) {
+            $this->pipe($middleware);
         }
     }
 

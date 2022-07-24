@@ -9,12 +9,12 @@ use Swew\Framework\Http\ResponseWrapper;
 
 function req(): RequestWrapper
 {
-    return new RequestWrapper();
+    return RequestWrapper::getInstance();
 }
 
 function res(?string $data = null): ResponseWrapper
 {
-    $response = new ResponseWrapper();
+    $response = ResponseWrapper::getInstance();
 
     if (is_string($data)) {
         $response->getBody()->write($data);
@@ -25,7 +25,7 @@ function res(?string $data = null): ResponseWrapper
 
 function env(string $key = '', mixed $default = null): mixed
 {
-    $env = new EnvContainer();
+    $env = EnvContainer::getInstance();
 
     if ($key === '') {
         return $env;

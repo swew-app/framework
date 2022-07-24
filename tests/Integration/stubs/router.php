@@ -8,16 +8,27 @@ return [
     [
         'name' => 'Main',
         'path' => '/',
-        'controller' => ExampleController::class,
+        'controller' => [ExampleController::class, 'getIndex'],
     ],
-//    [
-//        'name' => 'Admin',
-//        'path' => '/admin',
-//        'controller' => AdminController::class,
+    [
+        'name' => 'MainPost',
+        'path' => '/post',
+        'controller' => [ExampleController::class, 'getPost'],
+    ],
+    [
+        'name' => 'Admin',
+        'path' => '/admin',
+        'controller' => [AdminController::class, 'getIndex'],
 //        'children' => [
 //            'name' => 'Manager',
 //            'path' => '/manager',
 //            'controller' => [ManagerController::class, 'dashboard'],
 //        ]
-//    ]
+    ],
+    [
+        'name' => 'BadTestPage',
+        'path' => '/some-page',
+        'controller' => [AdminController::class, 'getSomePage'],
+        'middlewares' => ['break'],
+    ]
 ];

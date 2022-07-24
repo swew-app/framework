@@ -15,13 +15,9 @@ use Swew\Framework\Http\Partials\Uri;
 class Request extends MessageMethods implements ServerRequestInterface
 {
     private UriInterface $uri;
-
     private string $method = '';
-
     private array $serverParams = [];
-
     private string $requestTarget = '/';
-
     private array $cookieParams = [];
     private array $queryParams = [];
     private array $uploadedFiles = [];

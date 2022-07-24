@@ -19,8 +19,8 @@ final class RequestWrapper extends Request
         string                      $version = '1.1',
         array                       $serverParams = []
     ) {
-        if (!is_null(RequestWrapper::$instance)) {
-            return RequestWrapper::$instance;
+        if (!is_null(self::$instance)) {
+            return self::$instance;
         }
 
         if ($method === '') {
@@ -33,7 +33,26 @@ final class RequestWrapper extends Request
 
         parent::__construct($method, $uri, $headers, $body, $version, $serverParams);
 
-        RequestWrapper::$instance = $this;
+        self::$instance = $this;
+    }
+
+    public static function getInstance(): self
+    {
+        if (is_null(self::$instance)) {
+            return new self();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Remove singleton
+     *
+     * @return void
+     */
+    public static function removeInstance(): void
+    {
+        self::$instance = null;
     }
 
     /**

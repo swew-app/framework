@@ -6,6 +6,7 @@ namespace Swew\Framework\AppTest;
 
 use Exception;
 use LogicException;
+use Swew\Framework\Http\Partials\Stream;
 use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Http\ResponseWrapper;
 use Swew\Framework\SwewApp;
@@ -18,6 +19,8 @@ class AppTest
 
     public function __construct(SwewApp|string|null $app = null)
     {
+        $this->removeSingletons();
+
         if (is_string($app) && class_exists($app)) {
 
             /** @var SwewApp $instance */
@@ -28,6 +31,16 @@ class AppTest
         } else {
             $this->app = new SwewApp();
         }
+    }
+
+    public function removeSingletons(): void
+    {
+        RequestWrapper::removeInstance();
+        ;
+        ResponseWrapper::removeInstance();
+        ;
+        Stream::removeInstance();
+        ;
     }
 
     public function setApp(SwewApp $app): static

@@ -9,10 +9,9 @@ use Swew\Framework\Support\Arr;
 
 final class EnvContainer extends AbstractCacheState
 {
-    private static ?EnvContainer $instance;
+    private static ?EnvContainer $instance = null;
 
     private array $envVars = [];
-
 
     public function __construct()
     {
@@ -21,6 +20,15 @@ final class EnvContainer extends AbstractCacheState
         }
 
         self::$instance = $this;
+    }
+
+    public static function getInstance(): self
+    {
+        if (is_null(self::$instance)) {
+            return new self();
+        }
+
+        return self::$instance;
     }
 
     public function get(string $key, mixed $default = null): mixed

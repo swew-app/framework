@@ -49,6 +49,16 @@ class Stream implements StreamInterface
     }
 
     /**
+     * Remove singleton
+     *
+     * @return void
+     */
+    public static function removeInstance(): void
+    {
+        self::$instance = null;
+    }
+
+    /**
      * Creates a new PSR-7 stream.
      *
      * @param StreamInterface|string $body

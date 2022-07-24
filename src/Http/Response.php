@@ -76,14 +76,13 @@ class Response extends MessageMethods implements ResponseInterface
             throw new Exception(\sprintf('Status code has to be an integer between 100 and 599. A status code of %d was given', $code));
         }
 
-        $new = clone $this;
-        $new->statusCode = $code;
-        if ((is_null($reasonPhrase) || '' === $reasonPhrase) && isset(self::PHRASES[$new->statusCode])) {
-            $reasonPhrase = self::PHRASES[$new->statusCode];
+        $this->statusCode = $code;
+        if ((is_null($reasonPhrase) || '' === $reasonPhrase) && isset(self::PHRASES[$this->statusCode])) {
+            $reasonPhrase = self::PHRASES[$this->statusCode];
         }
-        $new->reasonPhrase = $reasonPhrase;
+        $this->reasonPhrase = $reasonPhrase;
 
-        return $new;
+        return $this;
     }
 
     public function getReasonPhrase(): string

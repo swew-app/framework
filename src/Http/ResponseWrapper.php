@@ -13,13 +13,32 @@ final class ResponseWrapper extends Response
 
     public function __construct(int $status = 200, array $headers = [], mixed $body = null, string $version = '1.1', string $reason = null)
     {
-        if (!is_null(ResponseWrapper::$instance)) {
-            return ResponseWrapper::$instance;
+        if (!is_null(self::$instance)) {
+            return self::$instance;
         }
 
         parent::__construct($status, $headers, $body, $version, $reason);
 
-        ResponseWrapper::$instance = $this;
+        self::$instance = $this;
+    }
+
+    public static function getInstance(): self
+    {
+        if (is_null(self::$instance)) {
+            return new self();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Remove singleton
+     *
+     * @return void
+     */
+    public static function removeInstance(): void
+    {
+        self::$instance = null;
     }
 
     /**

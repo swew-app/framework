@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Swew\Framework\Base\BaseDTO;
 use Swew\Framework\Container\Container;
 use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Http\RequestWrapper;
@@ -12,9 +13,13 @@ function req(): RequestWrapper
     return RequestWrapper::getInstance();
 }
 
-function res(string|array|null $data = null): ResponseWrapper
+function res(BaseDTO|string|array|null $data = null): ResponseWrapper
 {
     $response = ResponseWrapper::getInstance();
+
+    if ($data instanceof BaseDTO) {
+        $data = $data->getData();
+    }
 
     if (is_array($data)) {
         $data = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);

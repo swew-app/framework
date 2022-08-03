@@ -1,7 +1,7 @@
 {
     "name": "swew/framework",
     "type": "library",
-    "description": "A framework that is designed to fix the fatal flaw of other test frameworks.",
+    "description": "A framework that is designed to fix the fatal flaw of other frameworks.",
     "license": "MIT",
     "authors": [
         {

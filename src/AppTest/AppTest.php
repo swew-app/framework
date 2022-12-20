@@ -22,7 +22,6 @@ class AppTest
         $this->removeSingletons();
 
         if (is_string($app) && class_exists($app)) {
-
             /** @var SwewApp $instance */
             $instance = new $app();
             $this->app = $instance;
@@ -68,7 +67,12 @@ class AppTest
     }
 
 
-    public function call(string $method, string $uri, $post = [], $server = []): static
+    /**
+     * @param string[] $server
+     *
+     * @psalm-param array{CONTENT_TYPE?: 'application/json;charset=UTF-8', HTTP_ACCEPT?: 'application/json;charset=UTF-8'} $server
+     */
+    public function call(string $method, string $uri, $post = [], array $server = []): static
     {
         $old = json_encode([
             $_SERVER,

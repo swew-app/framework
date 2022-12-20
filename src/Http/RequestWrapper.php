@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Http;
 
+use Exception;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -24,10 +25,16 @@ final class RequestWrapper extends Request
         }
 
         if ($method === '') {
+            if (empty($_SERVER['REQUEST_METHOD'])) {
+                throw new Exception('Empty "REQUEST_METHOD"');
+            }
             $method = $_SERVER['REQUEST_METHOD'];
         }
 
         if ($uri === '') {
+            if (empty($_SERVER['REQUEST_URI'])) {
+                throw new Exception('Empty "REQUEST_URI"');
+            }
             $uri = $_SERVER['REQUEST_URI'];
         }
 

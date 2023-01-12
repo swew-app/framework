@@ -4,15 +4,19 @@ declare(strict_types=1);
 
 namespace Swew\Framework;
 
+use Swew\Framework\Base\BaseDTO;
 use Swew\Framework\Container\Container;
 use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Manager\AppMiddlewareManager;
 use Swew\Framework\Middleware\MiddlewarePipeline;
 use Swew\Framework\Router\Router;
+use Swew\Framework\Support\FeatureDetection;
 
 class SwewApp
 {
     private bool $DEV = true;
+
+    private bool $TEST = false;
 
     public string $host = '';
 
@@ -62,6 +66,8 @@ class SwewApp
     {
         /** @var EnvContainer $env */
         $env = env();
+        // TODO: перенести в хук
+        $env->loadGlobalEnvs();
 
         /** @var Container $container */
         $container = container();
@@ -72,6 +78,9 @@ class SwewApp
         }
 
         $this->host = $env->get('host', '');
+
+        $this->DEV = !$env->get('production', false);
+        $this->TEST = !!$env->get('IS_TEST', false);
     }
 
     public function run(): void
@@ -81,15 +90,27 @@ class SwewApp
         $route = $this->findRoute();
 
         if (is_null($route)) {
-            $this->showErrorPage();
+            $this->showErrorPage(404);
             return;
         }
 
+        FeatureDetection::setController($route['class']);
+
         $this->runPipeline($route);
 
-        $res = res();
+        $statusCode = res()->getStatusCode();
 
-        // TODO: показываем полученную страницу
+        if (200 <= $statusCode && $statusCode < 300) {
+            $this->prepareResponse();
+        } else {
+            $this->showErrorPage($statusCode);
+        }
+
+        if ($this->TEST) {
+            return;
+        }
+
+        res()->send();
     }
 
     /**
@@ -107,7 +128,7 @@ class SwewApp
         }
     }
 
-    private function findRoute(): array|null
+    private function findRoute(): array |null
     {
         $req = req();
 
@@ -152,8 +173,42 @@ class SwewApp
         $pipeline->handle(req()); // Запускаяем цепочку Middlewares
     }
 
-    private function showErrorPage(): void
+    private function showErrorPage(int $status, string $message = ''): void
     {
         // TODO
+    }
+
+    private function prepareResponse(): void
+    {
+        $data = store();
+
+        if (is_null($data)) {
+            return;
+        }
+
+        if ($data instanceof BaseDTO) {
+            $data = $data->getData();
+        }
+
+        $viewName = res()->getViewFileName();
+
+        if (req()->isAjax() || empty($viewName)) {
+            res()->withHeader('Content-Type', 'application/json');
+
+            if (is_array($data)) {
+                $data = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
+            }
+        } else {
+            $filePath = FeatureDetection::getView($this->features, $viewName);
+
+            $data = $this->templateFactory($filePath, $data);
+        }
+
+        res()->getBody()->write($data);
+    }
+
+    public function templateFactory(string $filePath, mixed $data = null): string
+    {
+        return '<h1>' . $filePath . '</h1><br><pre>' . json_encode($data) . '</pre>';
     }
 }

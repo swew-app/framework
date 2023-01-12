@@ -22,6 +22,11 @@ final class EnvContainer extends AbstractCacheState
         self::$instance = $this;
     }
 
+    public static function removeInstance(): void
+    {
+        self::$instance = null;
+    }
+
     public static function getInstance(): self
     {
         if (is_null(self::$instance)) {
@@ -33,6 +38,7 @@ final class EnvContainer extends AbstractCacheState
 
     public function get(string $key, mixed $default = null): mixed
     {
+        // TODO: сделать конвертацию типов по значению
         if ($this->isUseCache) {
             $this->loadCacheFile();
 

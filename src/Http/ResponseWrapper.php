@@ -88,8 +88,20 @@ final class ResponseWrapper extends Response
 
     public function setBody(string $data): self
     {
-        $stream = Stream::create($data);
+        $this->stream = Stream::create($data);
 
-        return $this->withBody($stream);
+        return $this->withBody($this->stream);
+    }
+
+    private string $viewFileName = '';
+
+    public function view(string $viewFileName): void
+    {
+        $this->viewFileName = $viewFileName;
+    }
+
+    public function getViewFileName(): string
+    {
+        return $this->viewFileName;
     }
 }

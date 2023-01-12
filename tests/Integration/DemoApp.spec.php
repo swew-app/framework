@@ -11,7 +11,7 @@ it('DemoApp: save content in stream', function () {
 
     $res = $app->call('GET', '/')->getResponse();
 
-    expect($res->getBody()->getContents())->toBe('Hello world!');
+    expect($res->getBody()->getContents())->toContain('Hello world!');
 });
 
 it('DemoApp: admin page content by Ajax', function () {
@@ -29,7 +29,7 @@ it('DemoApp: admin child', function () {
 
     $res = $app->call('GET', '/admin/manager')->getResponse();
 
-    expect($res->getBody()->getContents())->toBe('Hello from Dashboard');
+    expect($res->getBody()->getContents())->toContain('Hello from Dashboard');
 });
 
 it('DemoApp: CORS global middleware', function () {

@@ -6,6 +6,7 @@ namespace Swew\Framework\AppTest;
 
 use Exception;
 use LogicException;
+use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Http\Partials\Stream;
 use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Http\ResponseWrapper;
@@ -20,6 +21,8 @@ class AppTest
     public function __construct(SwewApp|string|null $app = null)
     {
         $this->removeSingletons();
+
+        putenv('IS_TEST=true');
 
         if (is_string($app) && class_exists($app)) {
             /** @var SwewApp $instance */
@@ -37,6 +40,7 @@ class AppTest
         RequestWrapper::removeInstance();
         ResponseWrapper::removeInstance();
         Stream::removeInstance();
+        EnvContainer::removeInstance();
     }
 
     public function setApp(SwewApp $app): static
@@ -68,7 +72,11 @@ class AppTest
 
 
     /**
-     * @param string[] $server
+     * @param string $method
+     * @param string $uri
+     * @param mixed $post
+     * @param array $server
+     * @return static
      *
      * @psalm-param array{CONTENT_TYPE?: 'application/json;charset=UTF-8', HTTP_ACCEPT?: 'application/json;charset=UTF-8'} $server
      */

@@ -8,30 +8,23 @@ use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Http\ResponseWrapper;
 
+/**
+ * A helper to create a request
+ */
 function req(): RequestWrapper
 {
     return RequestWrapper::getInstance();
 }
 
-function res(BaseDTO|string|array|null $data = null): ResponseWrapper
+/**
+ * A helper to create a response
+ *
+ */
+function res(BaseDTO|string|array |null $data = null): ResponseWrapper
 {
     $response = ResponseWrapper::getInstance();
 
-    if ($data instanceof BaseDTO) {
-        $data = $data->getData();
-    }
-
-    if (is_array($data)) {
-        $data = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
-
-        if (req()->isAjax()) {
-            $response->withHeader('Content-Type', 'application/json');
-        }
-    }
-
-    if (is_string($data)) {
-        $response->getBody()->write($data);
-    }
+    store($data);
 
     return $response;
 }
@@ -49,11 +42,22 @@ function env(string $key = '', mixed $default = null): mixed
 
 function container(string $id = ''): mixed
 {
-    $container = new Container();
+    static $container = new Container();
 
     if ($id === '') {
         return $container;
     }
 
     return $container->get($id);
+}
+
+function store(mixed &$data = null): mixed
+{
+    static $storeData = null;
+
+    if (!is_null($data)) {
+        $storeData = $data;
+    }
+
+    return $storeData;
 }

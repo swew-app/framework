@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Swew\Framework\Env\EnvContainer;
 
 it('Env Parse', function (string $text, array $vars) {
-    $env = new EnvContainer();
+    $env = EnvContainer::getInstance();
     $env->parse($text);
 
     expect($env->get('*'))->toMatchArray($vars);
@@ -20,7 +20,7 @@ it('Env Parse', function (string $text, array $vars) {
 ]);
 
 it('Evn Load Global envs', function () {
-    $env = new EnvContainer();
+    $env = EnvContainer::getInstance(true);
 
     expect($env->get('HOME'))->toBeFalsy();
 
@@ -32,7 +32,7 @@ it('Evn Load Global envs', function () {
 /*/
 # Test only for manual checking
 it('Env load from file', function () {
-    $env = new EnvContainer();
+    $env = EnvContainer::getInstance();
     $env->loadFromFile(__DIR__ . DIRECTORY_SEPARATOR . '.env.test');
 
     expect($env->get('TEST_VAR_1'))->toBe(true);
@@ -42,7 +42,7 @@ it('Env load from file', function () {
 /*/
 # Test only for manual checking cache
 it('Env Cache', function () {
-    $env = new EnvContainer();
+    $env = EnvContainer::getInstance();
 
     $env->useCache(
         true,

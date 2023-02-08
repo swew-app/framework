@@ -61,7 +61,7 @@ abstract class AbstractCacheState
         }
     }
 
-    protected function loadCacheFile(): void
+    protected function loadCache(): void
     {
         if ($this->isCacheFileLoaded) {
             return;

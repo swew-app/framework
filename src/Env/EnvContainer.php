@@ -13,7 +13,7 @@ final class EnvContainer extends AbstractCacheState
 
     private array $envVars = [];
 
-    public function __construct()
+    private function __construct()
     {
         if (isset(self::$instance)) {
             return self::$instance;
@@ -27,9 +27,9 @@ final class EnvContainer extends AbstractCacheState
         self::$instance = null;
     }
 
-    public static function getInstance(): self
+    public static function getInstance($forceNew = false): self
     {
-        if (is_null(self::$instance)) {
+        if (is_null(self::$instance) || $forceNew) {
             return new self();
         }
 
@@ -40,7 +40,7 @@ final class EnvContainer extends AbstractCacheState
     {
         // TODO: сделать конвертацию типов по значению
         if ($this->isUseCache) {
-            $this->loadCacheFile();
+            $this->loadCache();
 
             $this->setMultiple($this->cachedData);
         }

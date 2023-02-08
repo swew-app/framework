@@ -24,7 +24,7 @@ function res(BaseDTO|string|array |null $data = null): ResponseWrapper
 {
     $response = ResponseWrapper::getInstance();
 
-    store($data);
+    responseState($data);
 
     return $response;
 }
@@ -51,7 +51,7 @@ function container(string $id = ''): mixed
     return $container->get($id);
 }
 
-function store(mixed &$data = null): mixed
+function responseState(mixed &$data = null): mixed
 {
     static $storeData = null;
 

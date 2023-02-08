@@ -22,10 +22,6 @@ class SwewApp
 
     protected ?string $cacheDir = null;
 
-    protected string $pageNotFound = '';
-
-    protected string $pageServerError = '';
-
     /**
      * Path to router files
      *
@@ -128,7 +124,7 @@ class SwewApp
         }
     }
 
-    private function findRoute(): array |null
+    private function findRoute(): array|null
     {
         $req = req();
 
@@ -180,17 +176,17 @@ class SwewApp
 
     private function prepareResponse(): void
     {
-        $data = store();
-
-        if (is_null($data)) {
-            return;
-        }
+        $data = responseState();
 
         if ($data instanceof BaseDTO) {
             $data = $data->getData();
         }
 
         $viewName = res()->getViewFileName();
+
+        if (is_null($data) && empty($viewName)) {
+            throw new \LogicException('Empty response');
+        }
 
         if (req()->isAjax() || empty($viewName)) {
             res()->withHeader('Content-Type', 'application/json');
@@ -209,6 +205,8 @@ class SwewApp
 
     public function templateFactory(string $filePath, mixed $data = null): string
     {
-        return '<h1>' . $filePath . '</h1><br><pre>' . json_encode($data) . '</pre>';
+        ob_start();
+        require($filePath);
+        return ob_get_clean();
     }
 }

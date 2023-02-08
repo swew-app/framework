@@ -244,7 +244,7 @@ class Container extends AbstractCacheState implements ContainerInterface
     private function hasCacheItem(string $className): bool
     {
         if ($this->isUseCache) {
-            $this->loadCacheFile();
+            $this->loadCache();
         }
 
         return array_key_exists($className, $this->cachedData);

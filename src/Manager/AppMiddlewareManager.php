@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Manager;
 
-use Exception;
+use Closure;
 use Psr\Http\Server\MiddlewareInterface;
+use Swew\Framework\Manager\Lib\CallableHandlerMiddleware;
 use Swew\Framework\Manager\Lib\ControllerHandlerMiddleware;
 
 final class AppMiddlewareManager
@@ -13,10 +14,11 @@ final class AppMiddlewareManager
     public function __construct(
         private readonly array $middlewares,
         private readonly array $globalMiddlewares
-    ) {
+    )
+    {
     }
 
-    public function getAppMiddlewares(string $class, string $method, array $middlewareNames): array
+    public function getMiddlewaresForApp(string|Closure $class, string $method = '', array $middlewareNames = []): array
     {
         $middlewaresList = $this->getMiddlewares($middlewareNames);
 
@@ -41,14 +43,15 @@ final class AppMiddlewareManager
     }
 
     /**
-     * @throws Exception
+     * @param string $alias
+     * @return MiddlewareInterface
      */
     private function getMiddleware(string $alias): MiddlewareInterface
     {
         $middlewareClassName = $this->middlewares[$alias];
 
         if (!class_exists($middlewareClassName)) {
-            throw new Exception("Can't find middleware with name '$alias' ");
+            throw new \LogicException("Can't find middleware with name '$alias' ");
         }
 
         /** @var MiddlewareInterface $middlewareClass */
@@ -57,8 +60,11 @@ final class AppMiddlewareManager
         return $middlewareClass;
     }
 
-    private function makeControllerMiddleware(string $class, string $method): MiddlewareInterface
+    private function makeControllerMiddleware(string|Closure $class, string $method): MiddlewareInterface
     {
+        if (is_callable($class)) {
+            return new CallableHandlerMiddleware($class);
+        }
         return new ControllerHandlerMiddleware($class, $method);
     }
 }

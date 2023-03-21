@@ -95,4 +95,9 @@ final class RequestWrapper extends Request
             || str_contains($contentType, 'javascript')
             || str_contains($contentType, 'xmlhttprequest');
     }
+
+    public function isCLi(): bool
+    {
+        return PHP_SAPI == 'cli';
+    }
 }

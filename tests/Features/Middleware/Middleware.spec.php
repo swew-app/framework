@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Swew\Framework\Http\Request;
 use Swew\Framework\Http\Response;
+use Swew\Framework\Manager\AppMiddlewareManager;
 use Swew\Framework\Middleware\MiddlewarePipeline;
 
 it('Pipe process handler', function () {
@@ -52,4 +53,20 @@ it('Pipe process handler', function () {
     expect($response->getHeader('X-Name-1'))->toBe(['101']);
     expect($response->getHeader('X-Name-2'))->toBe(['102']);
     expect($response->getStatusCode())->toBe(301);
+});
+
+it('AppMiddlewareManager callable', function () {
+    $manager = new AppMiddlewareManager([], []);
+    $text = 'TEST TEST OF RESPONSE';
+    $mockCallback = fn() => $text;
+
+    $middlewares = $manager->getMiddlewaresForApp($mockCallback);
+
+    $pipelines = new MiddlewarePipeline($middlewares);
+
+    $req = new Request('GET', '/');
+
+    $pipelines->handle($req);
+
+    expect(res()->getStoredData())->toBe($text);
 });

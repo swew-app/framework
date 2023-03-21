@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Swew\Framework\Manager\Lib;
 
+use Closure;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -9,27 +12,19 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Swew\Framework\Base\BaseDTO;
 use Swew\Framework\Http\Response;
 
-final class ControllerHandlerMiddleware implements MiddlewareInterface
+class CallableHandlerMiddleware implements MiddlewareInterface
 {
+
     public function __construct(
-        private readonly string $class,
-        private readonly string $method,
-        private readonly ?\Closure $hook = null
-    ) {
+        readonly Closure $callback
+    )
+    {
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (is_callable($this->hook)) {
-            $cb = $this->hook;
-            $cb();
-        }
-
-        $classInstance = new $this->class();
-
-        $method = $this->method;
-
-        $result = $classInstance->$method();
+        $cb = $this->callback;
+        $result = $cb();
 
         if ($result instanceof Response) {
             return $result;

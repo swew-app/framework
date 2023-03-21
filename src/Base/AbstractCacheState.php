@@ -46,7 +46,9 @@ abstract class AbstractCacheState
 
     public function clearCache(): void
     {
-        unlink($this->cacheFilePath);
+        if (!empty($this->cacheFilePath) && file_exists($this->cacheFilePath)) {
+            unlink($this->cacheFilePath);
+        }
     }
 
     private function writeCacheFile(): void

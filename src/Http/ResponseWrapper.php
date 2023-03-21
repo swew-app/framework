@@ -11,6 +11,8 @@ final class ResponseWrapper extends Response
 {
     private static ?ResponseWrapper $instance = null;
 
+    private bool $isTest = false;
+
     public function __construct(int $status = 200, array $headers = [], mixed $body = null, string $version = '1.1', string $reason = null)
     {
         if (!is_null(self::$instance)) {
@@ -63,6 +65,10 @@ final class ResponseWrapper extends Response
 
     public function sendHeaders(): void
     {
+        if ($this->isTest) {
+            return;
+        }
+
         $headers = $this->getHeaders();
 
         foreach ($headers as $name => $values) {
@@ -79,6 +85,10 @@ final class ResponseWrapper extends Response
      */
     public function sendContent(): void
     {
+        if ($this->isTest) {
+            return;
+        }
+
         if (connection_aborted() !== CONNECTION_NORMAL) {
             throw new Exception('Connection Aborted');
         }
@@ -93,15 +103,34 @@ final class ResponseWrapper extends Response
         return $this->withBody($this->stream);
     }
 
+    public function setTestEnv(bool $isTest): void
+    {
+        $this->isTest = $isTest;
+    }
+
+    public function getStoredData(): mixed
+    {
+        return responseState();
+    }
+
     private string $viewFileName = '';
 
-    public function view(string $viewFileName): void
+    private array $viewData = [];
+
+    public function view(string $viewFileName, array $viewData = []): self
     {
         $this->viewFileName = $viewFileName;
+        $this->viewData = $viewData;
+        return $this;
     }
 
     public function getViewFileName(): string
     {
         return $this->viewFileName;
+    }
+
+    public function getViewData(): array
+    {
+        return $this->viewData;
     }
 }

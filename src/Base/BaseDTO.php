@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Swew\Framework\Base;
 
 use Rakit\Validation\Validator;
+use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Support\Obj;
 
 abstract class BaseDTO
@@ -19,9 +20,20 @@ abstract class BaseDTO
         return Obj::getPublicVars($this);
     }
 
-    public function setData(array $data): void
+    public function setData(array|RequestWrapper $data): self
     {
+
+        if ($data instanceof RequestWrapper) {
+            $data = $data->getParsedBody();
+
+            d($data);
+        }
+
         $this->setDataWithCast($data);
+
+        $this->validate();
+
+        return $this;
     }
 
     /**
@@ -117,7 +129,7 @@ abstract class BaseDTO
         return [];
     }
 
-    public function isNeedValidate(): bool
+    protected function isNeedValidate(): bool
     {
         return count($this->rules()) > 0;
     }

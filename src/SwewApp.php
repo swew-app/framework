@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace Swew\Framework;
 
-use Swew\Framework\Base\BaseDTO;
 use Swew\Framework\Container\Container;
 use Swew\Framework\Env\EnvContainer;
+use Swew\Framework\Hook\HK;
+use Swew\Framework\Hook\Hook;
 use Swew\Framework\Manager\AppMiddlewareManager;
+use Swew\Framework\Manager\FeatureManager;
 use Swew\Framework\Middleware\MiddlewarePipeline;
 use Swew\Framework\Router\Router;
-use Swew\Framework\Support\FeatureDetection;
 
 class SwewApp
 {
-    private bool $DEV = true;
+    protected bool $DEV = true;
 
-    private bool $TEST = false;
+    protected bool $TEST = false;
 
     public string $host = '';
 
@@ -60,53 +61,76 @@ class SwewApp
 
     public function __construct()
     {
+        Hook::call(HK::beforeInit);
+
         /** @var EnvContainer $env */
         $env = env();
-        // TODO: перенести в хук
         $env->loadGlobalEnvs();
 
         /** @var Container $container */
         $container = container();
 
-        if (!is_null($this->cacheDir)) {
+        $this->TEST = (bool)$env->get('APP_IS_TEST', false);
+
+        if (!is_null($this->cacheDir) && !$this->TEST) {
             $env->useCache(true, $this->cacheDir . '/env_cache.php');
             $container->useCache(true, $this->cacheDir . '/container_cache.php');
         }
 
+        $this->DEV = (bool)$env->get('APP_IS_DEV', false);
+
         $this->host = $env->get('host', '');
 
-        $this->DEV = !$env->get('production', false);
-        $this->TEST = !!$env->get('IS_TEST', false);
+        res()->setTestEnv($this->TEST);
+
+        set_error_handler(function ($e) {
+            Hook::call(HK::onError, $e);
+            $this->errorHandler($e);
+        });
+        set_exception_handler(function ($e) {
+            Hook::call(HK::onError, $e);
+            $this->errorHandler($e);
+        });
+
+        FeatureManager::setFeaturePath($this->features);
     }
 
-    public function run(): void
+    final public function run(): void
     {
+        Hook::call(HK::beforeRun);
+
         $this->initRouter();
 
         $route = $this->findRoute();
 
         if (is_null($route)) {
-            $this->showErrorPage(404);
-            return;
+            // Route not found
+            $route = [
+                'class' => fn() => $this->makeErrorPage(404, 'Page not found.')
+            ];
+        } else {
+            FeatureManager::setController($route['class']);
         }
 
-        FeatureDetection::setController($route['class']);
+        Hook::call(HK::beforeHandlePipeline);
 
         $this->runPipeline($route);
+
+        Hook::call(HK::afterHandlePipeline);
 
         $statusCode = res()->getStatusCode();
 
         if (200 <= $statusCode && $statusCode < 300) {
-            $this->prepareResponse();
+            res()->getBody()->write(FeatureManager::getPreparedResponse());
         } else {
-            $this->showErrorPage($statusCode);
+            $this->makeErrorPage($statusCode);
         }
 
-        if ($this->TEST) {
-            return;
-        }
+        Hook::call(HK::beforeSend);
 
         res()->send();
+
+        Hook::call(HK::afterSend);
     }
 
     /**
@@ -158,7 +182,7 @@ class SwewApp
             $this->globalMiddlewares
         );
 
-        $middlewares = $appMiddlewareManager->getAppMiddlewares(
+        $middlewares = $appMiddlewareManager->getMiddlewaresForApp(
             $route['class'],
             $route['method'],
             $route['middlewares']
@@ -169,44 +193,22 @@ class SwewApp
         $pipeline->handle(req()); // Запускаяем цепочку Middlewares
     }
 
-    private function showErrorPage(int $status, string $message = ''): void
+    public function errorHandler(mixed $e): void
     {
-        // TODO
+        // Handle error
+        throw $e;
+        exit(1);
     }
 
-    private function prepareResponse(): void
+    /**
+     * Error page for production
+     */
+    public function makeErrorPage(int $status, string $message = ''): void
     {
-        $data = responseState();
+        res($message)->withStatus($status);
 
-        if ($data instanceof BaseDTO) {
-            $data = $data->getData();
+        if ($status == 404) {
+            res()->view('error/404.php');
         }
-
-        $viewName = res()->getViewFileName();
-
-        if (is_null($data) && empty($viewName)) {
-            throw new \LogicException('Empty response');
-        }
-
-        if (req()->isAjax() || empty($viewName)) {
-            res()->withHeader('Content-Type', 'application/json');
-
-            if (is_array($data)) {
-                $data = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
-            }
-        } else {
-            $filePath = FeatureDetection::getView($this->features, $viewName);
-
-            $data = $this->templateFactory($filePath, $data);
-        }
-
-        res()->getBody()->write($data);
-    }
-
-    public function templateFactory(string $filePath, mixed $data = null): string
-    {
-        ob_start();
-        require($filePath);
-        return ob_get_clean();
     }
 }

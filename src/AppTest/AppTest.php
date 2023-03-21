@@ -22,7 +22,7 @@ class AppTest
     {
         $this->removeSingletons();
 
-        putenv('IS_TEST=true');
+        putenv('APP_IS_TEST=true');
 
         if (is_string($app) && class_exists($app)) {
             /** @var SwewApp $instance */

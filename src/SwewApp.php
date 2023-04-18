@@ -196,8 +196,10 @@ class SwewApp
     public function errorHandler(mixed $e): void
     {
         // Handle error
-        throw $e;
-        exit(1);
+        if ($e instanceof \Exception || $e instanceof \Error) {
+            throw $e;
+        }
+        die();
     }
 
     /**

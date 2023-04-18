@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "32c4a1373717cdf838bdc3cd1973e9da",
+    "content-hash": "c518ab3a559282d70404e92d53296827",
     "packages": [
         {
             "name": "nikic/fast-route",
@@ -526,16 +526,16 @@
         },
         {
             "name": "swew/test",
-            "version": "v1.2.1",
+            "version": "v1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swew-app/test.git",
-                "reference": "772879574451fc176d4c8ef35763b216d3dea58f"
+                "reference": "8c9b79c79971fb87cccd025f8a6790f319f3c369"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swew-app/test/zipball/772879574451fc176d4c8ef35763b216d3dea58f",
-                "reference": "772879574451fc176d4c8ef35763b216d3dea58f",
+                "url": "https://api.github.com/repos/swew-app/test/zipball/8c9b79c79971fb87cccd025f8a6790f319f3c369",
+                "reference": "8c9b79c79971fb87cccd025f8a6790f319f3c369",
                 "shasum": ""
             },
             "require": {
@@ -590,9 +590,9 @@
             ],
             "support": {
                 "issues": "https://github.com/swew-app/test/issues",
-                "source": "https://github.com/swew-app/test/tree/v1.2.1"
+                "source": "https://github.com/swew-app/test/tree/v1.2.2"
             },
-            "time": "2023-03-21T21:33:03+00:00"
+            "time": "2023-03-21T23:57:40+00:00"
         }
     ],
     "aliases": [],

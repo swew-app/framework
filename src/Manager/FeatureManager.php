@@ -27,44 +27,18 @@ final class FeatureManager
         self::$controller = $controller;
     }
 
-    public static function getView(string $viewFile, string $featureName = ''): string
+    public static function getView(string $file): string
     {
-        if (is_null(self::$controller)) {
-            throw new \LogicException('Call FeatureDetection::setController in App file');
+        $paths = self::getFeaturesViewPaths();
+
+        foreach ($paths as $path) {
+            $filePath = $path . DIRECTORY_SEPARATOR . $file;
+            if (file_exists($filePath)) {
+                return $filePath;
+            }
         }
 
-        $featDirPath = str_replace(['\\', '/', '||'], '/', self::$featurePath);
-
-        if ($featureName === '') {
-            $contrPath = str_replace(['\\', '/', '||'], '/', self::$controller);
-            $contrArr = explode('/', $contrPath);
-            $featDir = basename($featDirPath);
-            $index = array_search($featDir, $contrArr);
-            if (!is_int($index)) {
-                throw new \LogicException("Wrong path for controller: '$contrPath'");
-            }
-            $feature = $contrArr[$index + 1];
-        } else {
-            $feature = $featureName;
-        }
-
-        $featViewPath = $featDirPath . DIRECTORY_SEPARATOR
-            . $feature . DIRECTORY_SEPARATOR
-            . 'view' . DIRECTORY_SEPARATOR . $viewFile;
-
-        if (self::$isCheckExists) {
-            if (file_exists($featViewPath)) {
-                return $featViewPath;
-            }
-
-            if ($featureName === '') {
-                return self::getView($viewFile, self::$defaultCommonFeature);
-            }
-
-            throw new \LogicException("Not found view:\n $featViewPath");
-        }
-
-        return $featViewPath;
+        throw new \LogicException("File '$file'\nnot found in:\n- " . implode("\n- ", $paths));
     }
 
     // Templates for response

@@ -125,4 +125,16 @@ function routerStub(string $wantType = 'config'): array
 
         ];
     }
+
+    if ($wantType === 'methodRoute') {
+        return [
+            [
+                'name' => 'MainPage',
+                'path' => '/{_method_}',
+                'controller' => 'SomeClass::class',
+            ]
+        ];
+    }
+
+    return [];
 }

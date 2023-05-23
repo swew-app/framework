@@ -29,3 +29,12 @@ it('Router: child', function () {
         ],
     ]);
 });
+
+
+it('Router: method from request', function () {
+    $router = new Router(routerStub('methodRoute'));
+
+    $item = $router->getRoute('GET', '/about');
+
+    expect($item['method'])->toBe('getAbout');
+});

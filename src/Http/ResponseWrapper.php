@@ -6,6 +6,8 @@ namespace Swew\Framework\Http;
 
 use Exception;
 use Swew\Framework\Http\Partials\Stream;
+use function function_exists;
+use function litespeed_finish_request;
 
 final class ResponseWrapper extends Response
 {
@@ -54,10 +56,10 @@ final class ResponseWrapper extends Response
         $this->sendHeaders();
         $this->sendContent();
 
-        if (\function_exists('fastcgi_finish_request')) {
+        if (function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
-        } elseif (\function_exists('litespeed_finish_request')) {
-            \litespeed_finish_request();
+        } elseif (function_exists('litespeed_finish_request')) {
+            litespeed_finish_request();
         }
 
         return $this;
@@ -132,5 +134,25 @@ final class ResponseWrapper extends Response
     public function getViewData(): array
     {
         return $this->viewData;
+    }
+
+    private string|bool $viewRaw = false;
+
+    public function raw(mixed $raw): self
+    {
+        if (is_string($raw)) {
+            $handler = fopen($raw, 'r');
+            $this->viewRaw = stream_get_contents($handler);
+            fclose($handler);
+        } else {
+            $this->viewRaw = stream_get_contents($raw);
+        }
+
+        return $this;
+    }
+
+    public function getRaw(): string|bool
+    {
+        return $this->viewRaw;
     }
 }

@@ -45,6 +45,12 @@ final class FeatureManager
 
     public static function getPreparedResponse(): mixed
     {
+        $raw = res()->getRaw();
+
+        if ($raw) {
+            return $raw;
+        }
+
         $data = responseState();
 
         if ($data instanceof BaseDTO) {

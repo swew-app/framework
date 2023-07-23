@@ -226,7 +226,7 @@ class Stream implements StreamInterface
         return $this->writable;
     }
 
-    public function write($string): int
+    public function write(string $string): int
     {
         if (!isset(Stream::$stream)) {
             throw new \RuntimeException('Stream is detached');

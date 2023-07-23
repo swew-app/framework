@@ -15,13 +15,21 @@ use Swew\Framework\Router\Router;
 
 class SwewApp
 {
-    protected bool $DEV = true;
+    protected readonly bool $DEV;
 
     public string $host = '';
 
     protected string $envFilePath = '';
 
     protected ?string $cacheDir = null;
+
+    /**
+     * Path to the features folder
+     *
+     * @example
+     *  $features = __DIR__ . '/../Features';
+     */
+    protected string $features = '';
 
     /**
      * Path to router files
@@ -48,14 +56,6 @@ class SwewApp
      *  $globalMiddlewares = [ 'auth' ];
      */
     protected array $globalMiddlewares = [];
-
-    /**
-     * Path to the features folder
-     *
-     * @example
-     *  $features = __DIR__ . '/../Features';
-     */
-    protected string $features = '';
 
     public ?Router $router = null;
 

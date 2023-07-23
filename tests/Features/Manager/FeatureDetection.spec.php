@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 use Swew\Framework\Manager\FeatureManager;
 use Swew\Framework\Manager\TemplateParser\DefaultTemplateParser;
-//
+
 //it('FeatureDetection [Special feature]', function () {
 //    FeatureManager::$isCheckExists = false;
 //
@@ -34,6 +34,7 @@ use Swew\Framework\Manager\TemplateParser\DefaultTemplateParser;
 //
 //    expect($result)->toContain('<h1>Hello main test page in admin panel</h1>');
 //});
+
 
 it('FeatureDetection [getView]', function () {
     FeatureManager::setController('');

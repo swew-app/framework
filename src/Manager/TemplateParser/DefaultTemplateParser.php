@@ -11,7 +11,7 @@ class DefaultTemplateParser extends AbstractTemplateParser
         return '*';
     }
 
-    public function render(array $paths, string $filePath, array $data = []): string
+    public function render(array $viewFolders, string $filePath, array $data = []): string
     {
         ob_start();
         require($filePath);

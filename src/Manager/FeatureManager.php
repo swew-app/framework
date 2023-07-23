@@ -72,7 +72,7 @@ final class FeatureManager
                 $data = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
             }
         } else {
-            $filePath = self::getView(self::$featurePath, $viewName);
+            $filePath = self::getView($viewName);
 
             /** @var array $data */
             $data = self::render($filePath, $data);
@@ -96,6 +96,10 @@ final class FeatureManager
     {
         $extension = pathinfo($filepath, PATHINFO_EXTENSION);
 
+        if (count(self::$templateParser) === 0) {
+            throw new \LogicException('Empty renrderer. Please set with "FeatureManager::setTemplateParser(...)"');
+        }
+
         if (isset(self::$templateParser[$extension])) {
             return self::$templateParser[$extension]->render(
                 self::getFeaturesViewPaths(),
@@ -103,6 +107,7 @@ final class FeatureManager
                 $data
             );
         }
+
         return self::$templateParser['*']->render(
             self::getFeaturesViewPaths(),
             $filepath,

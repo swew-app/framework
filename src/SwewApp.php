@@ -17,9 +17,9 @@ class SwewApp
 {
     protected bool $DEV = true;
 
-    protected bool $TEST = false;
-
     public string $host = '';
+
+    protected string $envFilePath = '';
 
     protected ?string $cacheDir = null;
 
@@ -66,13 +66,16 @@ class SwewApp
         /** @var EnvContainer $env */
         $env = env();
         $env->loadGlobalEnvs();
+        if (!empty($this->envFilePath)) {
+            $env->loadFromFile($this->envFilePath);
+        }
 
         /** @var Container $container */
         $container = container();
 
-        $this->TEST = (bool)$env->get('APP_IS_TEST', false);
+        $IS_TEST = (bool)$env->get('__TEST__', false);
 
-        if (!is_null($this->cacheDir) && !$this->TEST) {
+        if (!is_null($this->cacheDir) && !$IS_TEST) {
             $env->useCache(true, $this->cacheDir . '/env_cache.php');
             $container->useCache(true, $this->cacheDir . '/container_cache.php');
         }
@@ -81,7 +84,7 @@ class SwewApp
 
         $this->host = $env->get('host', '');
 
-        res()->setTestEnv($this->TEST);
+        res()->setTestEnv($IS_TEST);
 
         set_error_handler(function ($e) {
             Hook::call(HK::onError, $e);

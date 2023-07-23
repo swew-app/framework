@@ -98,6 +98,6 @@ final class RequestWrapper extends Request
 
     public function isCLi(): bool
     {
-        return PHP_SAPI == 'cli';
+        return PHP_SAPI === 'cli';
     }
 }

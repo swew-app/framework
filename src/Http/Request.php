@@ -59,7 +59,7 @@ class Request extends MessageMethods implements ServerRequestInterface
             $this->updateHostFromUri();
         }
 
-        // If we got no body, defer initialization of the stream until ServerRequest::getBody()
+        // If we got empty body, defer initialization of the stream until ServerRequest::getBody()
         if ('' !== $body && null !== $body) {
             $this->stream = Stream::create($body);
         }

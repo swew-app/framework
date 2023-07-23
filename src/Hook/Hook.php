@@ -12,7 +12,6 @@ class Hook
     {
     }
 
-
     public static function on(HK $hookKey, \Closure $callback): void
     {
         self::$callbackList[] = [

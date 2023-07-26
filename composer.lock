@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0c3c3f174a7090a235a481f976eb1c21",
+    "content-hash": "a5dd7deb93751654c8120ff1908792c3",
     "packages": [
         {
             "name": "nikic/fast-route",
@@ -488,16 +488,16 @@
         },
         {
             "name": "swew/cli",
-            "version": "v1.1.6",
+            "version": "v1.1.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swew-app/cli.git",
-                "reference": "71eb1007af10141e5e662514a47f8c8e414a09c0"
+                "reference": "376bb07839653210e7a2cb3cc8d6ed952ee10e9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swew-app/cli/zipball/71eb1007af10141e5e662514a47f8c8e414a09c0",
-                "reference": "71eb1007af10141e5e662514a47f8c8e414a09c0",
+                "url": "https://api.github.com/repos/swew-app/cli/zipball/376bb07839653210e7a2cb3cc8d6ed952ee10e9f",
+                "reference": "376bb07839653210e7a2cb3cc8d6ed952ee10e9f",
                 "shasum": ""
             },
             "require": {
@@ -549,9 +549,9 @@
             ],
             "support": {
                 "issues": "https://github.com/swew-app/cli/issues",
-                "source": "https://github.com/swew-app/cli/tree/v1.1.6"
+                "source": "https://github.com/swew-app/cli/tree/v1.1.7"
             },
-            "time": "2023-07-23T11:01:12+00:00"
+            "time": "2023-07-23T21:30:43+00:00"
         },
         {
             "name": "swew/dd",
@@ -592,16 +592,16 @@
         },
         {
             "name": "swew/test",
-            "version": "v1.4.4",
+            "version": "v1.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swew-app/test.git",
-                "reference": "ccd23fb3e8604eaba1ab5ce074cbf193048b2744"
+                "reference": "e52fca205baba013a076d9c0fff61d76bbd35f20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swew-app/test/zipball/ccd23fb3e8604eaba1ab5ce074cbf193048b2744",
-                "reference": "ccd23fb3e8604eaba1ab5ce074cbf193048b2744",
+                "url": "https://api.github.com/repos/swew-app/test/zipball/e52fca205baba013a076d9c0fff61d76bbd35f20",
+                "reference": "e52fca205baba013a076d9c0fff61d76bbd35f20",
                 "shasum": ""
             },
             "require": {
@@ -657,9 +657,9 @@
             ],
             "support": {
                 "issues": "https://github.com/swew-app/test/issues",
-                "source": "https://github.com/swew-app/test/tree/v1.4.4"
+                "source": "https://github.com/swew-app/test/tree/v1.4.8"
             },
-            "time": "2023-07-23T13:41:15+00:00"
+            "time": "2023-07-26T21:32:13+00:00"
         }
     ],
     "aliases": [],

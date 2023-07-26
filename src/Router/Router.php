@@ -179,6 +179,12 @@ class Router
      */
     public function getRoute(string $httpMethod, string $uri): array
     {
+        if (empty($httpMethod)) {
+            throw new \LogicException('Router: passed empty method');
+        }
+        if (empty($uri)) {
+            throw new \LogicException('Router: passed empty uri');
+        }
         return $this->findRouteByFastRouter($httpMethod, $uri);
     }
 

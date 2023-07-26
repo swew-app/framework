@@ -85,7 +85,7 @@ final class EnvContainer extends AbstractCacheState
     public function loadFromFile(string $filePath): void
     {
         if (!is_readable($filePath) || is_dir($filePath)) {
-            throw new \Exception("Env file path exception: '${filePath}' ");
+            throw new \Exception("Env file path exception: '$filePath' ");
         }
 
         $fileContent = file_get_contents($filePath);
@@ -117,10 +117,10 @@ final class EnvContainer extends AbstractCacheState
         $val = trim($val);
 
         if (empty($key)) {
-            throw new \Exception("Passed empty 'key' in '${str}'");
+            throw new \Exception("Passed empty 'key' in '$str'");
         }
         if (empty($val)) {
-            throw new \Exception("Passed empty 'value' in '${str}'");
+            throw new \Exception("Passed empty 'value' in '$str'");
         }
 
         $this->set($key, $this->convert($val));

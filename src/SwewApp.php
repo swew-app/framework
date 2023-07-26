@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Swew\Framework;
 
+use Error;
+use Exception;
 use Swew\Framework\Container\Container;
 use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Hook\HK;
@@ -59,7 +61,7 @@ class SwewApp
 
     public ?Router $router = null;
 
-    public function __construct()
+    public function __construct(bool $hasErrorHandler = true)
     {
         Hook::call(HK::beforeInit);
 
@@ -86,14 +88,17 @@ class SwewApp
 
         res()->setTestEnv($IS_TEST);
 
-        set_error_handler(function ($e) {
-            Hook::call(HK::onError, $e);
-            $this->errorHandler($e);
-        });
-        set_exception_handler(function ($e) {
-            Hook::call(HK::onError, $e);
-            $this->errorHandler($e);
-        });
+        if ($hasErrorHandler && !$IS_TEST) {
+            set_error_handler(function ($e) {
+                Hook::call(HK::onError, $e);
+                $this->errorHandler($e);
+            });
+
+            set_exception_handler(function ($e) {
+                Hook::call(HK::onError, $e);
+                $this->errorHandler($e);
+            });
+        }
 
         FeatureManager::setFeaturePath($this->features);
     }
@@ -137,7 +142,7 @@ class SwewApp
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     private function initRouter(): void
     {
@@ -199,7 +204,7 @@ class SwewApp
     public function errorHandler(mixed $e): void
     {
         // Handle error
-        if ($e instanceof \Exception || $e instanceof \Error) {
+        if ($e instanceof Exception || $e instanceof Error) {
             throw $e;
         }
         die();

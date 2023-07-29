@@ -7,7 +7,6 @@ namespace Swew\Framework\AppTest;
 use Exception;
 use LogicException;
 use Swew\Framework\Env\EnvContainer;
-use Swew\Framework\Http\Partials\Stream;
 use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Http\ResponseWrapper;
 use Swew\Framework\SwewApp;
@@ -39,7 +38,6 @@ class AppTest
     {
         RequestWrapper::removeInstance();
         ResponseWrapper::removeInstance();
-        Stream::removeInstance();
         EnvContainer::removeInstance();
     }
 

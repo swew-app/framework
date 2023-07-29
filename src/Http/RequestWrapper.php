@@ -12,7 +12,7 @@ final class RequestWrapper extends Request
 {
     private static ?RequestWrapper $instance = null;
 
-    public function __construct(
+    private function __construct(
         string                      $method = '',
         UriInterface|string         $uri = '',
         array                       $headers = [],
@@ -20,10 +20,6 @@ final class RequestWrapper extends Request
         string                      $version = '1.1',
         array                       $serverParams = []
     ) {
-        if (!is_null(self::$instance)) {
-            return self::$instance;
-        }
-
         if ($method === '') {
             if (empty($_SERVER['REQUEST_METHOD'])) {
                 throw new Exception('Empty "REQUEST_METHOD"');
@@ -43,10 +39,23 @@ final class RequestWrapper extends Request
         self::$instance = $this;
     }
 
-    public static function getInstance(): self
-    {
+    public static function getInstance(
+        string                      $method = '',
+        UriInterface|string         $uri = '',
+        array                       $headers = [],
+        StreamInterface|string|null $body = null,
+        string                      $version = '1.1',
+        array                       $serverParams = []
+    ): self {
         if (is_null(self::$instance)) {
-            return new self();
+            return new self(
+                $method,
+                $uri,
+                $headers,
+                $body,
+                $version,
+                $serverParams
+            );
         }
 
         return self::$instance;

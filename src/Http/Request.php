@@ -94,12 +94,8 @@ class Request extends MessageMethods implements ServerRequestInterface
     /**
      * @throws InvalidArgumentException
      */
-    public function withMethod($method): self
+    public function withMethod(string $method): self
     {
-        if (!is_string($method)) {
-            throw new InvalidArgumentException("Invalid method '$method'");
-        }
-
         $this->method = strtoupper($method);
 
         return $this;

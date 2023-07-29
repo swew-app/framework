@@ -128,7 +128,7 @@ final class FeatureManager
         $commonView = self::$featurePath . DIRECTORY_SEPARATOR . 'Common' . DIRECTORY_SEPARATOR . 'view';
 
         if (!empty($controller)) {
-            $start = strpos($controller, $featDir . '\\') + strlen($featDir . '\\');
+            $start = (strpos($controller, $featDir . '\\') ?: 0) + strlen($featDir . '\\');
             $end = strpos($controller, '\\Controllers');
 
             /** @var int $end */

@@ -25,11 +25,14 @@ abstract class BaseDTO
 
         if ($data instanceof RequestWrapper) {
             $data = $data->getParsedBody();
-
-            d($data);
         }
 
-        $this->setDataWithCast($data);
+        if (is_array($data)) {
+            $this->setDataWithCast($data);
+        } else {
+            throw new \Exception('Passed invalid data');
+        }
+
 
         $this->validate();
 

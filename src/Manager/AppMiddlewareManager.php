@@ -14,8 +14,7 @@ final class AppMiddlewareManager
     public function __construct(
         private readonly array $middlewares,
         private readonly array $globalMiddlewares
-    )
-    {
+    ) {
     }
 
     public function getMiddlewaresForApp(string|Closure $class, string $method = '', array $middlewareNames = []): array
@@ -63,6 +62,7 @@ final class AppMiddlewareManager
     private function makeControllerMiddleware(string|Closure $class, string $method): MiddlewareInterface
     {
         if (is_callable($class)) {
+            /** @var Closure $class */
             return new CallableHandlerMiddleware($class);
         }
         return new ControllerHandlerMiddleware($class, $method);

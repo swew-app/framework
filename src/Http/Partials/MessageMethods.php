@@ -50,19 +50,19 @@ class MessageMethods
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return bool
      */
-    public function hasHeader($name): bool
+    public function hasHeader(string $name): bool
     {
         return isset($this->headerNames[$this->normalize($name)]);
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return array<array-key, string>
      */
-    public function getHeader($name): array
+    public function getHeader(string $name): array
     {
         $name = $this->normalize($name);
 
@@ -75,7 +75,7 @@ class MessageMethods
         return $this->headers[$name];
     }
 
-    public function getHeaderLine($name): string
+    public function getHeaderLine(string $name): string
     {
         return \implode(', ', $this->getHeader($name));
     }

@@ -6,6 +6,7 @@ namespace Swew\Framework\Http;
 
 use Exception;
 use Swew\Framework\Http\Partials\Stream;
+
 use function function_exists;
 use function litespeed_finish_request;
 
@@ -15,21 +16,17 @@ final class ResponseWrapper extends Response
 
     private bool $isTest = false;
 
-    public function __construct(int $status = 200, array $headers = [], mixed $body = null, string $version = '1.1', string $reason = null)
+    private function __construct(int $status = 200, array $headers = [], mixed $body = null, string $version = '1.1', string $reason = null)
     {
-        if (!is_null(self::$instance)) {
-            return self::$instance;
-        }
-
         parent::__construct($status, $headers, $body, $version, $reason);
 
         self::$instance = $this;
     }
 
-    public static function getInstance(): self
+    public static function getInstance(int $status = 200, array $headers = [], mixed $body = null, string $version = '1.1', string $reason = null): self
     {
         if (is_null(self::$instance)) {
-            return new self();
+            return new self($status, $headers, $body, $version, $reason);
         }
 
         return self::$instance;

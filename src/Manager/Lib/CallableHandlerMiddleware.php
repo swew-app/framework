@@ -14,11 +14,9 @@ use Swew\Framework\Http\Response;
 
 class CallableHandlerMiddleware implements MiddlewareInterface
 {
-
     public function __construct(
         readonly Closure $callback
-    )
-    {
+    ) {
     }
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

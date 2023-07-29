@@ -82,20 +82,27 @@ class SwewApp
             $container->useCache(true, $this->cacheDir . '/container_cache.php');
         }
 
-        $this->DEV = (bool)$env->get('APP_IS_DEV', false);
+        $this->DEV = (bool)$env->get('APP_IS_DEV', false) || $IS_TEST;
 
         $this->host = $env->get('host', '');
 
         res()->setTestEnv($IS_TEST);
 
         if ($hasErrorHandler && !$IS_TEST) {
-            set_error_handler(function ($e) {
-                Hook::call(HK::onError, $e);
-                $this->errorHandler($e);
+            set_error_handler(function (
+                int $errNum,
+                string $errorStr,
+                string $errfile = '',
+                int $errline = 0,
+                array $errcontext = []
+            ) {
+                Hook::call(HK::onError, func_get_args());
+                $this->errorHandler($errorStr, $errNum);
+                return true;
             });
 
-            set_exception_handler(function ($e) {
-                Hook::call(HK::onError, $e);
+            set_exception_handler(function (\Throwable $e) {
+                Hook::call(HK::onError, func_get_args());
                 $this->errorHandler($e);
             });
         }
@@ -114,7 +121,7 @@ class SwewApp
         if (is_null($route)) {
             // Route not found
             $route = [
-                'class' => fn() => $this->makeErrorPage(404, 'Page not found.')
+                'class' => fn () => $this->makeErrorPage(404, 'Page not found.')
             ];
         } else {
             FeatureManager::setController($route['class']);
@@ -169,6 +176,7 @@ class SwewApp
             $req->getUri()->getPath()
         );
 
+
         if (empty($routeItem['class']) || empty($routeItem['method'])) {
             return null;
         }
@@ -201,10 +209,10 @@ class SwewApp
         $pipeline->handle(req()); // Запускаяем цепочку Middlewares
     }
 
-    public function errorHandler(mixed $e): void
+    public function errorHandler(\Throwable|string $e, int $code = 0): void
     {
         // Handle error
-        if ($e instanceof Exception || $e instanceof Error) {
+        if ($e instanceof \Throwable) {
             throw $e;
         }
         die();

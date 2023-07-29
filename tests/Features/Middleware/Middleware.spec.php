@@ -58,7 +58,7 @@ it('Pipe process handler', function () {
 it('AppMiddlewareManager callable', function () {
     $manager = new AppMiddlewareManager([], []);
     $text = 'TEST TEST OF RESPONSE';
-    $mockCallback = fn() => $text;
+    $mockCallback = fn () => $text;
 
     $middlewares = $manager->getMiddlewaresForApp($mockCallback);
 

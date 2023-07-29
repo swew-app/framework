@@ -65,19 +65,14 @@ class Response extends MessageMethods implements ResponseInterface
         return $this->statusCode;
     }
 
-    public function withStatus($code, $reasonPhrase = ''): self
+    public function withStatus(int $code, string $reasonPhrase = ''): self
     {
-        if (!is_int($code) && !is_string($code)) {
-            throw new Exception('Status code has to be an integer');
-        }
-
-        $code = (int)$code;
         if ($code < 100 || $code > 599) {
             throw new Exception(\sprintf('Status code has to be an integer between 100 and 599. A status code of %d was given', $code));
         }
 
         $this->statusCode = $code;
-        if ((is_null($reasonPhrase) || '' === $reasonPhrase) && isset(self::PHRASES[$this->statusCode])) {
+        if ('' === $reasonPhrase && isset(self::PHRASES[$this->statusCode])) {
             $reasonPhrase = self::PHRASES[$this->statusCode];
         }
         $this->reasonPhrase = $reasonPhrase;

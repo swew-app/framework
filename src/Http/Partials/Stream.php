@@ -38,25 +38,10 @@ class Stream implements StreamInterface
         ],
     ];
 
-    private static ?Stream $instance = null;
-
     private function __construct()
     {
-        if (Stream::$instance) {
-            return Stream::$instance;
-        }
-        Stream::$instance = $this;
     }
 
-    /**
-     * Remove singleton
-     *
-     * @return void
-     */
-    public static function removeInstance(): void
-    {
-        self::$instance = null;
-    }
 
     /**
      * Creates a new PSR-7 stream.
@@ -106,7 +91,7 @@ class Stream implements StreamInterface
     /**
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         if ($this->isSeekable()) {
             $this->seek(0);

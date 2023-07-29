@@ -264,14 +264,17 @@ class Router
             return [];
         }
 
-        [$classAndMethod, $middlewares] = explode('|', $param[1], 2);
+        $items = explode('|', $param[1], 2);
 
-        $items = explode('@', $classAndMethod);
+        $classAndMethod = $items[0];
+        $middlewares = $items[1] ?? '';
 
-        $method = $items[1] ?? $this->getMethodByUri($httpMethod, $uri);
+        $classAndMethodArray = explode('@', $classAndMethod);
+
+        $method = $classAndMethodArray[1] ?? $this->getMethodByUri($httpMethod, $uri);
 
         return [
-            'class' => $items[0],
+            'class' => $classAndMethodArray[0],
             'method' => $method,
             'params' => $param[2] ?? [],
             'middlewares' => array_filter(explode('|', $middlewares)),
@@ -327,6 +330,6 @@ class Router
             $routeConfigPaths
         );
 
-        return array_merge(...$list);
+        return array_merge(...array_values($list));
     }
 }

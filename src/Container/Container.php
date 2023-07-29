@@ -74,7 +74,7 @@ class Container extends AbstractCacheState implements ContainerInterface
      * @param string $id
      * @param mixed $definition
      */
-    public function set(string $id, $definition): void
+    public function set(string $id, mixed $definition): void
     {
         if ($this->hasInstance($id)) {
             unset($this->instances[$id]);
@@ -162,7 +162,7 @@ class Container extends AbstractCacheState implements ContainerInterface
      * @param string $className
      * @return object
      *
-     * @throws ContainerException If unable to create object.
+     * @throws ContainerException|ReflectionException If unable to create object.
      * @psalm-suppress ArgumentTypeCoercion
      * @psalm-suppress MixedAssignment
      */
@@ -189,7 +189,6 @@ class Container extends AbstractCacheState implements ContainerInterface
         foreach ($constructor->getParameters() as $parameter) {
             if ($type = $parameter->getType()) {
                 /** @var ReflectionNamedType $type */
-
                 $typeName = $type->getName();
 
                 if (!$type->isBuiltin() && ($this->has($typeName) || class_exists($typeName))) {

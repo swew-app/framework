@@ -43,7 +43,7 @@ it('SetAndGetArrayDefinition', function () {
             'not_scalar' => [
                 'object' => new StdClass(),
                 'array' => ['array'],
-                'closure' => fn() => null,
+                'closure' => fn () => null,
             ],
         ],
     ]);
@@ -64,14 +64,14 @@ it('SetAndGetArrayWithPath', function () {
             'not_scalar' => [
                 'object' => new StdClass(),
                 'array' => ['array'],
-                'closure' => fn() => null,
+                'closure' => fn () => null,
             ],
         ],
     ]);
 
     expect($container->get('subData.nested.scalar.string'))->toBe('Leo');
 
-    expect(fn() => $container->get('subData.nested.wrong path'))
+    expect(fn () => $container->get('subData.nested.wrong path'))
         ->toThrow('`subData.nested.wrong path` is not set in container and is not a class name.');
 });
 

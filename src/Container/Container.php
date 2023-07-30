@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Container;
 
+use Error;
 use Exception;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
@@ -12,6 +13,7 @@ use ReflectionNamedType;
 use Swew\Framework\Base\AbstractCacheState;
 use Swew\Framework\Container\Exceptions\ContainerException;
 use Swew\Framework\Support\Arr;
+
 use function array_key_exists;
 use function class_exists;
 use function is_callable;
@@ -40,6 +42,45 @@ class Container extends AbstractCacheState implements ContainerInterface
     }
 
     /**
+     * Sets multiple definitions at once.
+     *
+     * @param array<string, mixed> $definitions
+     * @psalm-suppress MixedAssignment
+     */
+    public function setMultiple(array $definitions): void
+    {
+        foreach ($definitions as $id => $definition) {
+            $this->set($id, $definition);
+        }
+    }
+
+    /**
+     * Sets definition to the container.
+     *
+     * @param string $id
+     * @param mixed $definition
+     */
+    public function set(string $id, mixed $definition): void
+    {
+        if ($this->hasInstance($id)) {
+            unset($this->instances[$id]);
+        }
+
+        $this->definitions[$id] = $definition;
+    }
+
+    /**
+     * Returns `true` if the container can return an instance for this ID, otherwise `false`.
+     *
+     * @param string $id
+     * @return bool
+     */
+    private function hasInstance(string $id): bool
+    {
+        return array_key_exists($id, $this->instances);
+    }
+
+    /**
      * Gets instance by definition from the container by ID.
      *
      * @param string $id
@@ -59,7 +100,7 @@ class Container extends AbstractCacheState implements ContainerInterface
 
                 return $this->definitions[$id]($this);
 
-            } else if ($isString && class_exists($this->definitions[$id])) {
+            } elseif ($isString && class_exists($this->definitions[$id])) {
 
                 $definedInstance = $this->getNew($this->definitions[$id]);
 
@@ -100,21 +141,6 @@ class Container extends AbstractCacheState implements ContainerInterface
     }
 
     /**
-     * Sets definition to the container.
-     *
-     * @param string $id
-     * @param mixed $definition
-     */
-    public function set(string $id, mixed $definition): void
-    {
-        if ($this->hasInstance($id)) {
-            unset($this->instances[$id]);
-        }
-
-        $this->definitions[$id] = $definition;
-    }
-
-    /**
      * Always gets a new instance by definition from the container by ID.
      *
      * @param string $id
@@ -132,19 +158,6 @@ class Container extends AbstractCacheState implements ContainerInterface
         }
 
         return $instance;
-    }
-
-    /**
-     * Sets multiple definitions at once.
-     *
-     * @param array<string, mixed> $definitions
-     * @psalm-suppress MixedAssignment
-     */
-    public function setMultiple(array $definitions): void
-    {
-        foreach ($definitions as $id => $definition) {
-            $this->set($id, $definition);
-        }
     }
 
     /**
@@ -258,17 +271,6 @@ class Container extends AbstractCacheState implements ContainerInterface
         return $reflection->newInstanceArgs($arguments);
     }
 
-    /**
-     * Returns `true` if the container can return an instance for this ID, otherwise `false`.
-     *
-     * @param string $id
-     * @return bool
-     */
-    private function hasInstance(string $id): bool
-    {
-        return array_key_exists($id, $this->instances);
-    }
-
     // region [cache]
 
     private function hasCacheItem(string $className): bool
@@ -278,15 +280,6 @@ class Container extends AbstractCacheState implements ContainerInterface
         }
 
         return array_key_exists($className, $this->cachedData);
-    }
-
-    private function addCacheItem(string $className, array $args = []): void
-    {
-        $this->cachedData[$className] = array_map(function ($item) {
-            return is_object($item) ? get_class($item) : $item;
-        }, $args);
-
-        $this->isNeedWriteCache = true;
     }
 
     private function getCacheItem(string $className): object
@@ -301,11 +294,20 @@ class Container extends AbstractCacheState implements ContainerInterface
 
         try {
             return new $className(...$args);
-        } catch (\Error $e) {
+        } catch (Error $e) {
             $this->clearCache();
 
             throw $e;
         }
+    }
+
+    private function addCacheItem(string $className, array $args = []): void
+    {
+        $this->cachedData[$className] = array_map(function ($item) {
+            return is_object($item) ? get_class($item) : $item;
+        }, $args);
+
+        $this->isNeedWriteCache = true;
     }
 
     // endregion

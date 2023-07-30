@@ -26,7 +26,8 @@ class SwewApp
     protected string $rootPath = '';
     protected string $envFilePath = '';
     protected ?string $cacheDir = null;
-    protected ?string $preloadClass = null;
+    protected string $preloadClass = '';
+    protected string $containerAutoloadConfigDir = '';
     /**
      * Path to the features folder
      *
@@ -60,8 +61,12 @@ class SwewApp
 
     public function __construct()
     {
-        if (!is_null($this->preloadClass)) {
-            new $this->preloadClass($this);
+        if (!empty($this->preloadClass)) {
+            if (class_exists($this->preloadClass)) {
+                new $this->preloadClass;
+            } else {
+                throw new \LogicException("Pass class to preload, '$this->preloadClass' not class");
+            }
         }
 
         Hook::call(HK::beforeInit, $this);
@@ -69,6 +74,10 @@ class SwewApp
         $this->env = env();
         $this->env->loadGlobalEnvs();
         $this->container = container();
+
+        if (!empty($this->containerAutoloadConfigDir)) {
+            $this->container->loadConfigFiles($this->containerAutoloadConfigDir);
+        }
 
         $IS_TEST = (bool)$this->env->get('__TEST__', false);
 

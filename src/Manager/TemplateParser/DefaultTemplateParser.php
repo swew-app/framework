@@ -8,7 +8,7 @@ class DefaultTemplateParser extends AbstractTemplateParser
 {
     public function getExtension(): string
     {
-        return '*';
+        return 'php';
     }
 
     public function render(array $viewFolders, string $filePath, array $data = []): string

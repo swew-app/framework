@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e5d1f5100b2de4c839d97b257b3a4504",
+    "content-hash": "4d8d03189512351cd44225c08396517d",
     "packages": [
         {
             "name": "nikic/fast-route",
@@ -488,16 +488,16 @@
         },
         {
             "name": "swew/cli",
-            "version": "v1.1.7",
+            "version": "v1.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swew-app/cli.git",
-                "reference": "376bb07839653210e7a2cb3cc8d6ed952ee10e9f"
+                "reference": "5fdbf7f7388225cc02453da3562a20c203cf34b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swew-app/cli/zipball/376bb07839653210e7a2cb3cc8d6ed952ee10e9f",
-                "reference": "376bb07839653210e7a2cb3cc8d6ed952ee10e9f",
+                "url": "https://api.github.com/repos/swew-app/cli/zipball/5fdbf7f7388225cc02453da3562a20c203cf34b5",
+                "reference": "5fdbf7f7388225cc02453da3562a20c203cf34b5",
                 "shasum": ""
             },
             "require": {
@@ -549,22 +549,22 @@
             ],
             "support": {
                 "issues": "https://github.com/swew-app/cli/issues",
-                "source": "https://github.com/swew-app/cli/tree/v1.1.7"
+                "source": "https://github.com/swew-app/cli/tree/v1.1.8"
             },
-            "time": "2023-07-23T21:30:43+00:00"
+            "time": "2023-07-30T14:21:18+00:00"
         },
         {
             "name": "swew/dd",
-            "version": "v1.3.0",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swew-app/dd.git",
-                "reference": "84190be93662296d35dbfb4843714f5deabf8f26"
+                "reference": "184e62b6dcb302531bdd192e253fc692b60ef9f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swew-app/dd/zipball/84190be93662296d35dbfb4843714f5deabf8f26",
-                "reference": "84190be93662296d35dbfb4843714f5deabf8f26",
+                "url": "https://api.github.com/repos/swew-app/dd/zipball/184e62b6dcb302531bdd192e253fc692b60ef9f2",
+                "reference": "184e62b6dcb302531bdd192e253fc692b60ef9f2",
                 "shasum": ""
             },
             "type": "library",
@@ -586,22 +586,22 @@
             "description": "The simplest way to debug variables. As in Laravel.",
             "support": {
                 "issues": "https://github.com/swew-app/dd/issues",
-                "source": "https://github.com/swew-app/dd/tree/v1.3.0"
+                "source": "https://github.com/swew-app/dd/tree/v1.3.1"
             },
-            "time": "2023-03-19T15:14:34+00:00"
+            "time": "2023-07-30T13:55:18+00:00"
         },
         {
             "name": "swew/test",
-            "version": "v1.4.12",
+            "version": "v1.4.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swew-app/test.git",
-                "reference": "77c24542abe96776ac11b6fdba2134426f4c17f5"
+                "reference": "03fdf561f1d6a3ce9f285a96dadb4374ed05106a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swew-app/test/zipball/77c24542abe96776ac11b6fdba2134426f4c17f5",
-                "reference": "77c24542abe96776ac11b6fdba2134426f4c17f5",
+                "url": "https://api.github.com/repos/swew-app/test/zipball/03fdf561f1d6a3ce9f285a96dadb4374ed05106a",
+                "reference": "03fdf561f1d6a3ce9f285a96dadb4374ed05106a",
                 "shasum": ""
             },
             "require": {
@@ -657,9 +657,9 @@
             ],
             "support": {
                 "issues": "https://github.com/swew-app/test/issues",
-                "source": "https://github.com/swew-app/test/tree/v1.4.12"
+                "source": "https://github.com/swew-app/test/tree/v1.4.13"
             },
-            "time": "2023-07-30T12:16:53+00:00"
+            "time": "2023-07-30T13:14:57+00:00"
         }
     ],
     "aliases": [],

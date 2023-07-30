@@ -124,6 +124,7 @@ class Container extends AbstractCacheState implements ContainerInterface
             return $subDef;
         }
 
+        // If we don't find anything, we try to create
         $this->instances[$id] = $this->getNew($id);
 
         return $this->instances[$id];
@@ -270,6 +271,31 @@ class Container extends AbstractCacheState implements ContainerInterface
 
         return $reflection->newInstanceArgs($arguments);
     }
+
+    // region [autoload files]
+
+    public function loadConfigFiles(string $pathToConfigDir): void
+    {
+        $path = rtrim($pathToConfigDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . '*.php';
+
+        $files = glob($path, GLOB_ERR);
+
+        foreach ($files as $file) {
+            $name = basename($file, '.php');
+
+            $data = require $file;
+
+            if (!is_array($data)) {
+                throw new \LogicException("The Container tried to load the '$file' file, but did not get the array");
+            }
+
+            $this->set($name, $data);
+        }
+
+
+    }
+
+    // endregion
 
     // region [cache]
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Manager;
 
+use LogicException;
 use Swew\Framework\Base\BaseDTO;
 use Swew\Framework\Manager\TemplateParser\AbstractTemplateParser;
 
@@ -32,13 +33,26 @@ final class FeatureManager
         $paths = self::getFeaturesViewPaths();
 
         foreach ($paths as $path) {
-            $filePath = $path . DIRECTORY_SEPARATOR . $file;
-            if (file_exists($filePath)) {
-                return $filePath;
+            $filePathDefault = $path . DIRECTORY_SEPARATOR . $file;
+
+            $filePaths = [
+                $filePathDefault
+            ];
+
+            $extensions = array_keys(self::$templateParser);
+
+            foreach ($extensions as $ext) {
+                $filePaths[] = $filePathDefault . '.' . $ext;
+            }
+
+            foreach ($filePaths as $filePath) {
+                if (file_exists($filePath)) {
+                    return $filePath;
+                }
             }
         }
 
-        throw new \LogicException("File '$file'\nnot found in:\n- " . implode("\n- ", $paths));
+        throw new LogicException("File '$file'\nnot found in:\n- " . implode("\n- ", $paths));
     }
 
     // Templates for response
@@ -68,7 +82,7 @@ final class FeatureManager
         $viewName = res()->getViewFileName();
 
         if (is_null($data) && empty($viewName)) {
-            throw new \LogicException('Empty response');
+            throw new LogicException('Empty response');
         }
 
         if (req()->isAjax() || empty($viewName)) {
@@ -100,10 +114,14 @@ final class FeatureManager
 
     public static function render(string $filepath, array $data): string
     {
-        $extension = pathinfo($filepath, PATHINFO_EXTENSION);
+        $extension = self::findMatchingExtension($filepath);
+
+        if (is_null($extension)) {
+            throw  new LogicException("Can't parse extension from file '$filepath'");
+        }
 
         if (count(self::$templateParser) === 0) {
-            throw new \LogicException('Empty renrderer. Please set with "FeatureManager::setTemplateParser(...)"');
+            throw new LogicException('Empty renderer. Please set with "FeatureManager::setTemplateParser(...)"');
         }
 
         if (isset(self::$templateParser[$extension])) {
@@ -119,6 +137,21 @@ final class FeatureManager
             $filepath,
             $data
         );
+    }
+
+    public static function findMatchingExtension(string $filename): ?string
+    {
+        $extensions = array_keys(self::$templateParser);
+
+        foreach ($extensions as $extension) {
+            // Check if the extension is present at the end of the filename
+            if (str_ends_with($filename, $extension)) {
+                return $extension;
+            }
+        }
+
+        // Return null if no match is found
+        return null;
     }
 
     public static function getFeaturesViewPaths(): array

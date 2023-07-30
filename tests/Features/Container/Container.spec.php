@@ -195,6 +195,13 @@ it('AutoWiring', function () {
     expect('string')->toBe($autoWiring->getString());
 });
 
+it('ContainerLoadFilesFromDir', function () {
+    $container = new Container();
+    $container->loadConfigFiles(__DIR__ . '/TestConfigFiles');
+
+    expect($container->get('db-config.name'))->toBe('best_test_bd');
+});
+
 it('Cache', function () {
     $container = new Container();
     $item1 = $container->get(AutoWiringSimple::class);

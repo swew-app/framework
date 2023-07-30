@@ -102,6 +102,12 @@ final class ResponseWrapper extends Response
         return $this->withBody($this->stream);
     }
 
+    /**
+     * Need to prevent content rendering during tests
+     *
+     * @param bool $isTest
+     * @return void
+     */
     public function setTestEnv(bool $isTest): void
     {
         $this->isTest = $isTest;

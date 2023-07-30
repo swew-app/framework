@@ -13,5 +13,5 @@ enum HK
     case afterHandlePipeline;
     case beforeSend;
     case afterSend;
-    case onError;
+    case onException;
 }

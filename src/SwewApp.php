@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Swew\Framework;
 
-use Error;
 use Exception;
 use Swew\Framework\Container\Container;
 use Swew\Framework\Env\EnvContainer;
@@ -14,17 +13,20 @@ use Swew\Framework\Manager\AppMiddlewareManager;
 use Swew\Framework\Manager\FeatureManager;
 use Swew\Framework\Middleware\MiddlewarePipeline;
 use Swew\Framework\Router\Router;
+use Throwable;
 
 class SwewApp
 {
-    protected readonly bool $DEV;
+    public readonly bool $DEV;
 
     public string $host = '';
-
+    public ?Router $router = null;
+    public readonly EnvContainer $env;
+    public readonly Container $container;
+    protected string $rootPath = '';
     protected string $envFilePath = '';
-
     protected ?string $cacheDir = null;
-
+    protected ?string $preloadClass = null;
     /**
      * Path to the features folder
      *
@@ -32,7 +34,6 @@ class SwewApp
      *  $features = __DIR__ . '/../Features';
      */
     protected string $features = '';
-
     /**
      * Path to router files
      *
@@ -42,7 +43,6 @@ class SwewApp
      * ];
      */
     protected array $routeFiles = [];
-
     /**
      * @example
      *  $middlewares = [
@@ -50,7 +50,6 @@ class SwewApp
      *  ];
      */
     protected array $middlewares = [];
-
     /**
      * List of Middleware names that apply to all routers
      *
@@ -59,51 +58,45 @@ class SwewApp
      */
     protected array $globalMiddlewares = [];
 
-    public ?Router $router = null;
-
-    public function __construct(bool $hasErrorHandler = true)
+    public function __construct()
     {
-        Hook::call(HK::beforeInit);
-
-        /** @var EnvContainer $env */
-        $env = env();
-        $env->loadGlobalEnvs();
-        if (!empty($this->envFilePath)) {
-            $env->loadFromFile($this->envFilePath);
+        if (!is_null($this->preloadClass)) {
+            new $this->preloadClass($this);
         }
 
-        /** @var Container $container */
-        $container = container();
+        Hook::call(HK::beforeInit, $this);
 
-        $IS_TEST = (bool)$env->get('__TEST__', false);
+        $this->env = env();
+        $this->env->loadGlobalEnvs();
+        $this->container = container();
+
+        $IS_TEST = (bool)$this->env->get('__TEST__', false);
 
         if (!is_null($this->cacheDir) && !$IS_TEST) {
-            $env->useCache(true, $this->cacheDir . '/env_cache.php');
-            $container->useCache(true, $this->cacheDir . '/container_cache.php');
+            $this->env->useCache(true, $this->cacheDir . '/env_cache.php');
+            $this->container->useCache(true, $this->cacheDir . '/container_cache.php');
         }
 
-        $this->DEV = (bool)$env->get('APP_IS_DEV', false) || $IS_TEST;
+        if (
+            !empty($this->envFilePath) &&
+            !$this->env->get('__LOADED_ENV_FILE__', false)
+        ) {
+            // If we use cache, this block will be skipped
+            $this->env->loadFromFile($this->envFilePath);
+            $this->env->set('__LOADED_ENV_FILE__', true);
+        }
 
-        $this->host = $env->get('host', '');
+        $this->env->set('APP_ROOT', realpath($this->rootPath));
+
+        $this->DEV = (bool)$this->env->get('APP_IS_DEV', false) || $IS_TEST;
+
+        $this->host = $this->env->get('host', '');
 
         res()->setTestEnv($IS_TEST);
 
-        if ($hasErrorHandler && !$IS_TEST) {
-            set_error_handler(function (
-                int $errNum,
-                string $errorStr,
-                string $errfile = '',
-                int $errline = 0,
-                array $errcontext = []
-            ) {
-                Hook::call(HK::onError, func_get_args());
-                $this->errorHandler($errorStr, $errNum);
-                return true;
-            });
-
-            set_exception_handler(function (\Throwable $e) {
-                Hook::call(HK::onError, func_get_args());
-                $this->errorHandler($e);
+        if (!$IS_TEST) {
+            set_exception_handler(function (Throwable $e) {
+                $this->exceptionHandler($e);
             });
         }
 
@@ -112,33 +105,30 @@ class SwewApp
 
     final public function run(): void
     {
-        Hook::call(HK::beforeRun);
+        Hook::call(HK::beforeRun, $this);
 
         $this->initRouter();
 
         $route = $this->findRoute();
 
         if (is_null($route)) {
-            // Route not found
-            $route = [
-                'class' => fn () => $this->makeErrorPage(404, 'Page not found.')
-            ];
+            $this->makeErrorPage(404, 'Page not found.');
         } else {
             FeatureManager::setController($route['class']);
-        }
 
-        Hook::call(HK::beforeHandlePipeline);
+            Hook::call(HK::beforeHandlePipeline);
 
-        $this->runPipeline($route);
+            $this->runPipeline($route);
 
-        Hook::call(HK::afterHandlePipeline);
+            Hook::call(HK::afterHandlePipeline);
 
-        $statusCode = res()->getStatusCode();
+            $statusCode = res()->getStatusCode();
 
-        if (200 <= $statusCode && $statusCode < 300) {
-            res()->getBody()->write(FeatureManager::getPreparedResponse());
-        } else {
-            $this->makeErrorPage($statusCode);
+            if ($statusCode >= 200 && $statusCode < 300) {
+                res()->getBody()->write(FeatureManager::getPreparedResponse());
+            } else {
+                $this->makeErrorPage($statusCode);
+            }
         }
 
         Hook::call(HK::beforeSend);
@@ -201,7 +191,7 @@ class SwewApp
         $middlewares = $appMiddlewareManager->getMiddlewaresForApp(
             $route['class'],
             $route['method'],
-            $route['middlewares']
+            $route['middlewares'] ?? []
         );
 
         $pipeline = new MiddlewarePipeline($middlewares);
@@ -209,24 +199,26 @@ class SwewApp
         $pipeline->handle(req()); // Запускаяем цепочку Middlewares
     }
 
-    public function errorHandler(\Throwable|string $e, int $code = 0): void
-    {
-        // Handle error
-        if ($e instanceof \Throwable) {
-            throw $e;
-        }
-        die();
-    }
-
     /**
-     * Error page for production
+     * Method for displaying the error page
+     *
+     * @param int $status
+     * @param string $message
+     * @return void
      */
     public function makeErrorPage(int $status, string $message = ''): void
     {
-        res($message)->withStatus($status);
-
-        if ($status == 404) {
-            res()->view('error/404.php');
+        if ($status === 404) {
+            res('Page not found')->view('404.php');
         }
+
+        if ($status >= 500) {
+            res('Page not found')->view('500.php');
+        }
+    }
+
+    public function exceptionHandler(Throwable $exception): void
+    {
+        throw $exception;
     }
 }

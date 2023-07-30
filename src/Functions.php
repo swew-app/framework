@@ -61,3 +61,14 @@ function responseState(mixed &$data = null): mixed
 
     return $storeData;
 }
+
+// #region [ helpers ]
+
+if (!function_exists('public_path')) {
+    function public_path($path = ''): string
+    {
+        return env('APP_ROOT') . DIRECTORY_SEPARATOR . env('APP_PUBLIC_DIR') . ($path ? DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR) : $path);
+    }
+}
+
+// #endregion

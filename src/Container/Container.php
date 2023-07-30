@@ -11,7 +11,7 @@ use ReflectionException;
 use ReflectionNamedType;
 use Swew\Framework\Base\AbstractCacheState;
 use Swew\Framework\Container\Exceptions\ContainerException;
-
+use Swew\Framework\Support\Arr;
 use function array_key_exists;
 use function class_exists;
 use function is_callable;
@@ -50,6 +50,37 @@ class Container extends AbstractCacheState implements ContainerInterface
     {
         if ($this->hasInstance($id)) {
             return $this->instances[$id];
+        }
+
+        if ($this->has($id)) {
+            $isString = is_string($this->definitions[$id]);
+
+            if ($isString && is_callable($this->definitions[$id])) {
+
+                return $this->definitions[$id]($this);
+
+            } else if ($isString && class_exists($this->definitions[$id])) {
+
+                $definedInstance = $this->getNew($this->definitions[$id]);
+
+                if (is_callable($definedInstance)) {
+
+                    return $this->instances[$id] = $definedInstance();
+
+                }
+
+                return $this->instances[$id] = $definedInstance;
+            } else {
+
+                return $this->definitions[$id];
+
+            }
+        }
+
+        $subDef = Arr::get($this->definitions, $id);
+
+        if (isset($subDef)) {
+            return $subDef;
         }
 
         $this->instances[$id] = $this->getNew($id);

@@ -43,11 +43,36 @@ it('SetAndGetArrayDefinition', function () {
             'not_scalar' => [
                 'object' => new StdClass(),
                 'array' => ['array'],
-                'closure' => fn () => null,
+                'closure' => fn() => null,
             ],
         ],
     ]);
     expect($definition)->toBe($container->get($id));
+});
+
+it('SetAndGetArrayWithPath', function () {
+    $container = new Container();
+
+    $container->set($id = 'subData', $definition = [
+        'nested' => [
+            'scalar' => [
+                'integer' => 5,
+                'float' => 3.7,
+                'boolean' => false,
+                'string' => 'Leo',
+            ],
+            'not_scalar' => [
+                'object' => new StdClass(),
+                'array' => ['array'],
+                'closure' => fn() => null,
+            ],
+        ],
+    ]);
+
+    expect($container->get('subData.nested.scalar.string'))->toBe('Leo');
+
+    expect(fn() => $container->get('subData.nested.wrong path'))
+        ->toThrow('`subData.nested.wrong path` is not set in container and is not a class name.');
 });
 
 it('SetAndGetObjectAndClosureDefinitionBasicUsage', function () {
@@ -117,7 +142,7 @@ it('ConstructorWithPassDefinitions', function () {
     expect($arrayDefinition)->toBe($container->get($arrayId));
     expect($objectDefinition)->toBe($container->get($objectId));
 
-    expect($container->get($closureId))->toBeNull();
+    expect(is_callable($container->get($closureId)))->toBe(true);
 });
 
 it('SetMultiple', function () {
@@ -141,7 +166,7 @@ it('SetMultiple', function () {
     expect($arrayDefinition)->toBe($container->get($arrayId));
     expect($objectDefinition)->toBe($container->get($objectId));
 
-    expect($container->get($closureId))->toBeNull();
+    expect(is_callable($container->get($closureId)))->toBe(true);
 });
 
 it('Has', function () {

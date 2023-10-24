@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4d8d03189512351cd44225c08396517d",
+    "content-hash": "74c37c9356831d9cefb5651d4621c934",
     "packages": [
         {
             "name": "nikic/fast-route",
@@ -391,16 +391,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.10.26",
+            "version": "1.10.39",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "5d660cbb7e1b89253a47147ae44044f49832351f"
+                "reference": "d9dedb0413f678b4d03cbc2279a48f91592c97c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/5d660cbb7e1b89253a47147ae44044f49832351f",
-                "reference": "5d660cbb7e1b89253a47147ae44044f49832351f",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/d9dedb0413f678b4d03cbc2279a48f91592c97c4",
+                "reference": "d9dedb0413f678b4d03cbc2279a48f91592c97c4",
                 "shasum": ""
             },
             "require": {
@@ -449,20 +449,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-07-19T12:44:37+00:00"
+            "time": "2023-10-17T15:46:26+00:00"
         },
         {
             "name": "psalm/phar",
-            "version": "5.13.1",
+            "version": "5.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/psalm/phar.git",
-                "reference": "2107e3e98b25b93cb366dc601d1190af102431a5"
+                "reference": "19dde3eba5901ff50ca43a5e4c43540f097e0511"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/phar/zipball/2107e3e98b25b93cb366dc601d1190af102431a5",
-                "reference": "2107e3e98b25b93cb366dc601d1190af102431a5",
+                "url": "https://api.github.com/repos/psalm/phar/zipball/19dde3eba5901ff50ca43a5e4c43540f097e0511",
+                "reference": "19dde3eba5901ff50ca43a5e4c43540f097e0511",
                 "shasum": ""
             },
             "require": {
@@ -482,9 +482,9 @@
             "description": "Composer-based Psalm Phar",
             "support": {
                 "issues": "https://github.com/psalm/phar/issues",
-                "source": "https://github.com/psalm/phar/tree/5.13.1"
+                "source": "https://github.com/psalm/phar/tree/5.15.0"
             },
-            "time": "2023-06-27T17:20:37+00:00"
+            "time": "2023-08-21T03:20:52+00:00"
         },
         {
             "name": "swew/cli",

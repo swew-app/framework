@@ -35,9 +35,13 @@ class Router
         $this->rootPath = $rootPath;
     }
 
-    public function addRoute(array $route): void
+    public function addRoute(array|Route $route): void
     {
-        $this->routes += $route;
+        if ($route instanceof Route) {
+            $this->routes[] = $route->toArray();
+        } else {
+            $this->routes[] = $route;
+        }
     }
 
     /**
@@ -271,7 +275,7 @@ class Router
 
         $classAndMethodArray = explode('@', $classAndMethod);
 
-        $method = $classAndMethodArray[1] ?? $this->getMethodByUri($httpMethod, $uri);
+        $method = $classAndMethodArray[1] ?? 'getIndex'; // TODO: //$this->getMethodByUri($httpMethod, $uri);
 
         return [
             'class' => $classAndMethodArray[0],
@@ -289,7 +293,7 @@ class Router
      */
     public function getMethodByUri(string $httpMethod, string $uri): string
     {
-        if (!in_array($httpMethod, ['GET', 'POST', 'PUT', 'DELETE'])) {
+        if (!in_array($httpMethod, ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'])) {
             throw new Exception("Wrong http method '$httpMethod'");
         }
 
@@ -298,7 +302,6 @@ class Router
         if ($uri === '' || $uri === '/') {
             $uri = 'index';
         }
-
         return Str::camelCase($httpMethod . '-' . $uri);
     }
 

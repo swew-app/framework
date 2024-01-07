@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Swew\Framework\Router\Route;
 use Swew\Framework\Router\Router;
 
 include_once 'stub/router_stubs.php';
@@ -174,4 +175,23 @@ it('Route::getRoutesFromPaths [1]', function () {
     ]);
 
     expect($list)->toBe(routerStub('mergedConfig'));
+});
+
+it('Route: add by Route class', function () {
+    $router = new Router([]);
+    $route = new Route();
+    $route->name('single-route');
+    $route->path('/single/page');
+    $route->controller('DemoControllerStub');
+
+    $router->addRoute($route);
+
+    $item = $router->getRoute('GET', '/single/page');
+
+    expect($item)->toBe([
+        'class' => 'DemoControllerStub',
+        'method' => 'getIndex',
+        'params' => [],
+        'middlewares' => [],
+    ]);
 });

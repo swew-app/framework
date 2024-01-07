@@ -2,14 +2,13 @@
     "test": {
         "preloadFile": "",
         "paths": [
-            "**/*.spec.php",
-            "**/*.test.php"
+            "*/src/*.spec.php"
         ],
-        "bail": false,
+        "bail": true,
         "log": {
-            "traceReverse": true,
             "logo": true,
             "color": true,
+            "traceReverse": true,
             "clear": true,
             "short": false
         }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Swew\Framework;
 
 use Exception;
+use Swew\Framework\Container\__tests__;
 use Swew\Framework\Container\Container;
 use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Hook\HK;

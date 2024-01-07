@@ -1,5 +1,7 @@
 <?php
 
+require_once 'ControllerStub.php';
+
 use Router\stub\ControllerStub;
 
 /**

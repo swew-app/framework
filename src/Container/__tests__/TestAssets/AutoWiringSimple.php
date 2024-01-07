@@ -1,6 +1,6 @@
 <?php
 
-namespace Swew\Testing\Features\Container\TestAssets;
+namespace Swew\Framework\Container\__tests__\TestAssets;
 
 class AutoWiringSimple
 {

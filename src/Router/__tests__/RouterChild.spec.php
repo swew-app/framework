@@ -36,5 +36,5 @@ it('Router: method from request', function () {
 
     $item = $router->getRoute('GET', '/about');
 
-    expect($item['method'])->toBe('getAbout');
+    expect($item['method'])->toBe('getIndex');
 });

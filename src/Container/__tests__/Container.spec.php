@@ -1,11 +1,14 @@
 <?php
 
+namespace Swew\Framework\Container\__tests__;
+
+use stdClass;
+use Swew\Framework\Container\__tests__\TestAssets\AutoWiring;
+use Swew\Framework\Container\__tests__\TestAssets\AutoWiringSimple;
+use Swew\Framework\Container\__tests__\TestAssets\DummyData;
+use Swew\Framework\Container\__tests__\TestAssets\DummyEmpty;
+use Swew\Framework\Container\__tests__\TestAssets\DummyName;
 use Swew\Framework\Container\Container;
-use Swew\Testing\Features\Container\TestAssets\AutoWiring;
-use Swew\Testing\Features\Container\TestAssets\AutoWiringSimple;
-use Swew\Testing\Features\Container\TestAssets\DummyData;
-use Swew\Testing\Features\Container\TestAssets\DummyEmpty;
-use Swew\Testing\Features\Container\TestAssets\DummyName;
 
 it('SetAndGetScalarDefinition', function () {
     $container = new Container();
@@ -43,7 +46,7 @@ it('SetAndGetArrayDefinition', function () {
             'not_scalar' => [
                 'object' => new StdClass(),
                 'array' => ['array'],
-                'closure' => fn () => null,
+                'closure' => fn() => null,
             ],
         ],
     ]);
@@ -64,14 +67,14 @@ it('SetAndGetArrayWithPath', function () {
             'not_scalar' => [
                 'object' => new StdClass(),
                 'array' => ['array'],
-                'closure' => fn () => null,
+                'closure' => fn() => null,
             ],
         ],
     ]);
 
     expect($container->get('subData.nested.scalar.string'))->toBe('Leo');
 
-    expect(fn () => $container->get('subData.nested.wrong path'))
+    expect(fn() => $container->get('subData.nested.wrong path'))
         ->toThrow('`subData.nested.wrong path` is not set in container and is not a class name.');
 });
 
@@ -132,7 +135,7 @@ it('ConstructorWithPassDefinitions', function () {
         $stringId = 'string' => $stringDefinition = 'string',
         $arrayId = 'array' => $arrayDefinition = ['array'],
         $objectId = 'object' => $objectDefinition = new StdClass(),
-        $closureId = 'closure' => fn () => null,
+        $closureId = 'closure' => fn() => null,
     ]);
 
     expect($integerDefinition)->toBe($container->get($integerId));
@@ -154,7 +157,7 @@ it('SetMultiple', function () {
         $stringId = 'string' => $stringDefinition = 'string',
         $arrayId = 'array' => $arrayDefinition = ['array'],
         $objectId = 'object' => $objectDefinition = new StdClass(),
-        $closureId = 'closure' => fn () => null,
+        $closureId = 'closure' => fn() => null,
     ];
 
     $container->setMultiple($definitions);

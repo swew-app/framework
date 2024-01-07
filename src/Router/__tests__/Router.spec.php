@@ -195,3 +195,24 @@ it('Route: add by Route class', function () {
         'middlewares' => [],
     ]);
 });
+
+it('Route: Get method path', function () {
+    $router = new Router([]);
+    $route = new Route();
+    $route->name('single-route');
+    $route->path('/single/page');
+    $route->controller('DemoSecondControllerStub');
+    $route->methodAsPath(true);
+
+    $router->addRoute($route);
+
+//    $item = $router->getRoute('GET', '/single/page');
+    $item = $router->getRoute('GET', '/single/page/load-data');
+
+    expect($item)->toBe([
+        'class' => 'DemoSecondControllerStub',
+        'method' => 'getLoadData',
+        'params' => [],
+        'middlewares' => [],
+    ]);
+});

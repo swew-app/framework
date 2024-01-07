@@ -16,6 +16,8 @@ class Route
 
     private array $children = [];
 
+    public bool $methodAsPath = false;
+
     public bool $isDev = false;
 
     public function name(string $name): self
@@ -64,6 +66,12 @@ class Route
         return $this;
     }
 
+    public function methodAsPath(bool $methodAsPath): self
+    {
+        $this->methodAsPath = $methodAsPath;
+        return $this;
+    }
+
     public function isDev(bool $isDev = true): self
     {
         $this->isDev = $isDev;
@@ -89,6 +97,10 @@ class Route
 
         if ($this->isDev) {
             $route['dev'] = true;
+        }
+
+        if ($this->methodAsPath) {
+            $route['methodAsPath'] = true;
         }
 
         if (count($keys) > 0) {

@@ -7,7 +7,6 @@ namespace Swew\Framework\Router;
 use Exception;
 use FastRoute\Dispatcher as FastRouteDispatcher;
 use Swew\Framework\Support\Str;
-
 use function FastRoute\simpleDispatcher;
 
 class Router
@@ -18,8 +17,9 @@ class Router
         'controller',
         'middlewares',
         'method',
-        'dev',
         'children',
+        'dev',
+        'methodAsPath',
     ];
 
     private string $rootPath = '/';
@@ -235,10 +235,10 @@ class Router
             foreach ($routes as $route) {
                 $method = $route['method'] ?? 'GET|HEAD|OPTIONS';
 
-                # /Path/To/Class::class|methodName OR /Path/To/Class::class
+                # /Path/To/Class::class|methodName OR /Path/To/Class::class OR /Path/To/Class::class@_method_as_path_
                 $handlerItem = is_array($route['controller'])
                     ? implode('@', $route['controller'])
-                    : $route['controller'];
+                    : (empty($route['methodAsPath']) ? $route['controller'] : $route['controller'] . '@_method_as_path_');
 
                 $middlewares = $route['middlewares'] ?? [];
                 $handlerItem = $handlerItem . '|' . implode('|', $middlewares);
@@ -251,6 +251,19 @@ class Router
         $uri = $this->normalizeUri($uri);
 
         $found = $dispatcher->dispatch($httpMethod, $uri);
+
+        if ($found[0] !== FastRouteDispatcher::FOUND) {
+            // Empty
+            $lastSlashPosition = strrpos($uri, '/');
+            if ($lastSlashPosition) {
+                $firstPart = substr($uri, 0, $lastSlashPosition);
+                $lastPart = substr($uri, $lastSlashPosition + 1);
+
+                $found = $dispatcher->dispatch($httpMethod, $firstPart);
+
+                return $this->toRouteFromFastRoute($found, $httpMethod, $lastPart);
+            }
+        }
 
         return $this->toRouteFromFastRoute($found, $httpMethod, $uri);
     }
@@ -275,7 +288,11 @@ class Router
 
         $classAndMethodArray = explode('@', $classAndMethod);
 
-        $method = $classAndMethodArray[1] ?? 'getIndex'; // TODO: //$this->getMethodByUri($httpMethod, $uri);
+        $method = $classAndMethodArray[1] ?? 'getIndex';
+
+        if ($method === '_method_as_path_') {
+            $method = $this->getMethodByUri($httpMethod, $uri);
+        }
 
         return [
             'class' => $classAndMethodArray[0],

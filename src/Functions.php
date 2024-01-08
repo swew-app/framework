@@ -71,4 +71,13 @@ if (!function_exists('public_path')) {
     }
 }
 
+if (!function_exists('cache_path')) {
+    function cache_path($path = ''): string
+    {
+        return env('APP_ROOT') . DIRECTORY_SEPARATOR . env('APP_CACHE_DIR') . ($path ? DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR) : $path);
+    }
+}
+
+
+
 // #endregion

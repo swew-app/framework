@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Swew\Framework\AppTest;
 
 use Exception;
-use LogicException;
 use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Http\ResponseWrapper;
@@ -59,7 +58,7 @@ class AppTest
     public function addRoute(array $route): static
     {
         if (is_null($this->app->router)) {
-            throw  new LogicException('Router not initialized');
+            throw  new \LogicException('Router not initialized');
         }
 
         $this->app->router->addRoute($route);

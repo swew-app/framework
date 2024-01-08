@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Manager;
 
-use LogicException;
 use Swew\Framework\Base\BaseDTO;
 use Swew\Framework\Manager\TemplateParser\AbstractTemplateParser;
 
@@ -52,7 +51,7 @@ final class FeatureManager
             }
         }
 
-        throw new LogicException("File '$file'\nnot found in:\n- " . implode("\n- ", $paths));
+        throw new \LogicException("File '$file'\nnot found in:\n- " . implode("\n- ", $paths));
     }
 
     // Templates for response
@@ -82,7 +81,7 @@ final class FeatureManager
         $viewName = res()->getViewFileName();
 
         if (is_null($data) && empty($viewName)) {
-            throw new LogicException('Empty response');
+            throw new \LogicException('Empty response');
         }
 
         if (req()->isAjax() || empty($viewName)) {
@@ -117,11 +116,11 @@ final class FeatureManager
         $extension = self::findMatchingExtension($filepath);
 
         if (is_null($extension)) {
-            throw  new LogicException("Can't parse extension from file '$filepath'");
+            throw  new \LogicException("Can't parse extension from file '$filepath'");
         }
 
         if (count(self::$templateParser) === 0) {
-            throw new LogicException('Empty renderer. Please set with "FeatureManager::setTemplateParser(...)"');
+            throw new \LogicException('Empty renderer. Please set with "FeatureManager::setTemplateParser(...)"');
         }
 
         if (isset(self::$templateParser[$extension])) {
@@ -169,14 +168,9 @@ final class FeatureManager
                 . str_replace('\\', '/', substr($controller, $start, $end - $start))
                 . '/view';
 
-            return [
-                $currentFeatureView,
-                $commonView
-            ];
+            return array_unique([$currentFeatureView, $commonView]);
         }
 
-        return [
-            $commonView,
-        ];
+        return [$commonView];
     }
 }

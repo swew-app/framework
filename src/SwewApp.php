@@ -15,7 +15,7 @@ use Swew\Framework\Middleware\MiddlewarePipeline;
 use Swew\Framework\Router\Router;
 use Throwable;
 
-class SwewApp
+abstract class SwewApp
 {
     public readonly bool $DEV;
 
@@ -23,8 +23,10 @@ class SwewApp
     public ?Router $router = null;
     public readonly EnvContainer $env;
     public readonly Container $container;
-    protected string $rootPath = '';
-    protected string $envFilePath = '';
+    protected string $rootDir;
+    protected string $envFilePath;
+
+    // cache preload files,on init: env,container
     protected ?string $cacheDir = null;
     protected string $preloadClass = '';
     protected string $containerAutoloadConfigDir = '';
@@ -95,7 +97,7 @@ class SwewApp
             $this->env->set('__LOADED_ENV_FILE__', true);
         }
 
-        $this->env->set('APP_ROOT', realpath($this->rootPath));
+        $this->env->set('APP_ROOT', realpath($this->rootDir));
 
         $this->DEV = (bool)$this->env->get('APP_IS_DEV', false) || $IS_TEST;
 

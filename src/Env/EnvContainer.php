@@ -23,7 +23,7 @@ final class EnvContainer extends AbstractCacheState
         self::$instance = null;
     }
 
-    public static function getInstance($forceNew = false): self
+    public static function getInstance(bool $forceNew = false): self
     {
         if (is_null(self::$instance) || $forceNew) {
             return new self();
@@ -71,7 +71,7 @@ final class EnvContainer extends AbstractCacheState
         $this->setMultiple(getenv());
     }
 
-    public function setMultiple(array $list)
+    public function setMultiple(array $list): void
     {
         foreach ($list as $key => $val) {
             $this->set($key, $val);

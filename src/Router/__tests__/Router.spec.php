@@ -206,7 +206,7 @@ it('Route: Get method path', function () {
 
     $router->addRoute($route);
 
-//    $item = $router->getRoute('GET', '/single/page');
+    //    $item = $router->getRoute('GET', '/single/page');
     $item = $router->getRoute('GET', '/single/page/load-data');
 
     expect($item)->toBe([

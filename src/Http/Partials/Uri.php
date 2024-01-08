@@ -295,13 +295,12 @@ class Uri implements UriInterface
         return !isset(self::SCHEMES[$scheme]) || $port !== self::SCHEMES[$scheme];
     }
 
-    private function filterPort($port): ?int
+    private function filterPort(int|null $port): ?int
     {
         if (null === $port) {
             return null;
         }
 
-        $port = (int)$port;
         if (0 > $port || 0xffff < $port) {
             throw new \InvalidArgumentException(\sprintf('Invalid port: %d. Must be between 0 and 65535', $port));
         }
@@ -309,21 +308,13 @@ class Uri implements UriInterface
         return self::isNonStandardPort($this->scheme, $port) ? $port : null;
     }
 
-    private function filterPath($path): string
+    private function filterPath(string $path): string
     {
-        if (!\is_string($path)) {
-            throw new \InvalidArgumentException('Path must be a string');
-        }
-
         return \preg_replace_callback('/(?:[^' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMS . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/', [__CLASS__, 'rawurlencodeMatchZero'], $path);
     }
 
-    private function filterQueryAndFragment($str): string
+    private function filterQueryAndFragment(string $str): string
     {
-        if (!\is_string($str)) {
-            throw new \InvalidArgumentException('Query and fragment must be a string');
-        }
-
         return \preg_replace_callback('/(?:[^' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMS . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/', [__CLASS__, 'rawurlencodeMatchZero'], $str);
     }
 

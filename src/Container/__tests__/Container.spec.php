@@ -46,7 +46,7 @@ it('SetAndGetArrayDefinition', function () {
             'not_scalar' => [
                 'object' => new StdClass(),
                 'array' => ['array'],
-                'closure' => fn() => null,
+                'closure' => fn () => null,
             ],
         ],
     ]);
@@ -67,14 +67,14 @@ it('SetAndGetArrayWithPath', function () {
             'not_scalar' => [
                 'object' => new StdClass(),
                 'array' => ['array'],
-                'closure' => fn() => null,
+                'closure' => fn () => null,
             ],
         ],
     ]);
 
     expect($container->get('subData.nested.scalar.string'))->toBe('Leo');
 
-    expect(fn() => $container->get('subData.nested.wrong path'))
+    expect(fn () => $container->get('subData.nested.wrong path'))
         ->toThrow('`subData.nested.wrong path` is not set in container and is not a class name.');
 });
 
@@ -135,7 +135,7 @@ it('ConstructorWithPassDefinitions', function () {
         $stringId = 'string' => $stringDefinition = 'string',
         $arrayId = 'array' => $arrayDefinition = ['array'],
         $objectId = 'object' => $objectDefinition = new StdClass(),
-        $closureId = 'closure' => fn() => null,
+        $closureId = 'closure' => fn () => null,
     ]);
 
     expect($integerDefinition)->toBe($container->get($integerId));
@@ -157,7 +157,7 @@ it('SetMultiple', function () {
         $stringId = 'string' => $stringDefinition = 'string',
         $arrayId = 'array' => $arrayDefinition = ['array'],
         $objectId = 'object' => $objectDefinition = new StdClass(),
-        $closureId = 'closure' => fn() => null,
+        $closureId = 'closure' => fn () => null,
     ];
 
     $container->setMultiple($definitions);

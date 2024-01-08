@@ -7,6 +7,7 @@ namespace Swew\Framework\Router;
 use Exception;
 use FastRoute\Dispatcher as FastRouteDispatcher;
 use Swew\Framework\Support\Str;
+
 use function FastRoute\simpleDispatcher;
 
 class Router
@@ -212,6 +213,7 @@ class Router
             throw  new Exception("Route with name: '{$routeName}' not found");
         }
 
+        /** @var string $path */
         $path = preg_replace_callback(
             '/\{([^:]+)(.+)?\}/i',
             function ($matches) use ($params) {

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Swew\Framework;
 
 use Exception;
-use Swew\Framework\Container\__tests__;
 use Swew\Framework\Container\Container;
 use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Hook\HK;
@@ -64,7 +63,7 @@ class SwewApp
     {
         if (!empty($this->preloadClass)) {
             if (class_exists($this->preloadClass)) {
-                new $this->preloadClass;
+                new $this->preloadClass();
             } else {
                 throw new \LogicException("Pass class to preload, '$this->preloadClass' not class");
             }

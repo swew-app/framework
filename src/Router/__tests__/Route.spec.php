@@ -57,5 +57,3 @@ it('Route: slug', function () {
         'path' => '/recipe/desert',
     ]);
 });
-
-

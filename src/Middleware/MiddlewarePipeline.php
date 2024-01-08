@@ -38,7 +38,7 @@ final class MiddlewarePipeline implements MiddlewareInterface, RequestHandlerInt
         return $handler->handle($request);
     }
 
-    public function handle($request): ResponseInterface
+    public function handle(mixed $request): ResponseInterface
     {
         if (!$this->queue->isEmpty()) {
             $middleware = $this->queue->dequeue();

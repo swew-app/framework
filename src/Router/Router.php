@@ -12,7 +12,7 @@ use function FastRoute\simpleDispatcher;
 
 class Router
 {
-    private array $allowed_keys = [
+    private array $allowedKeys = [
         'name',
         'path',
         'controller',
@@ -109,7 +109,7 @@ class Router
         }
 
         foreach ($route as $key => $val) {
-            if (!in_array($key, $this->allowed_keys)) {
+            if (!in_array($key, $this->allowedKeys)) {
                 throw new Exception("Not allowed key '{$key}' in router");
             }
         }

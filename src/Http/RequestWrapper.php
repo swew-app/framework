@@ -11,6 +11,7 @@ use Psr\Http\Message\UriInterface;
 final class RequestWrapper extends Request
 {
     private static ?RequestWrapper $instance = null;
+    private array $middlewareNames = [];
 
     private function __construct(
         string                      $method = '',
@@ -115,5 +116,15 @@ final class RequestWrapper extends Request
     public function isCLi(): bool
     {
         return PHP_SAPI === 'cli';
+    }
+
+    public function setMiddlewareNames(array $middlewareNames): void
+    {
+        $this->middlewareNames = $middlewareNames;
+    }
+
+    public function hasMiddlewareName(string $middlewareName): bool
+    {
+        return in_array($middlewareName, $this->middlewareNames);
     }
 }

@@ -26,6 +26,8 @@ final class MiddlewarePipeline implements MiddlewareInterface, RequestHandlerInt
         foreach ($middlewares as $middleware) {
             $this->pipe($middleware);
         }
+
+        req()->setMiddlewareNames(array_keys($middlewares));
     }
 
     /**

@@ -31,11 +31,11 @@ final class AppMiddlewareManager
         $middlewareInstances = [];
 
         foreach ($this->globalMiddlewares as $middlewareAlias) {
-            $middlewareInstances[] = $this->getMiddleware($middlewareAlias);
+            $middlewareInstances[$middlewareAlias] = $this->getMiddleware($middlewareAlias);
         }
 
         foreach ($aliases as $alias) {
-            $middlewareInstances[] = $this->getMiddleware($alias);
+            $middlewareInstances[$alias] = $this->getMiddleware($alias);
         }
 
         return $middlewareInstances;
@@ -59,6 +59,9 @@ final class AppMiddlewareManager
         return $middlewareClass;
     }
 
+    /**
+     * Create Middleware from the controller to add it to the Middleware list
+     */
     private function makeControllerMiddleware(string|Closure $class, string $method): MiddlewareInterface
     {
         if (is_callable($class)) {

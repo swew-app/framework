@@ -33,6 +33,7 @@
             "Swew\\Testing\\": "tests/"
         }
     },
+    "minimum-stability": "stable",
     "require": {
         "ext-json": "*",
         "php": ">=8.2",

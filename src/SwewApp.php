@@ -9,13 +9,14 @@ use Swew\Framework\Container\Container;
 use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Hook\HK;
 use Swew\Framework\Hook\Hook;
+use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Manager\AppMiddlewareManager;
 use Swew\Framework\Manager\FeatureManager;
 use Swew\Framework\Middleware\MiddlewarePipeline;
 use Swew\Framework\Router\Router;
 use Throwable;
 
-abstract class SwewApp
+class SwewApp
 {
     public readonly bool $DEV;
 
@@ -23,7 +24,7 @@ abstract class SwewApp
     public ?Router $router = null;
     public readonly EnvContainer $env;
     public readonly Container $container;
-    protected string $rootDir;
+    protected string $rootDir = '';
     protected string $envFilePath;
 
     // cache preload files,on init: env,container
@@ -159,6 +160,9 @@ abstract class SwewApp
             $this->host
         );
 
+        $basePath = (string) $this->env->get('APP_BASE_PATH', '/');
+        $this->router->setBasePath($basePath);
+
         if ($this->DEV) {
             $this->router->validate();
         }
@@ -166,7 +170,7 @@ abstract class SwewApp
 
     private function findRoute(): array|null
     {
-        $req = req();
+        $req = RequestWrapper::new();
 
         if (is_null($this->router)) {
             return null;
@@ -207,7 +211,7 @@ abstract class SwewApp
 
         $pipeline = new MiddlewarePipeline($middlewares);
 
-        $pipeline->handle(req()); // Запускаяем цепочку Middlewares
+        $pipeline->handle(req()); // Run Middlewares
     }
 
     /**

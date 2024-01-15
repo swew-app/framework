@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+//use stdClass;
 use Swew\Framework\Container\__tests__\TestAssets\AutoWiring;
 use Swew\Framework\Container\__tests__\TestAssets\AutoWiringSimple;
 use Swew\Framework\Container\__tests__\TestAssets\DummyData;

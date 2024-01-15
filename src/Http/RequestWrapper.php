@@ -39,6 +39,12 @@ final class RequestWrapper extends Request
         self::$instance = $this;
     }
 
+    public static function new(): self
+    {
+        self::removeInstance();
+        return self::getInstance();
+    }
+
     public static function getInstance(
         string                      $method = '',
         UriInterface|string         $uri = '',
@@ -46,7 +52,8 @@ final class RequestWrapper extends Request
         StreamInterface|string|null $body = null,
         string                      $version = '1.1',
         array                       $serverParams = []
-    ): self {
+    ): self
+    {
         if (is_null(self::$instance)) {
             return new self(
                 $method,

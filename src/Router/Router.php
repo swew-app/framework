@@ -23,7 +23,7 @@ class Router
         'methodAsPath',
     ];
 
-    private string $rootPath = '/';
+    private string $basePath = '/';
 
     public function __construct(
         public array  $routes,
@@ -31,9 +31,9 @@ class Router
     ) {
     }
 
-    public function setRootPath(string $rootPath): void
+    public function setBasePath(string $basePath): void
     {
-        $this->rootPath = $rootPath;
+        $this->basePath = $basePath;
     }
 
     public function addRoute(array|Route $route): void
@@ -119,7 +119,7 @@ class Router
 
     public function getRoutes(): array
     {
-        $list = $this->makeChildRoutes($this->rootPath, $this->routes);
+        $list = $this->makeChildRoutes($this->basePath, $this->routes);
 
         foreach ($list as &$route) {
             $route['path'] = preg_replace('/\/+/', '/', $route['path']);

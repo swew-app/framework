@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6ebd3b6091ba4f9c1ff1117d8551efd5",
+    "content-hash": "854bc7f6dc1f8fdf21b42815f3225c7c",
     "packages": [
         {
             "name": "nikic/fast-route",
@@ -453,16 +453,16 @@
         },
         {
             "name": "psalm/phar",
-            "version": "5.18.0",
+            "version": "5.19.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/psalm/phar.git",
-                "reference": "a78b5c2e8860c3b4242c63bc0864621278705f9a"
+                "reference": "ec7ecda263af008af9ab74432e309278f31f1e02"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/psalm/phar/zipball/a78b5c2e8860c3b4242c63bc0864621278705f9a",
-                "reference": "a78b5c2e8860c3b4242c63bc0864621278705f9a",
+                "url": "https://api.github.com/repos/psalm/phar/zipball/ec7ecda263af008af9ab74432e309278f31f1e02",
+                "reference": "ec7ecda263af008af9ab74432e309278f31f1e02",
                 "shasum": ""
             },
             "require": {
@@ -482,9 +482,9 @@
             "description": "Composer-based Psalm Phar",
             "support": {
                 "issues": "https://github.com/psalm/phar/issues",
-                "source": "https://github.com/psalm/phar/tree/5.18.0"
+                "source": "https://github.com/psalm/phar/tree/5.19.0"
             },
-            "time": "2023-12-16T09:41:14+00:00"
+            "time": "2024-01-09T21:19:15+00:00"
         },
         {
             "name": "swew/cli",
@@ -556,16 +556,16 @@
         },
         {
             "name": "swew/dd",
-            "version": "v1.3.1",
+            "version": "v1.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/swew-app/dd.git",
-                "reference": "184e62b6dcb302531bdd192e253fc692b60ef9f2"
+                "reference": "afcb52970e149fd5d01dd2916d1e3a95f841e1c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/swew-app/dd/zipball/184e62b6dcb302531bdd192e253fc692b60ef9f2",
-                "reference": "184e62b6dcb302531bdd192e253fc692b60ef9f2",
+                "url": "https://api.github.com/repos/swew-app/dd/zipball/afcb52970e149fd5d01dd2916d1e3a95f841e1c0",
+                "reference": "afcb52970e149fd5d01dd2916d1e3a95f841e1c0",
                 "shasum": ""
             },
             "type": "library",
@@ -587,9 +587,9 @@
             "description": "The simplest way to debug variables. As in Laravel.",
             "support": {
                 "issues": "https://github.com/swew-app/dd/issues",
-                "source": "https://github.com/swew-app/dd/tree/v1.3.1"
+                "source": "https://github.com/swew-app/dd/tree/v1.4.2"
             },
-            "time": "2023-07-30T13:55:18+00:00"
+            "time": "2024-01-11T09:55:43+00:00"
         },
         {
             "name": "swew/test",

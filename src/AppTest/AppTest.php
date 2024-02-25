@@ -31,6 +31,9 @@ class AppTest
         } else {
             $this->app = new SwewApp();
         }
+
+        $env = EnvContainer::getInstance();
+        $env->set('__TEST__', true);
     }
 
     public function removeSingletons(): void
@@ -77,7 +80,7 @@ class AppTest
      *
      * @psalm-param array{CONTENT_TYPE?: 'application/json;charset=UTF-8', HTTP_ACCEPT?: 'application/json;charset=UTF-8'} $server
      */
-    public function call(string $method, string $uri, $post = [], array $server = []): static
+    public function call(string $method, string $uri, array $post = [], array $server = []): static
     {
         $old = json_encode([
             $_SERVER,

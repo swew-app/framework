@@ -1,6 +1,6 @@
 {
     "test": {
-        "preloadFile": "",
+        "preloadFile": "tests/preload-for-tests.php",
         "paths": [
             "*/src/*.spec.php"
         ],

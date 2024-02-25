@@ -58,13 +58,11 @@ final class FeatureManager
 
     public static function getPreparedResponse(): mixed
     {
-        $raw = res()->getRaw();
-
-        if ($raw) {
-            return $raw;
+        if (res()->getRaw()) {
+            return res()->getRaw();
         }
 
-        $data = responseState();
+        $data = res()->getStoredData();
 
         if ($data instanceof BaseDTO) {
             $dto = $data;
@@ -93,8 +91,10 @@ final class FeatureManager
         } else {
             $filePath = self::getView($viewName);
 
-            /** @var array $data */
-            $data = self::render($filePath, $data);
+            $data = self::render(
+                $filePath,
+                array_merge(res()->getViewData(), ['data' => $data])
+            );
         }
 
 
@@ -111,8 +111,14 @@ final class FeatureManager
         self::$templateParser[$parser->getExtension()] = $parser;
     }
 
-    public static function render(string $filepath, array $data): string
+    public static function render(string $filepath, string|array|null $data): string
     {
+        if (is_string($data)) {
+            $data = [$data];
+        } elseif (is_null($data)) {
+            $data = [];
+        }
+
         $extension = self::findMatchingExtension($filepath);
 
         if (is_null($extension)) {

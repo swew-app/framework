@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Swew\Framework\Http;
 
 use Exception;
+use Swew\Framework\Base\BaseDTO;
 use Swew\Framework\Http\Partials\Stream;
 
 use function function_exists;
@@ -13,6 +14,8 @@ use function litespeed_finish_request;
 final class ResponseWrapper extends Response
 {
     private static ?ResponseWrapper $instance = null;
+
+   private BaseDTO|string|array|null $storeData = null;
 
     private bool $isTest = false;
 
@@ -113,9 +116,21 @@ final class ResponseWrapper extends Response
         $this->isTest = $isTest;
     }
 
-    public function getStoredData(): mixed
+    public function setStoredData(BaseDTO|string|array $data): void
     {
-        return responseState();
+        $this->storeData = $data;
+    }
+
+    public function getStoredData(): BaseDTO|string|array|null
+    {
+        return $this->storeData;
+    }
+
+    public function redirect(string $url, int $status = 300): self
+    {
+        $this->withStatus($status);
+        $this->withHeader('Location', $url);
+        return $this;
     }
 
     private string $viewFileName = '';

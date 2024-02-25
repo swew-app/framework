@@ -85,7 +85,7 @@ class MessageMethods
      * @param string|array<array-key, string> $value
      * @return $this
      */
-    public function withHeader($name, $value): self
+    public function withHeader(string $name, $value): self
     {
         $normalized = $this->normalize($name);
 

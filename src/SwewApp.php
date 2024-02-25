@@ -121,6 +121,8 @@ class SwewApp
 
         $this->initRouter();
 
+        $this->env->set('$router', $this->router);
+
         $route = $this->findRoute();
 
         if (is_null($route)) {
@@ -136,9 +138,12 @@ class SwewApp
 
             $statusCode = res()->getStatusCode();
 
-            if ($statusCode >= 200 && $statusCode < 300) {
+            if ($statusCode < 300 || $statusCode >= 400) {
+                // Non redirect
                 res()->getBody()->write(FeatureManager::getPreparedResponse());
-            } else {
+            }
+
+            if ($statusCode >= 500) {
                 $this->makeErrorPage($statusCode);
             }
         }

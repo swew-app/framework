@@ -25,10 +25,19 @@ class Router
 
     private string $basePath = '/';
 
+    public array  $routes = [];
+
+    public string $host = '';
+
     public function __construct(
-        public array  $routes,
-        public string $host = ''
+        array  $routes,
+        string $host = ''
     ) {
+        foreach ($routes as $route) {
+            $this->addRoute($route);
+        }
+
+        $this->host = $host;
     }
 
     public function setBasePath(string $basePath): void

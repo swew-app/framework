@@ -7,6 +7,7 @@ use Swew\Framework\Container\Container;
 use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Http\ResponseWrapper;
+use Swew\Framework\Router\Route;
 
 /**
  * A helper to create a request
@@ -20,11 +21,13 @@ function req(): RequestWrapper
  * A helper to create a response
  *
  */
-function res(BaseDTO|string|array |null $data = null): ResponseWrapper
+function res(BaseDTO|string|array|null $data = null): ResponseWrapper
 {
     $response = ResponseWrapper::getInstance();
 
-    responseState($data);
+    if (!is_null($data)) {
+        $response->setStoredData($data);
+    }
 
     return $response;
 }
@@ -51,31 +54,36 @@ function container(string $id = ''): mixed
     return $container->get($id);
 }
 
-function responseState(mixed &$data = null): mixed
+function route(
+    string       $name,
+    string       $path,
+    string|array $controller
+): Route
 {
-    static $storeData = null;
+    $route = new Route();
+    $route->name($name);
+    $route->path($path);
+    $route->controller($controller);
 
-    if (!is_null($data)) {
-        $storeData = $data;
-    }
+    return $route;
+}
 
-    return $storeData;
+function url(string $routeName, array $params = []): string
+{
+    return env('$router')->url($routeName, $params);
+
 }
 
 // #region [ helpers ]
 
-if (!function_exists('public_path')) {
-    function public_path($path = ''): string
-    {
-        return env('APP_ROOT') . DIRECTORY_SEPARATOR . env('APP_PUBLIC_DIR') . ($path ? DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR) : $path);
-    }
+function public_path($path = ''): string
+{
+    return env('APP_ROOT') . DIRECTORY_SEPARATOR . env('APP_PUBLIC_DIR') . ($path ? DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR) : $path);
 }
 
-if (!function_exists('cache_path')) {
-    function cache_path($path = ''): string
-    {
+function cache_path($path = ''): string
+{
         return env('APP_ROOT') . DIRECTORY_SEPARATOR . env('APP_CACHE_DIR') . ($path ? DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR) : $path);
-    }
 }
 
 

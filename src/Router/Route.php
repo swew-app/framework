@@ -12,7 +12,7 @@ class Route
 
     private array $middlewares = [];
 
-    private string $controller = '';
+    private string|array $controller = '';
 
     private array $children = [];
 
@@ -54,7 +54,7 @@ class Route
         return $this;
     }
 
-    public function controller(string $class): self
+    public function controller(string|array $class): self
     {
         $this->controller = $class;
         return $this;

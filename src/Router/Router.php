@@ -365,7 +365,7 @@ class Router
     public static function getRoutesFromPaths(array $routeConfigPaths): array
     {
         $list = array_map(
-            fn($path) => include ($path),
+            fn ($path) => include($path),
             $routeConfigPaths
         );
 

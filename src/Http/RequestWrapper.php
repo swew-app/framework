@@ -53,8 +53,7 @@ final class RequestWrapper extends Request
         StreamInterface|string|null $body = null,
         string                      $version = '1.1',
         array                       $serverParams = []
-    ): self
-    {
+    ): self {
         if (is_null(self::$instance)) {
             return new self(
                 $method,

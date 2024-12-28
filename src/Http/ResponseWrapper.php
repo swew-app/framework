@@ -15,7 +15,7 @@ final class ResponseWrapper extends Response
 {
     private static ?ResponseWrapper $instance = null;
 
-   private BaseDTO|string|array|null $storeData = null;
+    private BaseDTO|string|array|null $storeData = null;
 
     private bool $isTest = false;
 

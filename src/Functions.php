@@ -58,8 +58,7 @@ function route(
     string       $name,
     string       $path,
     string|array $controller
-): Route
-{
+): Route {
     $route = new Route();
     $route->name($name);
     $route->path($path);
@@ -83,7 +82,7 @@ function public_path($path = ''): string
 
 function cache_path($path = ''): string
 {
-        return env('APP_ROOT') . DIRECTORY_SEPARATOR . env('APP_CACHE_DIR') . ($path ? DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR) : $path);
+    return env('APP_ROOT') . DIRECTORY_SEPARATOR . env('APP_CACHE_DIR') . ($path ? DIRECTORY_SEPARATOR . ltrim($path, DIRECTORY_SEPARATOR) : $path);
 }
 
 

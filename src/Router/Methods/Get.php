@@ -21,4 +21,3 @@ class Get extends MethodContract
         return 'GET';
     }
 }
-

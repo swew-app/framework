@@ -16,6 +16,8 @@ final class EnvContainer extends AbstractCacheState
     private function __construct()
     {
         self::$instance = $this;
+
+        $this->loadGlobalEnvs();
     }
 
     public static function removeInstance(): void

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Swew\Framework\Router;
 
 use Exception;
+use ReflectionClass;
 use FastRoute\Dispatcher as FastRouteDispatcher;
 use Swew\Framework\Support\Str;
+use Swew\Framework\Router\Methods\Get;
 
 use function FastRoute\simpleDispatcher;
 
@@ -21,16 +23,17 @@ class Router
         'children',
         'dev',
         'methodAsPath',
+        'collector',
     ];
 
     private string $basePath = '/';
 
-    public array  $routes = [];
+    public array $routes = [];
 
     public string $host = '';
 
     public function __construct(
-        array  $routes,
+        array $routes,
         string $host = ''
     ) {
         foreach ($routes as $route) {
@@ -47,10 +50,15 @@ class Router
 
     public function addRoute(array|Route $route): void
     {
-        if ($route instanceof Route) {
-            $this->routes[] = $route->toArray();
+        $item = $route instanceof Route ? $route->toArray() : $route;
+
+        if (array_key_exists('collector', $route)) {
+            $routes = $this->getRouteFromCollector($route);
+            foreach ($routes as $r) {
+                $this->routes[] = $r;
+            }
         } else {
-            $this->routes[] = $route;
+            $this->routes[] = $item;
         }
     }
 
@@ -109,12 +117,14 @@ class Router
      */
     private function isValidRoute(array $route): bool
     {
-        if (!array_key_exists('name', $route)) {
-            throw new Exception("Route key 'name' is required");
-        }
+        if (!array_key_exists('collector', $route)) {
+            if (!array_key_exists('name', $route)) {
+                throw new Exception("Route key 'name' is required");
+            }
 
-        if (!array_key_exists('controller', $route)) {
-            throw new Exception("Route key 'controller' is required");
+            if (!array_key_exists('controller', $route)) {
+                throw new Exception("Route key 'controller' is required");
+            }
         }
 
         foreach ($route as $key => $val) {
@@ -219,7 +229,7 @@ class Router
         }
 
         if (!isset($path)) {
-            throw  new Exception("Route with name: '{$routeName}' not found");
+            throw new Exception("Route with name: '{$routeName}' not found");
         }
 
         /** @var string $path */
@@ -227,7 +237,7 @@ class Router
             '/\{([^:]+)(.+)?\}/i',
             function ($matches) use ($params) {
                 if (!key_exists($matches[1], $params)) {
-                    throw  new Exception('Router->url $params[' . $matches[1] . '] not found');
+                    throw new Exception('Router->url $params[' . $matches[1] . '] not found');
                 }
                 return $params[$matches[1]];
             },
@@ -357,10 +367,43 @@ class Router
     public static function getRoutesFromPaths(array $routeConfigPaths): array
     {
         $list = array_map(
-            fn ($path) => include($path),
+            fn($path) => include ($path),
             $routeConfigPaths
         );
 
         return array_merge(...array_values($list));
+    }
+
+    private function getRouteFromCollector(array $route): array
+    {
+        $className = $route['collector'];
+        $reflection = new ReflectionClass($className);
+
+        $resultRoutes = [];
+
+        foreach ($reflection->getMethods() as $method) {
+            $attributes = $method->getAttributes(Get::class);
+
+            if (count($attributes) > 0) {
+                foreach ($attributes as $attribute) {
+                    $instance = $attribute->newInstance();
+                    $middlewares = [
+                        ...($route['middlewares'] ?? []),
+                        ...$instance->getMiddlewares()
+                    ];
+
+                    $resultRoutes[] = [
+                        ...$route,
+                        'path' => $instance->getPath(),
+                        'controller' => [$className, $method->getName()],
+                        'method' => $instance->getMethod(),
+                        'name' => $instance->getName() ?: $method->getName(),
+                        'middlewares' => $middlewares,
+                    ];
+                }
+            }
+        }
+
+        return $resultRoutes;
     }
 }

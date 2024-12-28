@@ -21,7 +21,6 @@ class Router
         'middlewares',
         'method',
         'children',
-        'dev',
         'methodAsPath',
         'collector',
     ];
@@ -176,7 +175,7 @@ class Router
     public function getInfoList(): array
     {
         $list = [
-            ['Name', 'Path', 'Controller', 'Middlewares', 'DEV'],
+            ['Name', 'Path', 'Controller', 'Middlewares'],
         ];
 
         $routes = $this->getRoutes();
@@ -187,7 +186,6 @@ class Router
                 $route['path'],
                 $route['controller'],
                 implode(',', $route['middlewares'] ?? []),
-                empty($route['dev']) ? 'FALSE' : 'TRUE',
             ];
         }
 

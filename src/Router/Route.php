@@ -95,10 +95,6 @@ class Route
             $route['children'] = $this->children;
         }
 
-        if ($this->isDev) {
-            $route['dev'] = true;
-        }
-
         if ($this->methodAsPath) {
             $route['methodAsPath'] = true;
         }

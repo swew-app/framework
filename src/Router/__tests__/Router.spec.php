@@ -14,7 +14,6 @@ it('validate [GOOD]', function () {
             'name' => 'MainPage',
             'middlewares' => [],
             'controller' => [],
-            'dev' => true,
         ]
     ]);
 
@@ -29,7 +28,6 @@ it('validate [BAD 1]: Has wrong key', function () {
             'name' => 'MainPage',
             'middlewares' => [],
             'controller' => [],
-            'dev' => true,
             'someKey' => '',
         ]
     ]);

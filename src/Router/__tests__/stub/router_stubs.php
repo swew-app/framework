@@ -34,7 +34,6 @@ function routerStub(string $wantType = 'config'): array
                 'path' => '/admin',
                 'middlewares' => [],
                 'controller' => [],
-                'dev' => true,
             ],
         ];
     }

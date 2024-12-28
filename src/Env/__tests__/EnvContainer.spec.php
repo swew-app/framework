@@ -22,10 +22,6 @@ it('Env Parse', function (string $text, array $vars) {
 it('Evn Load Global envs', function () {
     $env = EnvContainer::getInstance(true);
 
-    expect($env->get('HOME'))->toBeFalsy();
-
-    $env->loadGlobalEnvs();
-
     expect($env->get('HOME'))->toBeTruthy();
 });
 

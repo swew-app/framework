@@ -18,8 +18,6 @@ class Route
 
     public bool $methodAsPath = false;
 
-    public bool $isDev = false;
-
     public function name(string $name): self
     {
         $this->name = $name;
@@ -69,13 +67,6 @@ class Route
     public function methodAsPath(bool $methodAsPath): self
     {
         $this->methodAsPath = $methodAsPath;
-        return $this;
-    }
-
-    public function isDev(bool $isDev = true): self
-    {
-        $this->isDev = $isDev;
-
         return $this;
     }
 

@@ -45,7 +45,6 @@ function routerStub(string $wantType = 'config'): array
                 "Path",
                 "Controller",
                 "Middlewares",
-                "DEV"
             ],
 
             [
@@ -53,28 +52,24 @@ function routerStub(string $wantType = 'config'): array
                 "/",
                 "Router\\stub\\ControllerStub",
                 "",
-                "FALSE"
             ],
             [
                 "About",
                 "/about",
                 ["Router\\stub\\ControllerStub", "aboutPage"],
                 "",
-                "FALSE"
             ],
             [
                 "Blog",
                 "/blog/{id}",
                 ["Router\\stub\\ControllerStub", "blogListPage"],
                 "auth,admin",
-                "FALSE"
             ],
             [
                 "AdminPage",
                 "/admin",
                 [],
                 "",
-                "TRUE"
             ]
         ];
     }

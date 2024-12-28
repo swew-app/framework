@@ -49,15 +49,15 @@ class Router
 
     public function addRoute(array|Route $route): void
     {
-        $item = $route instanceof Route ? $route->toArray() : $route;
+        $routeArray = $route instanceof Route ? $route->toArray() : $route;
 
-        if (array_key_exists('collector', $route)) {
-            $routes = $this->getRouteFromCollector($route);
+        if (array_key_exists('collector', $routeArray)) {
+            $routes = $this->getRouteFromCollector($routeArray);
             foreach ($routes as $r) {
                 $this->routes[] = $r;
             }
         } else {
-            $this->routes[] = $item;
+            $this->routes[] = $routeArray;
         }
     }
 

@@ -1,6 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Swew\Framework\Router;
+
+use Exception;
 
 class Route
 {
@@ -13,13 +17,16 @@ class Route
     private array $middlewares = [];
 
     private string|array $controller = '';
+    private string $collector = '';
 
     private array $children = [];
 
-    public bool $methodAsPath = false;
-
     public function name(string $name): self
     {
+        if (!empty($this->collector)) {
+            throw new Exception("You cannot specify 'name' if you have already specified the 'collector' key.");
+        }
+
         $this->name = $name;
         return $this;
     }
@@ -54,19 +61,27 @@ class Route
 
     public function controller(string|array $class): self
     {
+        if (!empty($this->collector)) {
+            throw new Exception("You cannot specify 'controller' if you have already specified the 'collector' key.");
+        }
+
         $this->controller = $class;
+        return $this;
+    }
+
+    public function collector(string $collector): self
+    {
+        if (!empty($this->name) || !empty($this->controller)) {
+            throw new Exception("You cannot specify 'collector' if you have already specified the 'name' or 'controller' key.");
+        }
+
+        $this->collector = $collector;
         return $this;
     }
 
     public function children(array $child): self
     {
         $this->children = $child;
-        return $this;
-    }
-
-    public function methodAsPath(bool $methodAsPath): self
-    {
-        $this->methodAsPath = $methodAsPath;
         return $this;
     }
 

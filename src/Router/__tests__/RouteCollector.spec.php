@@ -5,6 +5,7 @@ declare(strict_types=1);
 include_once 'stub/CollectControllerStub.php';
 
 use Swew\Framework\Router\Router;
+use Swew\Framework\Router\Route;
 use Router\stub\CollectControllerStub;
 
 it('Route collector', function () {
@@ -42,6 +43,16 @@ it('Validate Collector', function () {
             'collector' => CollectControllerStub::class,
             'middlewares' => ['middleware_1'],
         ]
+    ]);
+
+    expect($router->validate())->toBe(true);
+});
+
+it('route helper for collector', function () {
+    $route = new Route();
+
+    $router = new Router([
+        route('/path/stub')->collector(CollectControllerStub::class),
     ]);
 
     expect($router->validate())->toBe(true);

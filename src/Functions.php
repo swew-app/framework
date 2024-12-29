@@ -55,14 +55,20 @@ function container(string $id = ''): mixed
 }
 
 function route(
-    string       $name,
-    string       $path,
-    string|array $controller
+    string $path,
+    string|null $name = null,
+    string|array|null $controller = null
 ): Route {
     $route = new Route();
-    $route->name($name);
     $route->path($path);
-    $route->controller($controller);
+
+    if ($name !== null) {
+        $route->name($name);
+    }
+
+    if ($controller !== null) {
+        $route->controller($controller);
+    }
 
     return $route;
 }

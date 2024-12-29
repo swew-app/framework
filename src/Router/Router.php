@@ -21,7 +21,6 @@ class Router
         'middlewares',
         'method',
         'children',
-        'methodAsPath',
         'collector',
     ];
 
@@ -116,13 +115,27 @@ class Router
      */
     private function isValidRoute(array $route): bool
     {
+        if (!array_key_exists('path', $route)) {
+            throw new Exception("Route key 'path' is required");
+        }
+
         if (!array_key_exists('collector', $route)) {
+            // Is Simple route
             if (!array_key_exists('name', $route)) {
                 throw new Exception("Route key 'name' is required");
             }
 
             if (!array_key_exists('controller', $route)) {
                 throw new Exception("Route key 'controller' is required");
+            }
+        } else {
+            // Is Collector route
+            if (!array_key_exists('name', $route)) {
+                throw new Exception("Route key 'name' can't be with the key 'collector'");
+            }
+
+            if (!array_key_exists('controller', $route)) {
+                throw new Exception("Route key 'controller' can't be with the key 'collector'");
             }
         }
 
@@ -254,10 +267,10 @@ class Router
             foreach ($routes as $route) {
                 $method = $route['method'] ?? 'GET|HEAD|OPTIONS';
 
-                # /Path/To/Class::class|methodName OR /Path/To/Class::class OR /Path/To/Class::class@_method_as_path_
+                # /Path/To/Class::class|methodName OR /Path/To/Class::class
                 $handlerItem = is_array($route['controller'])
                     ? implode('@', $route['controller'])
-                    : (empty($route['methodAsPath']) ? $route['controller'] : $route['controller'] . '@_method_as_path_');
+                    : $route['controller'];
 
                 $middlewares = $route['middlewares'] ?? [];
                 $handlerItem = $handlerItem . '|' . implode('|', $middlewares);
@@ -308,10 +321,6 @@ class Router
         $classAndMethodArray = explode('@', $classAndMethod);
 
         $method = $classAndMethodArray[1] ?? 'getIndex';
-
-        if ($method === '_method_as_path_') {
-            $method = $this->getMethodByUri($httpMethod, $uri);
-        }
 
         return [
             'class' => $classAndMethodArray[0],

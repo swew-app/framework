@@ -200,7 +200,6 @@ it('Route: Get method path', function () {
     $route->name('single-route');
     $route->path('/single/page');
     $route->controller('DemoSecondControllerStub');
-    $route->methodAsPath(true);
 
     $router->addRoute($route);
 
@@ -209,7 +208,7 @@ it('Route: Get method path', function () {
 
     expect($item)->toBe([
         'class' => 'DemoSecondControllerStub',
-        'method' => 'getLoadData',
+        'method' => 'getIndex',
         'params' => [],
         'middlewares' => [],
     ]);

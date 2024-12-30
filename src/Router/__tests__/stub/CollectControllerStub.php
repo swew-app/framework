@@ -9,13 +9,13 @@ use Swew\Framework\Router\Methods\Get;
 class CollectControllerStub
 {
     #[Get('/main', 'Main', ['middleware_2'])]
-    public function getMainPage()
+    public function getMainPage(): string
     {
         return 'Main page';
     }
 
     #[Get('/about')]
-    public function getAboutPage()
+    public function getAboutPage(): string
     {
         return 'About page';
     }

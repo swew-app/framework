@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Base;
 
-use Rakit\Validation\Validator;
 use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Support\Obj;
 
@@ -147,21 +146,20 @@ abstract class BaseDTO
         $rules = $this->rules();
         $messages = $this->messages();
         $translation = $this->translation();
-        $validator = new Validator();
 
-        if (count($translation) > 0) {
-            $validator->setTranslations($translation);
-        }
+        // if (count($translation) > 0) {
+        //     $validator->setTranslations($translation);
+        // }
 
-        $validation = $validator->validate($data, $rules, $messages);
+        // $validation = $validator->validate($data, $rules, $messages);
 
-        $this->isValid = !$validation->fails();
+        // $this->isValid = !$validation->fails();
 
-        $this->dtoValidationErrors = $validation->errors->firstOfAll();
+        // $this->dtoValidationErrors = $validation->errors->firstOfAll();
 
-        $this->setDataWithCast(
-            $validation->getValidData()
-        );
+        // $this->setDataWithCast(
+        // $validation->getValidData()
+        // );
 
         return $this->isValid;
     }

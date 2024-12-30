@@ -20,7 +20,7 @@ class Hook
         ];
     }
 
-    public static function call(HK $hookKey, mixed ...$args): void
+    public static function call(HK $hookKey, \Swew\Framework\SwewApp ...$args): void
     {
         foreach (self::$callbackList as $item) {
             if ($item['key'] === $hookKey) {

@@ -9,7 +9,9 @@ use Exception;
 class Route
 {
     private string $name = '';
+
     private string $path = '';
+
     private string $prefix = '';
 
     private string $method = 'GET|POST|PUT|PATCH|DELETE|OPTIONS|HEAD|CONNECT|TRACE';
@@ -17,29 +19,33 @@ class Route
     private array $middlewares = [];
 
     private string|array $controller = '';
+
     private string $collector = '';
 
     private array $children = [];
 
     public function name(string $name): self
     {
-        if (!empty($this->collector)) {
+        if (! empty($this->collector)) {
             throw new Exception("You cannot specify 'name' if you have already specified the 'collector' key.");
         }
 
         $this->name = $name;
+
         return $this;
     }
 
     public function path(string $path): self
     {
         $this->path = $path;
+
         return $this;
     }
 
     public function prefix(string $pathPrefix): self
     {
         $this->prefix = $pathPrefix;
+
         return $this;
     }
 
@@ -50,48 +56,56 @@ class Route
         }
 
         $this->method = $method;
+
         return $this;
     }
 
     public function middlewares(array $middlewares): self
     {
         $this->middlewares += $middlewares;
+
         return $this;
     }
 
     public function controller(string|array $class): self
     {
-        if (!empty($this->collector)) {
+        if (! empty($this->collector)) {
             throw new Exception("You cannot specify 'controller' if you have already specified the 'collector' key.");
         }
 
         $this->controller = $class;
+
         return $this;
     }
 
     public function collector(string $collector): self
     {
-        if (!empty($this->name) || !empty($this->controller)) {
+        if (! empty($this->name) || ! empty($this->controller)) {
             throw new Exception("You cannot specify 'collector' if you have already specified the 'name' or 'controller' key.");
         }
 
         $this->collector = $collector;
+
         return $this;
     }
 
     public function children(array $child): self
     {
         $this->children = $child;
+
         return $this;
     }
 
-    public function toArray(...$keys): array
+    /**
+     * @psalm-param 'name' $keys
+     */
+    public function toArray(string ...$keys): array
     {
-        $path = str_replace('//', '/', $this->prefix . '/' .  $this->path);
+        $path = str_replace('//', '/', $this->prefix.'/'.$this->path);
 
         $route = [
             'name' => empty($this->name) ? $this->slug($path) : $this->name,
-            'path' =>  $path,
+            'path' => $path,
             'method' => $this->method,
             'middlewares' => $this->middlewares,
             'controller' => $this->controller,
@@ -99,10 +113,6 @@ class Route
 
         if (count($this->children)) {
             $route['children'] = $this->children;
-        }
-
-        if ($this->methodAsPath) {
-            $route['methodAsPath'] = true;
         }
 
         if (count($keys) > 0) {

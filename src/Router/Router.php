@@ -6,11 +6,12 @@ namespace Swew\Framework\Router;
 
 use Exception;
 use FastRoute\Dispatcher as FastRouteDispatcher;
-use function FastRoute\cachedDispatcher;
-use function FastRoute\simpleDispatcher;
 use ReflectionClass;
 use Swew\Framework\Router\Methods\Get;
 use Swew\Framework\Support\Str;
+
+use function FastRoute\cachedDispatcher;
+use function FastRoute\simpleDispatcher;
 
 class Router
 {
@@ -43,7 +44,8 @@ class Router
         $this->host = $host;
     }
 
-    public function useCache(string $cachePath): self {
+    public function useCache(string $cachePath): self
+    {
         $this->cachePath = $cachePath;
         return $this;
     }
@@ -270,7 +272,7 @@ class Router
     {
         $routes = $this->getRoutes();
 
-        $routeDefinitionCallback = function ($r) use ($routes) {
+        $routeDefinitionCallback = function ($r) use ($routes): void {
             foreach ($routes as $route) {
                 $method = $route['method'] ?? 'GET|HEAD|OPTIONS';
 
@@ -391,7 +393,7 @@ class Router
     public static function getRoutesFromPaths(array $routeConfigPaths): array
     {
         $list = array_map(
-            fn($path) => include($path),
+            fn ($path) => include($path),
             $routeConfigPaths
         );
 

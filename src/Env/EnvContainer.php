@@ -34,7 +34,12 @@ final class EnvContainer extends AbstractCacheState
         return self::$instance;
     }
 
-    public function get(string $key, mixed $default = null): mixed
+    /**
+     * @param null|string $default
+     *
+     * @psalm-param '/'|null $default
+     */
+    public function get(string $key, string|null $default = null): mixed
     {
         // TODO: сделать конвертацию типов по значению
         if ($this->isUseCache) {
@@ -54,7 +59,10 @@ final class EnvContainer extends AbstractCacheState
         return Arr::get($this->envVars, $key) ?? $default;
     }
 
-    public function set(string $key, mixed $value): void
+    /**
+     * @param \Swew\Framework\Router\Router|null|true $value
+     */
+    public function set(string $key, bool|\Swew\Framework\Router\Router|null $value): void
     {
         $this->envVars[$key] = $value;
 

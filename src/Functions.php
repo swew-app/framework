@@ -7,7 +7,7 @@ use Swew\Framework\Container\Container;
 use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Http\ResponseWrapper;
-use Swew\Framework\Router\Route;
+use Swew\Framework\Router\RouteHelper;
 
 /**
  * A helper to create a request
@@ -58,8 +58,8 @@ function route(
     string $path,
     string|null $name = null,
     string|array|null $controller = null
-): Route {
-    $route = new Route();
+): RouteHelper {
+    $route = new RouteHelper();
     $route->path($path);
 
     if ($name !== null) {

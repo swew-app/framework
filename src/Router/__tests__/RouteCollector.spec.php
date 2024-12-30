@@ -5,7 +5,7 @@ declare(strict_types=1);
 include_once 'stub/CollectControllerStub.php';
 
 use Swew\Framework\Router\Router;
-use Swew\Framework\Router\Route;
+use Swew\Framework\Router\RouteHelper;
 use Router\stub\CollectControllerStub;
 
 it('Route collector', function () {
@@ -49,7 +49,7 @@ it('Validate Collector', function () {
 });
 
 it('route helper for collector', function () {
-    $route = new Route();
+    $route = new RouteHelper();
 
     $router = new Router([
         route('/path/stub')->collector(CollectControllerStub::class),

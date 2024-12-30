@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Swew\Framework\Env;
 
 use Swew\Framework\Base\AbstractCacheState;
+use Swew\Framework\Router\Router;
 use Swew\Framework\Support\Arr;
 
 final class EnvContainer extends AbstractCacheState
@@ -34,12 +35,7 @@ final class EnvContainer extends AbstractCacheState
         return self::$instance;
     }
 
-    /**
-     * @param null|string $default
-     *
-     * @psalm-param '/'|null $default
-     */
-    public function get(string $key, string|null $default = null): mixed
+    public function get(string $key, string|int|float|bool|null $default = null): mixed
     {
         // TODO: сделать конвертацию типов по значению
         if ($this->isUseCache) {
@@ -52,17 +48,14 @@ final class EnvContainer extends AbstractCacheState
             return $this->envVars;
         }
 
-        if (!str_contains($key, '.')) {
+        if (! str_contains($key, '.')) {
             return $this->envVars[$key] ?? $default;
         }
 
         return Arr::get($this->envVars, $key) ?? $default;
     }
 
-    /**
-     * @param \Swew\Framework\Router\Router|null|true $value
-     */
-    public function set(string $key, bool|\Swew\Framework\Router\Router|null $value): void
+    public function set(string $key, string|int|float|bool|null|Router $value): void
     {
         $this->envVars[$key] = $value;
 
@@ -90,7 +83,7 @@ final class EnvContainer extends AbstractCacheState
 
     public function loadFromFile(string $filePath): void
     {
-        if (!is_readable($filePath) || is_dir($filePath)) {
+        if (! is_readable($filePath) || is_dir($filePath)) {
             throw new \Exception("Env file path exception: '$filePath' ");
         }
 

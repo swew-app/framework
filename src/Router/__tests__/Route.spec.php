@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use Swew\Framework\Router\Route;
+use Swew\Framework\Router\RouteHelper;
 
 it('Route: simple', function () {
-    $route = new Route();
+    $route = new RouteHelper();
     $route->name('Blog');
     $route->path('/blog');
 
@@ -20,7 +20,7 @@ it('Route: simple', function () {
 
 
 it('Route: with prefix', function () {
-    $route = new Route();
+    $route = new RouteHelper();
     $route->name('Blog');
     $route->prefix('/recipe');
     $route->path('/desert');
@@ -36,7 +36,7 @@ it('Route: with prefix', function () {
 
 
 it('Route: key filter', function () {
-    $route = new Route();
+    $route = new RouteHelper();
     $route->name('Blog');
     $route->prefix('/recipe');
     $route->path('/desert');
@@ -48,7 +48,7 @@ it('Route: key filter', function () {
 });
 
 it('Route: slug', function () {
-    $route = new Route();
+    $route = new RouteHelper();
     $route->prefix('/recipe');
     $route->path('/desert');
 

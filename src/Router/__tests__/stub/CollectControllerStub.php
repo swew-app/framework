@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Router\stub;
 
-use Swew\Framework\Router\Methods\Get;
+use Swew\Framework\Router\Attribute\Route;
 
 class CollectControllerStub
 {
-    #[Get('/main', 'Main', ['middleware_2'])]
+    #[Route('/main', 'Main', methods: ['GET'], middlewares: ['middleware_2'])]
     public function getMainPage(): string
     {
         return 'Main page';
     }
 
-    #[Get('/about')]
+    #[Route('/about', methods: ['GET'])]
     public function getAboutPage(): string
     {
         return 'About page';

@@ -7,7 +7,7 @@ namespace Swew\Framework\Router;
 use Exception;
 use FastRoute\Dispatcher as FastRouteDispatcher;
 use ReflectionClass;
-use Swew\Framework\Router\Methods\Get;
+use Swew\Framework\Router\Attribute\Route;
 use Swew\Framework\Support\Str;
 
 use function FastRoute\cachedDispatcher;
@@ -55,9 +55,9 @@ class Router
         $this->basePath = $basePath;
     }
 
-    public function addRoute(array|Route $route): void
+    public function addRoute(array|RouteHelper $route): void
     {
-        $routeArray = $route instanceof Route ? $route->toArray() : $route;
+        $routeArray = $route instanceof RouteHelper ? $route->toArray() : $route;
 
         if (array_key_exists('collector', $routeArray)) {
             $routes = $this->getRouteFromCollector($routeArray);
@@ -408,7 +408,7 @@ class Router
         $resultRoutes = [];
 
         foreach ($reflection->getMethods() as $method) {
-            $attributes = $method->getAttributes(Get::class);
+            $attributes = $method->getAttributes(Route::class);
 
             if (count($attributes) > 0) {
                 foreach ($attributes as $attribute) {

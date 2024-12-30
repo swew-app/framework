@@ -6,7 +6,7 @@ namespace Swew\Framework\Router;
 
 use Exception;
 
-class Route
+class RouteHelper
 {
     private string $name = '';
 

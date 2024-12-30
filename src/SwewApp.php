@@ -21,16 +21,24 @@ class SwewApp
     public readonly bool $DEV;
 
     public string $host = '';
+
     public ?Router $router = null;
+
     public readonly EnvContainer $env;
+
     public readonly Container $container;
+
     protected string $rootDir = '';
+
     protected string $envFilePath;
 
     // cache preload files,on init: env,container
     protected ?string $cacheDir = null;
+
     protected string $preloadClass = '';
+
     protected string $containerAutoloadConfigDir = '';
+
     /**
      * Path to the features folder
      *
@@ -38,6 +46,7 @@ class SwewApp
      *  $features = __DIR__ . '/../Features';
      */
     protected string $features = '';
+
     /**
      * Path to router files
      *
@@ -47,6 +56,7 @@ class SwewApp
      * ];
      */
     protected array $routeFiles = [];
+
     /**
      * @example
      *  $middlewares = [
@@ -54,6 +64,7 @@ class SwewApp
      *  ];
      */
     protected array $middlewares = [];
+
     /**
      * List of Middleware names that apply to all routers
      *
@@ -64,7 +75,7 @@ class SwewApp
 
     public function __construct()
     {
-        if (!empty($this->preloadClass)) {
+        if (! empty($this->preloadClass)) {
             if (class_exists($this->preloadClass)) {
                 new $this->preloadClass();
             } else {
@@ -78,20 +89,20 @@ class SwewApp
         $this->env->loadGlobalEnvs();
         $this->container = container();
 
-        if (!empty($this->containerAutoloadConfigDir)) {
+        if (! empty($this->containerAutoloadConfigDir)) {
             $this->container->loadConfigFiles($this->containerAutoloadConfigDir);
         }
 
-        $IS_TEST = (bool)$this->env->get('__TEST__', false);
+        $IS_TEST = (bool) $this->env->get('__TEST__', false);
 
-        if (!is_null($this->cacheDir) && !$IS_TEST) {
-            $this->env->useCache(true, $this->cacheDir . '/env_cache.php');
-            $this->container->useCache(true, $this->cacheDir . '/container_cache.php');
+        if (! is_null($this->cacheDir) && ! $IS_TEST) {
+            $this->env->useCache(true, $this->cacheDir.'/env_cache.php');
+            $this->container->useCache(true, $this->cacheDir.'/container_cache.php');
         }
 
         if (
-            !empty($this->envFilePath) &&
-            !$this->env->get('__LOADED_ENV_FILE__', false)
+            ! empty($this->envFilePath) &&
+            ! $this->env->get('__LOADED_ENV_FILE__', false)
         ) {
             // If we use cache, this block will be skipped
             $this->env->loadFromFile($this->envFilePath);
@@ -100,13 +111,13 @@ class SwewApp
 
         $this->env->set('APP_ROOT', realpath($this->rootDir));
 
-        $this->DEV = (bool)$this->env->get('APP_IS_DEV', false) || $IS_TEST;
+        $this->DEV = (bool) $this->env->get('APP_IS_DEV', false) || $IS_TEST;
 
         $this->host = $this->env->get('host', '');
 
         res()->setTestEnv($IS_TEST);
 
-        if (!$IS_TEST) {
+        if (! $IS_TEST) {
             set_exception_handler(function (Throwable $e) {
                 $this->exceptionHandler($e);
             });
@@ -186,7 +197,6 @@ class SwewApp
             $req->getUri()->getPath()
         );
 
-
         if (empty($routeItem['class']) || empty($routeItem['method'])) {
             return null;
         }
@@ -221,10 +231,6 @@ class SwewApp
 
     /**
      * Method for displaying the error page
-     *
-     * @param int $status
-     * @param string $message
-     * @return void
      */
     public function makeErrorPage(int $status, string $message = ''): void
     {

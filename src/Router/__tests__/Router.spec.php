@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Swew\Framework\Router\Route;
+use Swew\Framework\Router\RouteHelper;
 use Swew\Framework\Router\Router;
 
 include_once 'stub/router_stubs.php';
@@ -177,7 +177,7 @@ it('Route::getRoutesFromPaths [1]', function () {
 
 it('Route: add by Route class', function () {
     $router = new Router([]);
-    $route = new Route();
+    $route = new RouteHelper();
     $route->name('single-route');
     $route->path('/single/page');
     $route->controller('DemoControllerStub');
@@ -196,7 +196,7 @@ it('Route: add by Route class', function () {
 
 it('Route: Get method path', function () {
     $router = new Router([]);
-    $route = new Route();
+    $route = new RouteHelper();
     $route->name('single-route');
     $route->path('/single/page');
     $route->controller('DemoSecondControllerStub');

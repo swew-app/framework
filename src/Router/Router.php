@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Swew\Framework\Router;
 
 use Exception;
-use ReflectionClass;
 use FastRoute\Dispatcher as FastRouteDispatcher;
-use Swew\Framework\Support\Str;
-use Swew\Framework\Router\Methods\Get;
-
+use function FastRoute\cachedDispatcher;
 use function FastRoute\simpleDispatcher;
+use ReflectionClass;
+use Swew\Framework\Router\Methods\Get;
+use Swew\Framework\Support\Str;
 
 class Router
 {
@@ -26,6 +26,8 @@ class Router
 
     private string $basePath = '/';
 
+    private ?string $cachePath = null;
+
     public array $routes = [];
 
     public string $host = '';
@@ -39,6 +41,11 @@ class Router
         }
 
         $this->host = $host;
+    }
+
+    public function useCache(string $cachePath): self {
+        $this->cachePath = $cachePath;
+        return $this;
     }
 
     public function setBasePath(string $basePath): void
@@ -263,7 +270,7 @@ class Router
     {
         $routes = $this->getRoutes();
 
-        $dispatcher = simpleDispatcher(function ($r) use ($routes) {
+        $routeDefinitionCallback = function ($r) use ($routes) {
             foreach ($routes as $route) {
                 $method = $route['method'] ?? 'GET|HEAD|OPTIONS';
 
@@ -278,7 +285,17 @@ class Router
                 $r->addRoute(explode('|', $method), $route['path'], $handlerItem);
                 # DEMO: $r->addRoute('POST', $route['path'], $handlerItem);
             }
-        });
+        };
+
+        if ($this->cachePath === null) {
+            $dispatcher = simpleDispatcher($routeDefinitionCallback);
+        } else {
+            $dispatcher = cachedDispatcher($routeDefinitionCallback, [
+                'cacheKey' => 'routes',
+                'cacheFile' => $this->cachePath,
+                'cacheDisabled' => false,
+            ]);
+        }
 
         $uri = $this->normalizeUri($uri);
 
@@ -374,7 +391,7 @@ class Router
     public static function getRoutesFromPaths(array $routeConfigPaths): array
     {
         $list = array_map(
-            fn ($path) => include($path),
+            fn($path) => include($path),
             $routeConfigPaths
         );
 

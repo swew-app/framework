@@ -213,3 +213,19 @@ it('Route: Get method path', function () {
         'middlewares' => [],
     ]);
 });
+
+it('Router with cache', function () {
+    $router = new Router(routerStub());
+
+    $cachePath = __DIR__ . '/route.cache';
+
+    $router->useCache($cachePath);
+    // initialize cache file
+    $router->findRouteByFastRouter('GET', '/blog/2');
+
+    // check if file $cachePath exists
+    expect(file_exists($cachePath))->toBe(true);
+
+    // remove file after tests
+    unlink($cachePath);
+});

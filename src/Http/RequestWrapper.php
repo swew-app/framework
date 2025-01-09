@@ -7,19 +7,21 @@ namespace Swew\Framework\Http;
 use Exception;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Swew\Framework\Support\Obj;
 
 final class RequestWrapper extends Request
 {
     private static ?RequestWrapper $instance = null;
+
     private array $middlewareNames = [];
 
     private function __construct(
-        string                      $method = '',
-        UriInterface|string         $uri = '',
-        array                       $headers = [],
+        string $method = '',
+        UriInterface|string $uri = '',
+        array $headers = [],
         StreamInterface|string|null $body = null,
-        string                      $version = '1.1',
-        array                       $serverParams = []
+        string $version = '1.1',
+        array $serverParams = []
     ) {
         if ($method === '') {
             if (empty($_SERVER['REQUEST_METHOD'])) {
@@ -43,16 +45,17 @@ final class RequestWrapper extends Request
     public static function new(): self
     {
         self::removeInstance();
+
         return self::getInstance();
     }
 
     public static function getInstance(
-        string                      $method = '',
-        UriInterface|string         $uri = '',
-        array                       $headers = [],
+        string $method = '',
+        UriInterface|string $uri = '',
+        array $headers = [],
         StreamInterface|string|null $body = null,
-        string                      $version = '1.1',
-        array                       $serverParams = []
+        string $version = '1.1',
+        array $serverParams = []
     ): self {
         if (is_null(self::$instance)) {
             return new self(
@@ -70,8 +73,6 @@ final class RequestWrapper extends Request
 
     /**
      * Remove singleton
-     *
-     * @return void
      */
     public static function removeInstance(): void
     {
@@ -80,12 +81,8 @@ final class RequestWrapper extends Request
 
     /**
      * Retrieve an input item from the request.
-     *
-     * @param string|null $key
-     * @param mixed|null $default
-     * @return mixed
      */
-    public function input(string $key = null, mixed $default = null): mixed
+    public function input(?string $key = null, mixed $default = null): array|object
     {
         $data = $this->getQueryParams();
         $body = $this->getParsedBody();
@@ -99,6 +96,29 @@ final class RequestWrapper extends Request
         }
 
         return $data;
+    }
+
+    public function mapTo(object|string $item): object
+    {
+        if (gettype($item) === 'string' && class_exists($item)) {
+            $item = new $item();
+        }
+
+        $data = $this->getParsedBody();
+
+        if (! is_array($data)) {
+            throw new \Exception('Passed invalid data from request');
+        }
+
+        $data = array_merge(Obj::getPublicVars($item), $data);
+
+        foreach ($data as $key => $value) {
+            if (property_exists($item, $key)) {
+                $item->{$key} = $value;
+            }
+        }
+
+        return $item;
     }
 
     public function isAjax(): bool

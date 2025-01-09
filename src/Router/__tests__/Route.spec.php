@@ -14,7 +14,6 @@ it('Route: simple', function () {
         'path' => '/blog',
         'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS|HEAD|CONNECT|TRACE',
         'middlewares' => [],
-        'controller' => '',
     ]);
 });
 
@@ -30,7 +29,6 @@ it('Route: with prefix', function () {
         'path' => '/recipe/desert',
         'method' => 'GET|POST|PUT|PATCH|DELETE|OPTIONS|HEAD|CONNECT|TRACE',
         'middlewares' => [],
-        'controller' => '',
     ]);
 });
 

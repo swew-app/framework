@@ -108,8 +108,15 @@ class RouteHelper
             'path' => $path,
             'method' => $this->method,
             'middlewares' => $this->middlewares,
-            'controller' => $this->controller,
         ];
+
+        if ($this->controller) {
+            $route['controller'] = $this->controller;
+        }
+
+        if ($this->collector) {
+            $route['collector'] = $this->collector;
+        }
 
         if (count($this->children)) {
             $route['children'] = $this->children;

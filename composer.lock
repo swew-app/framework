@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ab513ef49b2cfeb07eadeec7a58c8c9a",
+    "content-hash": "c8a570447aeb0b0253df4f44d08cbc1a",
     "packages": [
         {
             "name": "nikic/fast-route",
@@ -345,16 +345,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.12.13",
+            "version": "1.12.15",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "9b469068840cfa031e1deaf2fa1886d00e20680f"
+                "reference": "c91d4e8bc056f46cf653656e6f71004b254574d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/9b469068840cfa031e1deaf2fa1886d00e20680f",
-                "reference": "9b469068840cfa031e1deaf2fa1886d00e20680f",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/c91d4e8bc056f46cf653656e6f71004b254574d1",
+                "reference": "c91d4e8bc056f46cf653656e6f71004b254574d1",
                 "shasum": ""
             },
             "require": {
@@ -399,7 +399,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2024-12-17T17:00:20+00:00"
+            "time": "2025-01-05T16:40:22+00:00"
         },
         {
             "name": "psalm/phar",
@@ -543,17 +543,11 @@
         },
         {
             "name": "swew/test",
-            "version": "v1.6.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/swew-app/test.git",
-                "reference": "5849f40219fa0e25cd51873a034e7943e974e420"
-            },
+            "version": "dev-master",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/swew-app/test/zipball/5849f40219fa0e25cd51873a034e7943e974e420",
-                "reference": "5849f40219fa0e25cd51873a034e7943e974e420",
-                "shasum": ""
+                "type": "path",
+                "url": "../test",
+                "reference": "5849f40219fa0e25cd51873a034e7943e974e420"
             },
             "require": {
                 "ext-json": "*",
@@ -573,12 +567,12 @@
             ],
             "type": "library",
             "autoload": {
-                "files": [
-                    "src/Functions.php"
-                ],
                 "psr-4": {
                     "Swew\\Test\\": "src/"
                 },
+                "files": [
+                    "src/Functions.php"
+                ],
                 "exclude-from-classmap": [
                     "spec",
                     "/Tests/",
@@ -586,7 +580,31 @@
                     "/tests/"
                 ]
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "archive": {
+                "exclude": [
+                    "tests",
+                    "swew.json"
+                ]
+            },
+            "scripts": {
+                "test": [
+                    "t"
+                ],
+                "static": [
+                    "./vendor/psalm/phar/psalm.phar --no-cache"
+                ],
+                "stan": [
+                    "vendor/bin/phpstan analyse src --level=3"
+                ],
+                "code-check": [
+                    "./vendor/bin/pint"
+                ],
+                "check": [
+                    "@static",
+                    "@stan",
+                    "@code-check"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -604,17 +622,16 @@
                 "lightweight",
                 "testing"
             ],
-            "support": {
-                "issues": "https://github.com/swew-app/test/issues",
-                "source": "https://github.com/swew-app/test/tree/v1.6.2"
-            },
-            "time": "2024-12-30T19:00:10+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {},
-    "prefer-stable": false,
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "ext-json": "*",

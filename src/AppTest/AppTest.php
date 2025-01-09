@@ -8,6 +8,7 @@ use Exception;
 use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Http\ResponseWrapper;
+use Swew\Framework\Router\RouteHelper;
 use Swew\Framework\SwewApp;
 
 class AppTest
@@ -58,10 +59,10 @@ class AppTest
     /**
      * @throws Exception
      */
-    public function addRoute(array $route): static
+    public function addRoute(array|RouteHelper $route): static
     {
         if (is_null($this->app->router)) {
-            throw  new \LogicException('Router not initialized');
+            throw new \LogicException('Router not initialized');
         }
 
         $this->app->router->addRoute($route);
@@ -70,18 +71,17 @@ class AppTest
         return $this;
     }
 
-
     /**
-     * @param string $method
-     * @param string $uri
-     * @param mixed $post
-     * @param array $server
-     * @return static
+     * @param  mixed  $post
      *
      * @psalm-param array{CONTENT_TYPE?: 'application/json;charset=UTF-8', HTTP_ACCEPT?: 'application/json;charset=UTF-8'} $server
      */
     public function call(string $method, string $uri, array $post = [], array $server = []): static
     {
+        if ($this->app->router === null || count($this->app->router->routes) === 0) {
+            throw new \LogicException('Router not initialized: need use addRoute() method');
+        }
+
         $old = json_encode([
             $_SERVER,
             $_POST,

@@ -32,16 +32,16 @@ final class FeatureManager
         $paths = self::getFeaturesViewPaths();
 
         foreach ($paths as $path) {
-            $filePathDefault = $path . DIRECTORY_SEPARATOR . $file;
+            $filePathDefault = $path.DIRECTORY_SEPARATOR.$file;
 
             $filePaths = [
-                $filePathDefault
+                $filePathDefault,
             ];
 
             $extensions = array_keys(self::$templateParser);
 
             foreach ($extensions as $ext) {
-                $filePaths[] = $filePathDefault . '.' . $ext;
+                $filePaths[] = $filePathDefault.'.'.$ext;
             }
 
             foreach ($filePaths as $filePath) {
@@ -51,12 +51,12 @@ final class FeatureManager
             }
         }
 
-        throw new \LogicException("File '$file'\nnot found in:\n- " . implode("\n- ", $paths));
+        throw new \LogicException("File '$file'\nnot found in:\n- ".implode("\n- ", $paths));
     }
 
     // Templates for response
 
-    public static function getPreparedResponse(): mixed
+    public static function getPreparedResponse(): string|array|bool|BaseDTO
     {
         if (res()->getRaw()) {
             return res()->getRaw();
@@ -68,7 +68,7 @@ final class FeatureManager
             $dto = $data;
             $data = $dto->getData();
 
-            if (!$dto->isValid()) {
+            if (! $dto->isValid()) {
                 $data['errors'] = [
                     'message' => $dto->getErrorMessage(),
                     'items' => $dto->getErrors(),
@@ -97,7 +97,6 @@ final class FeatureManager
             );
         }
 
-
         return $data;
     }
 
@@ -122,7 +121,7 @@ final class FeatureManager
         $extension = self::findMatchingExtension($filepath);
 
         if (is_null($extension)) {
-            throw  new \LogicException("Can't parse extension from file '$filepath'");
+            throw new \LogicException("Can't parse extension from file '$filepath'");
         }
 
         if (count(self::$templateParser) === 0) {
@@ -163,16 +162,16 @@ final class FeatureManager
     {
         $controller = self::$controller;
         $featDir = basename(self::$featurePath);
-        $commonView = self::$featurePath . DIRECTORY_SEPARATOR . 'Common' . DIRECTORY_SEPARATOR . 'view';
+        $commonView = self::$featurePath.DIRECTORY_SEPARATOR.'Common'.DIRECTORY_SEPARATOR.'view';
 
-        if (!empty($controller)) {
-            $start = (strpos($controller, $featDir . '\\') ?: 0) + strlen($featDir . '\\');
+        if (! empty($controller)) {
+            $start = (strpos($controller, $featDir.'\\') ?: 0) + strlen($featDir.'\\');
             $end = strpos($controller, '\\Controllers');
 
             /** @var int $end */
-            $currentFeatureView = self::$featurePath . '/'
-                . str_replace('\\', '/', substr($controller, $start, $end - $start))
-                . '/view';
+            $currentFeatureView = self::$featurePath.'/'
+                .str_replace('\\', '/', substr($controller, $start, $end - $start))
+                .'/view';
 
             return array_unique([$currentFeatureView, $commonView]);
         }

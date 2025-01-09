@@ -38,7 +38,7 @@ class Response extends MessageMethods implements ResponseInterface
         array  $headers = [],
         mixed  $body = null,
         string $version = '1.1',
-        string $reason = null
+        ?string $reason = null
     ) {
         // If we got no body, defer initialization of the stream until Response::getBody()
         if ('' !== $body && !is_null($body)) {

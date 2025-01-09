@@ -33,7 +33,17 @@
             "Swew\\Testing\\": "tests/"
         }
     },
-    "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../test",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "prefer-stable": true,
+    "minimum-stability": "dev",
     "require": {
         "ext-json": "*",
         "php": ">=8.2",
@@ -47,7 +57,7 @@
         "phpstan/phpstan": "^1.12.13",
         "psalm/phar": "^5.26.1",
         "swew/dd": "^1.4.2",
-        "swew/test": "^1.6.2"
+        "swew/test": "*"
     },
     "scripts": {
         "test": "t",

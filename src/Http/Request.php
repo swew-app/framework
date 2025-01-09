@@ -15,34 +15,42 @@ use Swew\Framework\Http\Partials\Uri;
 class Request extends MessageMethods implements ServerRequestInterface
 {
     private UriInterface $uri;
+
     private string $method = '';
+
     private array $serverParams = [];
+
     private string $requestTarget = '/';
+
     private array $cookieParams = [];
+
     private array $queryParams = [];
+
     private array $uploadedFiles = [];
+
     private array|object|null $parsedBody = null;
+
     private array $attributes = [];
 
     /**
-     * @param string $method HTTP method
-     * @param string|UriInterface $uri URI
-     * @param array $headers Request headers
-     * @param string|StreamInterface|null $body Request body
-     * @param string $version Protocol version
-     * @param array $serverParams Typically the $_SERVER superglobal
+     * @param  string  $method HTTP method
+     * @param  string|UriInterface  $uri URI
+     * @param  array  $headers Request headers
+     * @param  string|StreamInterface|null  $body Request body
+     * @param  string  $version Protocol version
+     * @param  array  $serverParams Typically the $_SERVER superglobal
      */
     public function __construct(
-        string                      $method,
-        string|UriInterface         $uri,
-        array                       $headers = [],
+        string $method,
+        string|UriInterface $uri,
+        array $headers = [],
         string|StreamInterface|null $body = null,
-        string                      $version = '1.1',
-        array                       $serverParams = []
+        string $version = '1.1',
+        array $serverParams = []
     ) {
         $this->serverParams = $serverParams;
 
-        if (!($uri instanceof UriInterface)) {
+        if (! ($uri instanceof UriInterface)) {
             $uri = new Uri($uri);
         }
 
@@ -55,7 +63,7 @@ class Request extends MessageMethods implements ServerRequestInterface
 
         $this->protocol = $version;
 
-        if (!$this->hasHeader('Host')) {
+        if (! $this->hasHeader('Host')) {
             $this->updateHostFromUri();
         }
 
@@ -114,7 +122,7 @@ class Request extends MessageMethods implements ServerRequestInterface
 
         $this->uri = $uri;
 
-        if (!$preserveHost || !$this->hasHeader('Host')) {
+        if (! $preserveHost || ! $this->hasHeader('Host')) {
             $this->updateHostFromUri();
         }
 
@@ -172,7 +180,7 @@ class Request extends MessageMethods implements ServerRequestInterface
      */
     public function withParsedBody($data): self
     {
-        if (!\is_array($data) && !\is_object($data) && null !== $data) {
+        if (! \is_array($data) && ! \is_object($data) && null !== $data) {
             throw new InvalidArgumentException('First parameter to withParsedBody MUST be object, array or null');
         }
 
@@ -204,7 +212,7 @@ class Request extends MessageMethods implements ServerRequestInterface
 
     public function withoutAttribute($name): self
     {
-        if (!array_key_exists($name, $this->attributes)) {
+        if (! array_key_exists($name, $this->attributes)) {
             return $this;
         }
 
@@ -222,7 +230,7 @@ class Request extends MessageMethods implements ServerRequestInterface
         }
 
         if (null !== ($port = $this->uri->getPort())) {
-            $host .= ':' . $port;
+            $host .= ':'.$port;
         }
 
         if (isset($this->headerNames['host'])) {

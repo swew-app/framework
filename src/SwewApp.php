@@ -75,7 +75,7 @@ class SwewApp
 
     public function __construct()
     {
-        if (!empty($this->preloadClass)) {
+        if (! empty($this->preloadClass)) {
             if (class_exists($this->preloadClass)) {
                 new $this->preloadClass();
             } else {
@@ -89,20 +89,20 @@ class SwewApp
         $this->env->loadGlobalEnvs();
         $this->container = container();
 
-        if (!empty($this->containerAutoloadConfigDir)) {
+        if (! empty($this->containerAutoloadConfigDir)) {
             $this->container->loadConfigFiles($this->containerAutoloadConfigDir);
         }
 
         $IS_TEST = (bool) $this->env->get('__TEST__', false);
 
-        if ($this->cacheDir !== null && !$IS_TEST) {
-            $this->env->useCache(true, $this->cacheDir . '/env_cache.php');
-            $this->container->useCache(true, $this->cacheDir . '/container_cache.php');
+        if ($this->cacheDir !== null && ! $IS_TEST) {
+            $this->env->useCache(true, $this->cacheDir.'/env_cache.php');
+            $this->container->useCache(true, $this->cacheDir.'/container_cache.php');
         }
 
         if (
-            !empty($this->envFilePath) &&
-            !$this->env->get('__LOADED_ENV_FILE__', false)
+            ! empty($this->envFilePath) &&
+            ! $this->env->get('__LOADED_ENV_FILE__', false)
         ) {
             // If we use cache, this block will be skipped
             $this->env->loadFromFile($this->envFilePath);
@@ -117,11 +117,13 @@ class SwewApp
 
         res()->setTestEnv($IS_TEST);
 
-        if (!$IS_TEST) {
+        if (! $IS_TEST) {
             set_exception_handler(function (Throwable $e) {
                 $this->exceptionHandler($e);
             });
         }
+
+        $this->initRouter();
 
         FeatureManager::setFeaturePath($this->features);
     }
@@ -129,8 +131,6 @@ class SwewApp
     final public function run(): void
     {
         Hook::call(HK::beforeRun, $this);
-
-        $this->initRouter();
 
         $this->env->set('$router', $this->router);
 
@@ -177,7 +177,7 @@ class SwewApp
         );
 
         if ($this->cacheDir) {
-            $this->router->useCache($this->cacheDir . '/route.cache');
+            $this->router->useCache($this->cacheDir.'/route.cache');
         }
 
         $basePath = (string) $this->env->get('APP_BASE_PATH', '/');
@@ -239,11 +239,15 @@ class SwewApp
     public function makeErrorPage(int $status, string $message = ''): void
     {
         if ($status === 404) {
-            res('Page not found')->view('404.php');
+            res('Page not found')
+                ->withStatus($status)
+                ->view('404.php');
         }
 
         if ($status >= 500) {
-            res('Page not found')->view('500.php');
+            res('Page not found')
+                ->withStatus($status)
+                ->view('500.php');
         }
     }
 

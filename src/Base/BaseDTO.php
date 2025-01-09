@@ -32,7 +32,6 @@ abstract class BaseDTO
             throw new \Exception('Passed invalid data');
         }
 
-
         $this->validate();
 
         return $this;
@@ -49,9 +48,6 @@ abstract class BaseDTO
      *          'login' => fn (mixed $login) => strtolower($login),
      *      ];
      * }
-     *
-     *
-     * @return array
      */
     public function castTypes(): array
     {
@@ -71,19 +67,18 @@ abstract class BaseDTO
                     continue;
                 }
 
-                $this->$key = match (gettype($currentData[$key])) {
-                    'boolean' => (bool)$data[$key],
-                    'integer' => (int)$data[$key],
-                    'double' => (float)$data[$key],
-                    'string' => (string)$data[$key],
+                $this->$key = match (gettype($value)) {
+                    'boolean' => (bool) $data[$key],
+                    'integer' => (int) $data[$key],
+                    'double' => (float) $data[$key],
+                    'string' => (string) $data[$key],
                     default => $data[$key],
                 };
             }
         }
     }
 
-
-    # region [validation]
+    // region [validation]
 
     private bool $isValid = true;
 
@@ -113,8 +108,6 @@ abstract class BaseDTO
 
     /**
      * Validation messages
-     *
-     * @return array
      */
     public function messages(): array
     {
@@ -123,8 +116,6 @@ abstract class BaseDTO
 
     /**
      * Validate translations
-     *
-     * @return array
      */
     public function translation(): array
     {
@@ -164,5 +155,5 @@ abstract class BaseDTO
         return $this->isValid;
     }
 
-    # endregion
+    // endregion
 }

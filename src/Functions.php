@@ -57,7 +57,8 @@ function container(string $id = ''): mixed
 function route(
     string $path,
     string|null $name = null,
-    string|array|null $controller = null
+    string|array|null $controller = null,
+    string|null $collector = null,
 ): RouteHelper {
     $route = new RouteHelper();
     $route->path($path);
@@ -68,6 +69,10 @@ function route(
 
     if ($controller !== null) {
         $route->controller($controller);
+    }
+
+    if ($collector !== null) {
+        $route->collector($collector);
     }
 
     return $route;

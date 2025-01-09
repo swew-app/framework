@@ -5,11 +5,9 @@ declare(strict_types=1);
 namespace Swew\Framework\Http;
 
 use Exception;
+use function function_exists;
 use Swew\Framework\Base\BaseDTO;
 use Swew\Framework\Http\Partials\Stream;
-
-use function function_exists;
-use function litespeed_finish_request;
 
 final class ResponseWrapper extends Response
 {
@@ -19,14 +17,14 @@ final class ResponseWrapper extends Response
 
     private bool $isTest = false;
 
-    private function __construct(int $status = 200, array $headers = [], mixed $body = null, string $version = '1.1', string $reason = null)
+    private function __construct(int $status = 200, array $headers = [], mixed $body = null, string $version = '1.1', ?string $reason = null)
     {
         parent::__construct($status, $headers, $body, $version, $reason);
 
         self::$instance = $this;
     }
 
-    public static function getInstance(int $status = 200, array $headers = [], mixed $body = null, string $version = '1.1', string $reason = null): self
+    public static function getInstance(int $status = 200, array $headers = [], mixed $body = null, string $version = '1.1', ?string $reason = null): self
     {
         if (is_null(self::$instance)) {
             return new self($status, $headers, $body, $version, $reason);
@@ -37,8 +35,6 @@ final class ResponseWrapper extends Response
 
     /**
      * Remove singleton
-     *
-     * @return void
      */
     public static function removeInstance(): void
     {
@@ -49,6 +45,7 @@ final class ResponseWrapper extends Response
      * Sends HTTP headers and content.
      *
      * @return $this
+     *
      * @throws Exception
      */
     public function send(): ResponseWrapper
@@ -59,7 +56,7 @@ final class ResponseWrapper extends Response
         if (function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         } elseif (function_exists('litespeed_finish_request')) {
-            litespeed_finish_request();
+            \litespeed_finish_request();
         }
 
         return $this;
@@ -75,7 +72,7 @@ final class ResponseWrapper extends Response
 
         foreach ($headers as $name => $values) {
             header(
-                $name . ': ' . implode(',', $values),
+                $name.': '.implode(',', $values),
                 true,
                 $this->getStatusCode()
             );
@@ -107,9 +104,6 @@ final class ResponseWrapper extends Response
 
     /**
      * Need to prevent content rendering during tests
-     *
-     * @param bool $isTest
-     * @return void
      */
     public function setTestEnv(bool $isTest): void
     {
@@ -130,6 +124,7 @@ final class ResponseWrapper extends Response
     {
         $this->withStatus($status);
         $this->withHeader('Location', $url);
+
         return $this;
     }
 
@@ -141,6 +136,7 @@ final class ResponseWrapper extends Response
     {
         $this->viewFileName = $viewFileName;
         $this->viewData = $viewData;
+
         return $this;
     }
 

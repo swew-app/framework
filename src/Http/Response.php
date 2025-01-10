@@ -13,7 +13,7 @@ use Swew\Framework\Http\Partials\Stream;
 class Response extends MessageMethods implements ResponseInterface
 {
     /** @var array Map of standard HTTP status code/reason phrases */
-    private const PHRASES = [
+    protected const PHRASES = [
         100 => 'Continue', 101 => 'Switching Protocols', 102 => 'Processing',
         200 => 'OK', 201 => 'Created', 202 => 'Accepted', 203 => 'Non-Authoritative Information', 204 => 'No Content', 205 => 'Reset Content', 206 => 'Partial Content', 207 => 'Multi-status', 208 => 'Already Reported',
         300 => 'Multiple Choices', 301 => 'Moved Permanently', 302 => 'Found', 303 => 'See Other', 304 => 'Not Modified', 305 => 'Use Proxy', 306 => 'Switch Proxy', 307 => 'Temporary Redirect',
@@ -21,27 +21,28 @@ class Response extends MessageMethods implements ResponseInterface
         500 => 'Internal Server Error', 501 => 'Not Implemented', 502 => 'Bad Gateway', 503 => 'Service Unavailable', 504 => 'Gateway Time-out', 505 => 'HTTP Version not supported', 506 => 'Variant Also Negotiates', 507 => 'Insufficient Storage', 508 => 'Loop Detected', 511 => 'Network Authentication Required',
     ];
 
-    private int $statusCode = 200;
+    protected int $statusCode = 200;
 
-    private string $reasonPhrase = '';
+    protected string $reasonPhrase = '';
 
     /**
-     * @param int $status Status code
-     * @param array $headers Response headers
-     * @param string|StreamInterface|null $body Response body
-     * @param string $version Protocol version
-     * @param string|null $reason Reason phrase (when empty a default will be used based on the status code)
+     * @param  int  $status Status code
+     * @param  array  $headers Response headers
+     * @param  string|StreamInterface|null  $body Response body
+     * @param  string  $version Protocol version
+     * @param  string|null  $reason Reason phrase (when empty a default will be used based on the status code)
+     *
      * @throws Exception
      */
     public function __construct(
-        int    $status = 200,
-        array  $headers = [],
-        mixed  $body = null,
+        int $status = 200,
+        array $headers = [],
+        mixed $body = null,
         string $version = '1.1',
         ?string $reason = null
     ) {
-        // If we got no body, defer initialization of the stream until Response::getBody()
-        if ('' !== $body && !is_null($body)) {
+        // If we got nobody, defer initialization of the stream until Response::getBody()
+        if ('' !== $body && ! is_null($body)) {
             $this->stream = Stream::create($body);
         }
 

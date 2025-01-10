@@ -14,23 +14,23 @@ use Swew\Framework\Http\Partials\Uri;
 
 class Request extends MessageMethods implements ServerRequestInterface
 {
-    private UriInterface $uri;
+    protected UriInterface $uri;
 
-    private string $method = '';
+    protected string $method = '';
 
-    private array $serverParams = [];
+    protected array $serverParams = [];
 
-    private string $requestTarget = '/';
+    protected string $requestTarget = '/';
 
-    private array $cookieParams = [];
+    protected array $cookieParams = [];
 
-    private array $queryParams = [];
+    protected array $queryParams = [];
 
-    private array $uploadedFiles = [];
+    protected array $uploadedFiles = [];
 
-    private array|object|null $parsedBody = null;
+    protected array|object|null $parsedBody = null;
 
-    private array $attributes = [];
+    protected array $attributes = [];
 
     /**
      * @param  string  $method HTTP method

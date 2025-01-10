@@ -17,8 +17,10 @@ class AppTest
 
     public string $content = '';
 
-    public function __construct(SwewApp|string|null $app = null)
+    public function __construct(SwewApp|string $app)
     {
+        $_COOKIE = [];
+
         $this->removeSingletons();
 
         putenv('APP_IS_TEST=true');
@@ -29,8 +31,6 @@ class AppTest
             $this->app = $instance;
         } elseif ($app instanceof SwewApp) {
             $this->app = $app;
-        } else {
-            $this->app = new SwewApp();
         }
 
         $env = EnvContainer::getInstance();
@@ -44,14 +44,7 @@ class AppTest
         EnvContainer::removeInstance();
     }
 
-    public function setApp(SwewApp $app): static
-    {
-        $this->app = $app;
-
-        return $this;
-    }
-
-    public function run(): void
+    private function run(): void
     {
         $this->app->run();
     }
@@ -103,6 +96,8 @@ class AppTest
         $_SERVER = $data[0];
         $_POST = $data[1];
         $_REQUEST = $data[2];
+
+        res()->send();
 
         return $this;
     }

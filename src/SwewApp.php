@@ -10,6 +10,7 @@ use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Hook\HK;
 use Swew\Framework\Hook\Hook;
 use Swew\Framework\Http\RequestWrapper;
+use Swew\Framework\Http\ResponseWrapper;
 use Swew\Framework\Manager\AppMiddlewareManager;
 use Swew\Framework\Manager\FeatureManager;
 use Swew\Framework\Middleware\MiddlewarePipeline;
@@ -82,6 +83,9 @@ class SwewApp
                 throw new \LogicException("Pass class to preload, '$this->preloadClass' not class");
             }
         }
+
+        RequestWrapper::removeInstance();
+        ResponseWrapper::removeInstance();
 
         Hook::call(HK::beforeInit, $this);
 

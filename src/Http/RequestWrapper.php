@@ -107,7 +107,7 @@ final class RequestWrapper extends Request
         $data = $this->getParsedBody();
 
         if (! is_array($data)) {
-            throw new \Exception('Passed invalid data from request');
+            throw new \LogicException('Passed invalid data from request');
         }
 
         $data = array_merge(Obj::getPublicVars($item), $data);

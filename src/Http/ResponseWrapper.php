@@ -17,6 +17,8 @@ final class ResponseWrapper extends Response
 
     private bool $isTest = false;
 
+    private array $cookies = [];
+
     private function __construct(int $status = 200, array $headers = [], mixed $body = null, string $version = '1.1', ?string $reason = null)
     {
         parent::__construct($status, $headers, $body, $version, $reason);
@@ -54,7 +56,7 @@ final class ResponseWrapper extends Response
         $this->sendContent();
 
         if (function_exists('fastcgi_finish_request')) {
-            fastcgi_finish_request();
+            \fastcgi_finish_request();
         } elseif (function_exists('litespeed_finish_request')) {
             \litespeed_finish_request();
         }
@@ -64,6 +66,19 @@ final class ResponseWrapper extends Response
 
     public function sendHeaders(): void
     {
+        foreach ($this->cookies as $name => $data) {
+            $name = htmlspecialchars($name);
+            $value = htmlspecialchars($data['value']);
+
+            if (! $this->isTest) {
+                setcookie($name, $value, $data['options']);
+            } else {
+                if ($data['options']['expires'] > time()) {
+                    $_COOKIE[$name] = $value;
+                }
+            }
+        }
+
         if ($this->isTest) {
             return;
         }
@@ -118,6 +133,33 @@ final class ResponseWrapper extends Response
     public function getStoredData(): BaseDTO|string|array|null
     {
         return $this->storeData;
+    }
+
+    public function setCookie(string $name, string $value, int $expires = 0, string $path = '/', bool $httponly = true, ?array $options = null): self
+    {
+        $this->cookies[$name] = [
+            'value' => $value,
+            'options' => $options ?? [
+                'expires' => $expires > 0 ? $expires : time() + 1209600, // 14 day
+                'path' => $path,
+                'domain' => $_SERVER['HTTP_ORIGIN'] ?? '',
+                'secure' => $_SERVER['HTTPS'] ?? false,
+                'httponly' => $httponly,
+            ],
+        ];
+
+        return $this;
+    }
+
+    public function removeCookie(string $name): bool
+    {
+        if (isset($this->cookies[$name])) {
+            $this->setCookie($name, '', time() - 100000);
+
+            return true;
+        }
+
+        return false;
     }
 
     public function redirect(string $url, int $status = 300): self

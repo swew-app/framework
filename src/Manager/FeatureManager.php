@@ -79,11 +79,19 @@ final class FeatureManager
         $viewName = res()->getViewFileName();
 
         if (is_null($data) && empty($viewName)) {
-            throw new \LogicException('Empty response');
+            if (res()->getStatusCode() >= 300) {
+                $data = [];
+            } else {
+                throw new \LogicException('Empty response');
+            }
         }
 
         if (req()->isAjax() || empty($viewName)) {
             res()->withHeader('Content-Type', 'application/json');
+
+            if ($data === null) {
+                $data = res()->getViewData();
+            }
 
             if (is_array($data)) {
                 $data = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
@@ -97,7 +105,11 @@ final class FeatureManager
             );
         }
 
-        return $data;
+        if (env('__TEST__') && $data === null) {
+            throw new \LogicException('Empty response');
+        }
+
+        return $data ?? '';
     }
 
     /**

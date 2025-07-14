@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Http\Partials;
 
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\StreamInterface;
 
-class MessageMethods
+class MessageMethods implements MessageInterface
 {
     protected string $protocol = '1.1';
 

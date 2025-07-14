@@ -16,6 +16,10 @@ final class EnvContainer extends AbstractCacheState
 
     private function __construct()
     {
+        if (self::$instance) {
+            return;
+        }
+
         self::$instance = $this;
 
         $this->loadGlobalEnvs();
@@ -28,7 +32,7 @@ final class EnvContainer extends AbstractCacheState
 
     public static function getInstance(bool $forceNew = false): self
     {
-        if (is_null(self::$instance) || $forceNew) {
+        if (self::$instance === null || $forceNew) {
             return new self();
         }
 
@@ -111,7 +115,7 @@ final class EnvContainer extends AbstractCacheState
 
     private function addVarByString(string $str): void
     {
-        [$key, $val] = preg_split('/=/', $str);
+        [$key, $val] = explode('=', $str, 2);
         $key = trim($key);
         $val = trim($val);
 

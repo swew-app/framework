@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 use Swew\Framework\Env\EnvContainer;
 
+beforeEach(function () {
+    EnvContainer::removeInstance();
+});
+
 it('Env Parse', function (string $text, array $vars) {
     $env = EnvContainer::getInstance();
     $env->parse($text);

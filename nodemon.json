@@ -1,6 +1,12 @@
 {
-    "ignore": ["vendor"],
-    "watch": ["src", "tests"],
+    "ignore": [
+        "vendor"
+    ],
+    "watch": [
+        "src",
+        "tests"
+    ],
+    "_exec": "composer test",
     "exec": "composer test",
     "ext": "php,json",
     "delay": 1000

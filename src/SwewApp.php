@@ -17,7 +17,7 @@ use Swew\Framework\Middleware\MiddlewarePipeline;
 use Swew\Framework\Router\Router;
 use Throwable;
 
-class SwewApp
+abstract class SwewApp
 {
     public readonly bool $DEV;
 
@@ -130,6 +130,15 @@ class SwewApp
         $this->initRouter();
 
         FeatureManager::setFeaturePath($this->features);
+
+        $this->init();
+    }
+
+    /**
+     * Метод для запуска после инициализцаии приложения, но до начала работы
+     */
+    public function init(): void
+    {
     }
 
     final public function run(): void
@@ -140,7 +149,7 @@ class SwewApp
 
         $route = $this->findRoute();
 
-        if (is_null($route)) {
+        if ($route === null) {
             $this->makeErrorPage(404, 'Page not found.');
         } else {
             FeatureManager::setController($route['class']);

@@ -1,9 +1,7 @@
 {
     "test": {
         "preloadFile": "tests/preload-for-tests.php",
-        "paths": [
-            "*/src/*.spec.php"
-        ],
+        "paths": ["*/src/*.spec.php", "*/tests/*.spec.php"],
         "bail": true,
         "log": {
             "logo": true,

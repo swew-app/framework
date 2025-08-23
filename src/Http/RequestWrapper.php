@@ -21,7 +21,7 @@ final class RequestWrapper extends Request
         array $headers = [],
         StreamInterface|string|null $body = null,
         string $version = '1.1',
-        array $serverParams = []
+        array $serverParams = [],
     ) {
         if ($method === '') {
             if (empty($_SERVER['REQUEST_METHOD'])) {
@@ -55,7 +55,7 @@ final class RequestWrapper extends Request
         array $headers = [],
         StreamInterface|string|null $body = null,
         string $version = '1.1',
-        array $serverParams = []
+        array $serverParams = [],
     ): self {
         if (is_null(self::$instance)) {
             return new self(
@@ -64,7 +64,7 @@ final class RequestWrapper extends Request
                 $headers,
                 $body,
                 $version,
-                $serverParams
+                $serverParams,
             );
         }
 
@@ -88,7 +88,7 @@ final class RequestWrapper extends Request
         $body = $this->getParsedBody();
 
         if (is_array($body)) {
-            $data = $data + $body;
+            $data += $body;
         }
 
         if ($key) {
@@ -125,11 +125,9 @@ final class RequestWrapper extends Request
     {
         $contentType = $_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
 
-        $contentType = strtolower($contentType);
+        $contentType = strtolower((string) $contentType);
 
-        return str_contains($contentType, 'json')
-            || str_contains($contentType, 'javascript')
-            || str_contains($contentType, 'xmlhttprequest');
+        return str_contains($contentType, 'json') || str_contains($contentType, 'javascript') || str_contains($contentType, 'xmlhttprequest');
     }
 
     public function isCLi(): bool
@@ -144,6 +142,6 @@ final class RequestWrapper extends Request
 
     public function hasMiddlewareName(string $middlewareName): bool
     {
-        return in_array($middlewareName, $this->middlewareNames);
+        return in_array($middlewareName, $this->middlewareNames, strict: true);
     }
 }

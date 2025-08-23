@@ -16,10 +16,6 @@ class Request extends MessageMethods implements ServerRequestInterface
 {
     protected UriInterface $uri;
 
-    protected string $method = '';
-
-    protected array $serverParams = [];
-
     protected string $requestTarget = '/';
 
     protected array $cookieParams = [];
@@ -41,20 +37,16 @@ class Request extends MessageMethods implements ServerRequestInterface
      * @param  array  $serverParams Typically the $_SERVER superglobal
      */
     public function __construct(
-        string $method,
+        protected string $method,
         string|UriInterface $uri,
         array $headers = [],
         string|StreamInterface|null $body = null,
         string $version = '1.1',
-        array $serverParams = []
+        protected array $serverParams = [],
     ) {
-        $this->serverParams = $serverParams;
-
         if (! ($uri instanceof UriInterface)) {
             $uri = new Uri($uri);
         }
-
-        $this->method = $method;
         $this->uri = $uri;
 
         foreach ($headers as $name => $text) {
@@ -221,22 +213,21 @@ class Request extends MessageMethods implements ServerRequestInterface
         return $this;
     }
 
-    //
-
     protected function updateHostFromUri(): void
     {
-        if ('' === $host = $this->uri->getHost()) {
+        if ('' === ($host = $this->uri->getHost())) {
             return;
         }
 
         if (null !== ($port = $this->uri->getPort())) {
-            $host .= ':'.$port;
+            $host .= ':' . $port;
         }
 
         if (isset($this->headerNames['host'])) {
             $header = $this->headerNames['host'];
         } else {
-            $this->headerNames['host'] = $header = 'Host';
+            $header = 'Host';
+            $this->headerNames['host'] = $header;
         }
 
         // Ensure Host is the first header.

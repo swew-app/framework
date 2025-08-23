@@ -12,10 +12,10 @@ use Psr\Http\Server\RequestHandlerInterface;
 use Swew\Framework\Base\BaseDTO;
 use Swew\Framework\Http\Response;
 
-class CallableHandlerMiddleware implements MiddlewareInterface
+readonly class CallableHandlerMiddleware implements MiddlewareInterface
 {
     public function __construct(
-        readonly Closure $callback
+        private Closure $callback,
     ) {
     }
 

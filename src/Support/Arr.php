@@ -4,9 +4,7 @@ namespace Swew\Framework\Support;
 
 final class Arr
 {
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 
     public static function get(array $arr, string $key): mixed
     {

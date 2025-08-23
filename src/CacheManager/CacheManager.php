@@ -25,13 +25,13 @@ final class CacheManager
                 return;
             }
 
-            if (key_exists('cacheDir', $data)) {
+            if (\array_key_exists('cacheDir', $data)) {
                 $this->cacheDir = $data['cacheDir'];
             }
-            if (key_exists('isEnabled', $data)) {
+            if (\array_key_exists('isEnabled', $data)) {
                 $this->isEnabled = $data['isEnabled'];
             }
-            if (key_exists('state', $data)) {
+            if (\array_key_exists('state', $data)) {
                 $this->state = $data['state'];
             }
         }
@@ -51,12 +51,14 @@ final class CacheManager
         return self::$instance;
     }
 
-    public function hasInstanceCache(): bool {
+    public function hasInstanceCache(): bool
+    {
         return file_exists($this->instanceCacheFilePath);
     }
 
-    public function instanceCache(bool $isEnabled): void {
-        if ( $isEnabled === false ) {
+    public function instanceCache(bool $isEnabled): void
+    {
+        if ($isEnabled === false) {
             if (file_exists($this->instanceCacheFilePath)) {
                 unlink($this->instanceCacheFilePath);
             }
@@ -74,25 +76,28 @@ final class CacheManager
         file_put_contents($this->instanceCacheFilePath, $content);
     }
 
-    public function setCacheDir(string $cacheDir): void {
+    public function setCacheDir(string $cacheDir): void
+    {
         $this->cacheDir = $cacheDir;
     }
 
-    public function setFile(string $key, string $pathToFileInCacheDir, bool $forceEnabled = false): bool {
-        if (key_exists($key, $this->state)) {
+    public function setFile(string $key, string $pathToFileInCacheDir, bool $forceEnabled = false): bool
+    {
+        if (\array_key_exists($key, $this->state)) {
             return false;
         }
 
         $this->state[$key] = [
-            'path' => preg_replace('#/+#','/', $this->cacheDir . DIRECTORY_SEPARATOR . $pathToFileInCacheDir),
-            'enabled' => $forceEnabled ?? $this->isEnabled,
+            'path' => preg_replace('#/+#', '/', $this->cacheDir . DIRECTORY_SEPARATOR . $pathToFileInCacheDir),
+            'enabled' => $forceEnabled ?: $this->isEnabled,
         ];
 
         return true;
     }
 
-    public function getFile(string $key): string | null {
-        $item = key_exists($key, $this->state) ? $this->state[$key] : null;
+    public function getFile(string $key): ?string
+    {
+        $item = \array_key_exists($key, $this->state) ? $this->state[$key] : null;
 
         if ($item === null || !$item['enabled']) {
             return null;
@@ -101,7 +106,8 @@ final class CacheManager
         return $item['path'];
     }
 
-    public function enable(string $key = ''): void {
+    public function enable(string $key = ''): void
+    {
         if ($key === '') {
             foreach ($this->state as &$value) {
                 $value['enabled'] = true;
@@ -113,7 +119,8 @@ final class CacheManager
         }
     }
 
-    public function disable(string $key = ''): void {
+    public function disable(string $key = ''): void
+    {
         if ($key === '') {
             foreach ($this->state as &$value) {
                 $value['enabled'] = false;

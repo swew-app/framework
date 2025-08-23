@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Container;
 
-use Error;
 use Exception;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
@@ -23,6 +22,8 @@ use function sprintf;
 
 class Container extends AbstractCacheState implements ContainerInterface
 {
+    private static ?self $instance = null;
+
     /**
      * @var array<string, mixed>
      */
@@ -39,6 +40,15 @@ class Container extends AbstractCacheState implements ContainerInterface
     public function __construct(array $definitions = [])
     {
         $this->setMultiple($definitions);
+    }
+
+    public static function getInstance(bool $forceNew = false): self
+    {
+        if (self::$instance === null || $forceNew) {
+            return new self();
+        }
+
+        return self::$instance;
     }
 
     /**
@@ -97,24 +107,17 @@ class Container extends AbstractCacheState implements ContainerInterface
             $isString = is_string($this->definitions[$id]);
 
             if ($isString && is_callable($this->definitions[$id])) {
-
                 return $this->definitions[$id]($this);
-
             } elseif ($isString && class_exists($this->definitions[$id])) {
-
                 $definedInstance = $this->getNew($this->definitions[$id]);
 
                 if (is_callable($definedInstance)) {
-
                     return $this->instances[$id] = $definedInstance();
-
                 }
 
                 return $this->instances[$id] = $definedInstance;
             } else {
-
                 return $this->definitions[$id];
-
             }
         }
 
@@ -154,7 +157,7 @@ class Container extends AbstractCacheState implements ContainerInterface
     {
         $instance = $this->createInstance($id);
 
-        if (!is_null($method) && method_exists($instance, $method)) {
+        if (! is_null($method) && method_exists($instance, $method)) {
             return $instance->$method($this);
         }
 
@@ -172,7 +175,7 @@ class Container extends AbstractCacheState implements ContainerInterface
      */
     private function createInstance(string $id): mixed
     {
-        if (!$this->has($id)) {
+        if (! $this->has($id)) {
             if (class_exists($id)) {
                 return $this->createObject($id);
             }
@@ -236,12 +239,12 @@ class Container extends AbstractCacheState implements ContainerInterface
                 /** @var ReflectionNamedType $type */
                 $typeName = $type->getName();
 
-                if (!$type->isBuiltin() && ($this->has($typeName) || class_exists($typeName))) {
+                if (! $type->isBuiltin() && ($this->has($typeName) || class_exists($typeName))) {
                     $arguments[] = $this->get($typeName);
                     continue;
                 }
 
-                if ($type->isBuiltin() && $typeName === 'array' && !$parameter->isDefaultValueAvailable()) {
+                if ($type->isBuiltin() && $typeName === 'array' && ! $parameter->isDefaultValueAvailable()) {
                     $arguments[] = [];
                     continue;
                 }
@@ -251,11 +254,11 @@ class Container extends AbstractCacheState implements ContainerInterface
                 try {
                     $arguments[] = $parameter->getDefaultValue();
                     continue;
-                } catch (ReflectionException $e) {
+                } catch (ReflectionException) {
                     throw new ContainerException(sprintf(
                         'Unable to create object `%s`. Unable to get default value of constructor parameter: `%s`.',
                         $reflection->getName(),
-                        $parameter->getName()
+                        $parameter->getName(),
                     ));
                 }
             }
@@ -263,7 +266,7 @@ class Container extends AbstractCacheState implements ContainerInterface
             throw new ContainerException(sprintf(
                 'Unable to create object `%s`. Unable to process a constructor parameter: `%s`.',
                 $reflection->getName(),
-                $parameter->getName()
+                $parameter->getName(),
             ));
         }
 
@@ -285,14 +288,12 @@ class Container extends AbstractCacheState implements ContainerInterface
 
             $data = require $file;
 
-            if (!is_array($data)) {
-                throw new \LogicException("The Container tried to load the '$file' file, but did not get the array");
+            if (! is_array($data)) {
+                throw new \LogicException("The Container tried to load the '{$file}' file, but did not get the array");
             }
 
             $this->set($name, $data);
         }
-
-
     }
 
     // endregion
@@ -320,7 +321,7 @@ class Container extends AbstractCacheState implements ContainerInterface
 
         try {
             return new $className(...$args);
-        } catch (Error $e) {
+        } catch (Exception $e) {
             $this->clearCache();
 
             throw $e;
@@ -329,9 +330,7 @@ class Container extends AbstractCacheState implements ContainerInterface
 
     private function addCacheItem(string $className, array $args = []): void
     {
-        $this->cachedData[$className] = array_map(function ($item) {
-            return is_object($item) ? get_class($item) : $item;
-        }, $args);
+        $this->cachedData[$className] = array_map(fn ($item) => is_object($item) ? $item::class : $item, $args);
 
         $this->isNeedWriteCache = true;
     }

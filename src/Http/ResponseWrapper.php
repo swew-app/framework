@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Swew\Framework\Http;
 
 use Exception;
-use function function_exists;
-use Swew\Framework\Base\BaseDTO;
 use Swew\Framework\Http\Partials\Stream;
+
+use function function_exists;
 
 final class ResponseWrapper extends Response
 {
     private static ?ResponseWrapper $instance = null;
 
-    private BaseDTO|string|array|null $storeData = null;
+    private string|array|null $storeData = null;
 
     private bool $isTest = false;
 
@@ -50,16 +50,17 @@ final class ResponseWrapper extends Response
      *
      * @throws Exception
      */
-    public function send(): ResponseWrapper
+    public function send(): self
     {
         $this->sendHeaders();
         $this->sendContent();
 
         if (function_exists('fastcgi_finish_request')) {
             \fastcgi_finish_request();
-        } elseif (function_exists('litespeed_finish_request')) {
-            \litespeed_finish_request();
         }
+        //  elseif (function_exists('litespeed_finish_request')) {
+        //     \litespeed_finish_request();
+        // }
 
         return $this;
     }
@@ -68,7 +69,7 @@ final class ResponseWrapper extends Response
     {
         foreach ($this->cookies as $name => $data) {
             $name = htmlspecialchars($name);
-            $value = htmlspecialchars($data['value']);
+            $value = htmlspecialchars((string) $data['value']);
 
             if (! $this->isTest) {
                 setcookie($name, $value, $data['options']);
@@ -87,9 +88,9 @@ final class ResponseWrapper extends Response
 
         foreach ($headers as $name => $values) {
             header(
-                $name.': '.implode(',', $values),
+                $name . ': ' . implode(',', $values),
                 true,
-                $this->getStatusCode()
+                $this->getStatusCode(),
             );
         }
     }
@@ -125,12 +126,12 @@ final class ResponseWrapper extends Response
         $this->isTest = $isTest;
     }
 
-    public function setStoredData(BaseDTO|string|array $data): void
+    public function setStoredData(string|array $data): void
     {
         $this->storeData = $data;
     }
 
-    public function getStoredData(): BaseDTO|string|array|null
+    public function getStoredData(): string|array|null
     {
         return $this->storeData;
     }
@@ -139,13 +140,15 @@ final class ResponseWrapper extends Response
     {
         $this->cookies[$name] = [
             'value' => $value,
-            'options' => $options ?? [
-                'expires' => $expires > 0 ? $expires : time() + 1209600, // 14 day
-                'path' => $path,
-                'domain' => $_SERVER['HTTP_ORIGIN'] ?? '',
-                'secure' => $_SERVER['HTTPS'] ?? false,
-                'httponly' => $httponly,
-            ],
+            'options' =>
+                $options ?? [
+                    'expires' => $expires > 0 ? $expires : (time() + 1209600), // 14 day
+                    'path' => $path,
+                    'domain' => $_SERVER['HTTP_ORIGIN'] ?? '',
+                    'secure' => $_SERVER['HTTPS'] ?? false,
+                    'httponly' => $httponly,
+                ]
+            ,
         ];
 
         return $this;

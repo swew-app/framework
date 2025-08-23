@@ -23,25 +23,47 @@ class Stream implements StreamInterface
     private ?int $size = null;
 
     /** @var array Hash of readable and writable stream types */
-    private const READ_WRITE_HASH = [
+    private const array READ_WRITE_HASH = [
         'read' => [
-            'r' => true, 'w+' => true, 'r+' => true, 'x+' => true, 'c+' => true,
-            'rb' => true, 'w+b' => true, 'r+b' => true, 'x+b' => true,
-            'c+b' => true, 'rt' => true, 'w+t' => true, 'r+t' => true,
-            'x+t' => true, 'c+t' => true, 'a+' => true,
+            'r' => true,
+            'w+' => true,
+            'r+' => true,
+            'x+' => true,
+            'c+' => true,
+            'rb' => true,
+            'w+b' => true,
+            'r+b' => true,
+            'x+b' => true,
+            'c+b' => true,
+            'rt' => true,
+            'w+t' => true,
+            'r+t' => true,
+            'x+t' => true,
+            'c+t' => true,
+            'a+' => true,
         ],
         'write' => [
-            'w' => true, 'w+' => true, 'rw' => true, 'r+' => true, 'x+' => true,
-            'c+' => true, 'wb' => true, 'w+b' => true, 'r+b' => true,
-            'x+b' => true, 'c+b' => true, 'w+t' => true, 'r+t' => true,
-            'x+t' => true, 'c+t' => true, 'a' => true, 'a+' => true,
+            'w' => true,
+            'w+' => true,
+            'rw' => true,
+            'r+' => true,
+            'x+' => true,
+            'c+' => true,
+            'wb' => true,
+            'w+b' => true,
+            'r+b' => true,
+            'x+b' => true,
+            'c+b' => true,
+            'w+t' => true,
+            'r+t' => true,
+            'x+t' => true,
+            'c+t' => true,
+            'a' => true,
+            'a+' => true,
         ],
     ];
 
-    private function __construct()
-    {
-    }
-
+    private function __construct() {}
 
     /**
      * Creates a new PSR-7 stream.
@@ -102,7 +124,7 @@ class Stream implements StreamInterface
 
     public function close(): void
     {
-        if (!is_null(Stream::$stream)) {
+        if (! is_null(Stream::$stream)) {
             /** @var resource $stream */
             $stream = Stream::$stream;
 
@@ -114,22 +136,25 @@ class Stream implements StreamInterface
         }
     }
 
-    public function detach()
+    public function detach(): mixed
     {
-        if (!isset(Stream::$stream)) {
+        if (! isset(Stream::$stream)) {
             return null;
         }
 
         fclose(Stream::$stream);
         Stream::$stream = null;
 
-        $this->size = $this->uri = null;
-        $this->readable = $this->writable = $this->seekable = false;
+        $this->size = null;
+        $this->uri = null;
+        $this->seekable = false;
+        $this->writable = false;
+        $this->readable = false;
 
         return Stream::$stream;
     }
 
-    private function getUri()
+    private function getUri(): mixed
     {
         if (false !== $this->uri) {
             $this->uri = $this->getMetadata('uri') ?? false;
@@ -144,7 +169,7 @@ class Stream implements StreamInterface
             return $this->size;
         }
 
-        if (!isset(Stream::$stream)) {
+        if (! isset(Stream::$stream)) {
             return null;
         }
 
@@ -165,11 +190,11 @@ class Stream implements StreamInterface
 
     public function tell(): int
     {
-        if (!isset(Stream::$stream)) {
+        if (! isset(Stream::$stream)) {
             throw new \RuntimeException('Stream is detached');
         }
 
-        if (false === $result = @\ftell(Stream::$stream)) {
+        if (false === ($result = @\ftell(Stream::$stream))) {
             throw new \RuntimeException('Unable to determine stream position: ' . (\error_get_last()['message'] ?? ''));
         }
 
@@ -178,7 +203,7 @@ class Stream implements StreamInterface
 
     public function eof(): bool
     {
-        return !isset(Stream::$stream) || \feof(Stream::$stream);
+        return ! isset(Stream::$stream) || \feof(Stream::$stream);
     }
 
     public function isSeekable(): bool
@@ -188,11 +213,11 @@ class Stream implements StreamInterface
 
     public function seek($offset, $whence = \SEEK_SET): void
     {
-        if (!isset(Stream::$stream)) {
+        if (! isset(Stream::$stream)) {
             throw new \RuntimeException('Stream is detached');
         }
 
-        if (!$this->seekable) {
+        if (! $this->seekable) {
             throw new \RuntimeException('Stream is not seekable');
         }
 
@@ -213,18 +238,18 @@ class Stream implements StreamInterface
 
     public function write(string $string): int
     {
-        if (!isset(Stream::$stream)) {
+        if (! isset(Stream::$stream)) {
             throw new \RuntimeException('Stream is detached');
         }
 
-        if (!$this->writable) {
+        if (! $this->writable) {
             throw new \RuntimeException('Cannot write to a non-writable stream');
         }
 
         // We can't know the size after writing anything
         $this->size = null;
 
-        if (false === $result = @\fwrite(Stream::$stream, $string)) {
+        if (false === ($result = @\fwrite(Stream::$stream, $string))) {
             throw new \RuntimeException('Unable to write to stream: ' . (\error_get_last()['message'] ?? ''));
         }
 
@@ -238,15 +263,15 @@ class Stream implements StreamInterface
 
     public function read($length): string
     {
-        if (!isset(Stream::$stream)) {
+        if (! isset(Stream::$stream)) {
             throw new \RuntimeException('Stream is detached');
         }
 
-        if (!$this->readable) {
+        if (! $this->readable) {
             throw new \RuntimeException('Cannot read from non-readable stream');
         }
 
-        if (false === $result = @\fread(Stream::$stream, $length)) {
+        if (false === ($result = @\fread(Stream::$stream, $length))) {
             throw new \RuntimeException('Unable to read from stream: ' . (\error_get_last()['message'] ?? ''));
         }
 
@@ -255,13 +280,13 @@ class Stream implements StreamInterface
 
     public function getContents(): string
     {
-        if (!isset(Stream::$stream)) {
+        if (! isset(Stream::$stream)) {
             throw new \RuntimeException('Stream is detached');
         }
 
         rewind(Stream::$stream);
 
-        if (false === $contents = @\stream_get_contents(Stream::$stream)) {
+        if (false === ($contents = @\stream_get_contents(Stream::$stream))) {
             throw new \RuntimeException('Unable to read stream contents: ' . (\error_get_last()['message'] ?? ''));
         }
 
@@ -270,7 +295,7 @@ class Stream implements StreamInterface
 
     public function getMetadata($key = null): mixed
     {
-        if (!isset(Stream::$stream)) {
+        if (! isset(Stream::$stream)) {
             return $key ? null : [];
         }
 

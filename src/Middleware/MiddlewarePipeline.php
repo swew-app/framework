@@ -23,7 +23,13 @@ final class MiddlewarePipeline implements MiddlewareInterface, RequestHandlerInt
         $this->response = ResponseWrapper::getInstance();
 
         foreach ($middlewares as $middleware) {
-            $this->pipe($middleware);
+            if (is_string($middleware)) {
+                // Is class string
+                $this->pipe(new $middleware());
+            } else {
+                // Is object
+                $this->pipe($middleware);
+            }
         }
 
         req()->setMiddlewareNames(array_keys($middlewares));
@@ -40,7 +46,7 @@ final class MiddlewarePipeline implements MiddlewareInterface, RequestHandlerInt
         return $handler->handle($request);
     }
 
-    public function handle(\Swew\Framework\Http\Request|ServerRequestInterface $request): ResponseInterface
+    public function handle(\Swew\Framework\Http\RequestWrapper|ServerRequestInterface $request): ResponseInterface
     {
         if (! $this->queue->isEmpty()) {
             $middleware = $this->queue->dequeue();

@@ -8,10 +8,9 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Swew\Framework\Http\Request;
 use Swew\Framework\Http\Response;
-use Swew\Framework\Manager\AppMiddlewareManager;
 use Swew\Framework\Middleware\MiddlewarePipeline;
 
-it('Pipe process handler', function () {
+it('Pipe process handler', function (): void {
     class MiddlewareOne implements MiddlewareInterface
     {
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -55,25 +54,7 @@ it('Pipe process handler', function () {
     expect($response->getStatusCode())->toBe(301);
 });
 
-it('AppMiddlewareManager callable', function () {
-    $manager = new AppMiddlewareManager([], []);
-    $text = 'TEST TEST OF RESPONSE';
-    $mockCallback = fn (): string => $text;
-
-    $middlewares = $manager->getMiddlewaresForApp($mockCallback);
-
-    $pipelines = new MiddlewarePipeline($middlewares);
-
-    $req = new Request('GET', '/');
-
-    $pipelines->handle($req);
-
-    expect(res()->getStoredData())->toBe($text);
-});
-
-
-
-it('Pipe process handler with cancel', function () {
+it('Pipe process handler with cancel', function (): void {
     class CancelMiddlewareOne implements MiddlewareInterface
     {
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
@@ -90,7 +71,7 @@ it('Pipe process handler with cancel', function () {
         {
             // Cancel Middleware - the next ones shouldn't work out.
             //You can check the statuses
-            $resp = (new Response());
+            $resp = new Response();
             $resp->withStatus(401);
 
             return $resp;

@@ -67,7 +67,7 @@ class MessageMethods implements MessageInterface
     {
         $name = $this->normalize($name);
 
-        if (!isset($this->headerNames[$name])) {
+        if (! isset($this->headerNames[$name])) {
             return [];
         }
 
@@ -90,7 +90,7 @@ class MessageMethods implements MessageInterface
     {
         $normalized = $this->normalize($name);
 
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             $value = [$value];
         }
 
@@ -110,7 +110,7 @@ class MessageMethods implements MessageInterface
      */
     public function withAddedHeader($name, $value): self
     {
-        if (!is_array($value)) {
+        if (! is_array($value)) {
             $value = [$value];
         }
 
@@ -136,7 +136,7 @@ class MessageMethods implements MessageInterface
     {
         $normalized = $this->normalize($name);
 
-        if (!isset($this->headerNames[$normalized])) {
+        if (! isset($this->headerNames[$normalized])) {
             return $this;
         }
 
@@ -170,7 +170,6 @@ class MessageMethods implements MessageInterface
 
         return $this;
     }
-
 
     // Helper
     protected function normalize(string $name): string

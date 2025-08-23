@@ -7,6 +7,9 @@ namespace Swew\Framework\Base;
 use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Support\Obj;
 
+/**
+ * @deprecated
+ */
 abstract class BaseDTO
 {
     public function rules(): array
@@ -21,7 +24,6 @@ abstract class BaseDTO
 
     public function setData(array|RequestWrapper $data): self
     {
-
         if ($data instanceof RequestWrapper) {
             $data = $data->getParsedBody();
         }
@@ -133,7 +135,7 @@ abstract class BaseDTO
             return $this->isValid();
         }
 
-        $data = $data ?? $this->getData();
+        $data ??= $this->getData();
         $rules = $this->rules();
         $messages = $this->messages();
         $translation = $this->translation();

@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-
-use Swew\Testing\Integration\DemoApp;
 use Swew\Framework\AppTest\AppTest;
+use Swew\Testing\Integration\DemoApp;
 
 it('DemoApp: save content in stream', function () {
     $app = new AppTest(DemoApp::class);
@@ -29,7 +28,8 @@ it('DemoApp: admin child', function () {
 
     $res = $app->call('GET', '/admin/manager')->getResponse();
 
-    expect($res->getBody()->getContents())->toContain('Hello from Dashboard');
+    expect($res->getBody()->getContents())
+        ->toContain('Hello from Dashboard');
 });
 
 it('DemoApp: CORS global middleware', function () {

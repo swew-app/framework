@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 use Swew\Framework\Http\RequestWrapper;
 
-it('RequestWrapper mapTo from Object', function () {
-
+it('RequestWrapper mapTo from Object', function (): void {
     class ModelStub
     {
         public string $name;
@@ -25,8 +24,7 @@ it('RequestWrapper mapTo from Object', function () {
     expect($model->age)->toBe(37);
 });
 
-it('RequestWrapper mapTo from className', function () {
-
+it('RequestWrapper mapTo from className', function (): void {
     class ModelStub2
     {
         public string $name;

@@ -1,36 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 use Swew\Testing\Integration\stubs\Controllers\AdminController;
 use Swew\Testing\Integration\stubs\Controllers\ExampleController;
 use Swew\Testing\Integration\stubs\Controllers\ManagerController;
 
-return [
-    [
-        'name' => 'Main',
-        'path' => '/',
-        'controller' => [ExampleController::class, 'getIndex'],
-    ],
-    [
-        'name' => 'MainPost',
-        'path' => '/post',
-        'controller' => [ExampleController::class, 'getPost'],
-    ],
-    [
-        'name' => 'Admin',
-        'path' => '/admin',
-        'controller' => [AdminController::class, 'getIndex'],
-        'children' => [
-            [
-                'name' => 'Manager',
-                'path' => '/manager',
-                'controller' => [ManagerController::class, 'dashboard'],
-            ]
-        ]
-    ],
-    [
-        'name' => 'BadTestPage',
-        'path' => '/some-page',
-        'controller' => [AdminController::class, 'getSomePage'],
-        'middlewares' => ['break'],
-    ]
-];
+route('GET /', [ExampleController::class, 'getIndex']);
+
+route('GET /post', [ExampleController::class, 'getPost']);
+
+route('GET /admin', [AdminController::class, 'getIndex']);
+
+route('GET /manager', [ManagerController::class, 'dashboard'], prefix: '/admin');
+
+route('GET /some-page', [AdminController::class, 'getSomePage'], middlewares: ['break']);

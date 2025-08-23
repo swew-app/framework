@@ -5,37 +5,13 @@ namespace Swew\Framework\Container\__tests__\TestAssets;
 class AutoWiring
 {
     /**
-     * @var DummyData
-     */
-    private DummyData $dummyData;
-
-    /**
-     * @var array
-     */
-    private array $array;
-
-    /**
-     * @var int
-     */
-    private int $int;
-
-    /**
-     * @var string
-     */
-    private string $string;
-
-    /**
      * @param  DummyData  $dummyData
      * @param  array  $array
      * @param  int  $int
      * @param  string  $string
      */
-    public function __construct(DummyData $dummyData, array $array, int $int = 100, string $string = 'string')
+    public function __construct(private readonly DummyData $dummyData, private readonly array $array, private readonly int $int = 100, private readonly string $string = 'string')
     {
-        $this->dummyData = $dummyData;
-        $this->array = $array;
-        $this->int = $int;
-        $this->string = $string;
     }
 
     /**

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Manager;
 
-use Swew\Framework\Base\BaseDTO;
 use Swew\Framework\Manager\TemplateParser\AbstractTemplateParser;
 
 final class FeatureManager
@@ -32,7 +31,7 @@ final class FeatureManager
         $paths = self::getFeaturesViewPaths();
 
         foreach ($paths as $path) {
-            $filePathDefault = $path.DIRECTORY_SEPARATOR.$file;
+            $filePathDefault = $path . DIRECTORY_SEPARATOR . $file;
 
             $filePaths = [
                 $filePathDefault,
@@ -41,7 +40,7 @@ final class FeatureManager
             $extensions = array_keys(self::$templateParser);
 
             foreach ($extensions as $ext) {
-                $filePaths[] = $filePathDefault.'.'.$ext;
+                $filePaths[] = $filePathDefault . '.' . $ext;
             }
 
             foreach ($filePaths as $filePath) {
@@ -51,30 +50,18 @@ final class FeatureManager
             }
         }
 
-        throw new \LogicException("File '$file'\nnot found in:\n- ".implode("\n- ", $paths));
+        throw new \LogicException("File '{$file}'\nnot found in:\n- " . implode("\n- ", $paths));
     }
 
     // Templates for response
 
-    public static function getPreparedResponse(): string|array|bool|BaseDTO
+    public static function getPreparedResponse(mixed $dataFromRoute): string|array|bool
     {
         if (res()->getRaw()) {
             return res()->getRaw();
         }
 
-        $data = res()->getStoredData();
-
-        if ($data instanceof BaseDTO) {
-            $dto = $data;
-            $data = $dto->getData();
-
-            if (! $dto->isValid()) {
-                $data['errors'] = [
-                    'message' => $dto->getErrorMessage(),
-                    'items' => $dto->getErrors(),
-                ];
-            }
-        }
+        $data = res()->getStoredData() ?: $dataFromRoute;
 
         $viewName = res()->getViewFileName();
 
@@ -101,7 +88,7 @@ final class FeatureManager
 
             $data = self::render(
                 $filePath,
-                array_merge(res()->getViewData(), ['data' => $data])
+                array_merge(res()->getViewData(), ['data' => $data]),
             );
         }
 
@@ -109,7 +96,7 @@ final class FeatureManager
             throw new \LogicException('Empty response');
         }
 
-        return $data ?? '';
+        return $data ?: '';
     }
 
     /**
@@ -133,7 +120,7 @@ final class FeatureManager
         $extension = self::findMatchingExtension($filepath);
 
         if (is_null($extension)) {
-            throw new \LogicException("Can't parse extension from file '$filepath'");
+            throw new \LogicException("Can't parse extension from file '{$filepath}'");
         }
 
         if (count(self::$templateParser) === 0) {
@@ -144,14 +131,14 @@ final class FeatureManager
             return self::$templateParser[$extension]->render(
                 self::getFeaturesViewPaths(),
                 $filepath,
-                $data
+                $data,
             );
         }
 
         return self::$templateParser['*']->render(
             self::getFeaturesViewPaths(),
             $filepath,
-            $data
+            $data,
         );
     }
 
@@ -174,16 +161,17 @@ final class FeatureManager
     {
         $controller = self::$controller;
         $featDir = basename(self::$featurePath);
-        $commonView = self::$featurePath.DIRECTORY_SEPARATOR.'Common'.DIRECTORY_SEPARATOR.'view';
+        $commonView = self::$featurePath . DIRECTORY_SEPARATOR . 'Common' . DIRECTORY_SEPARATOR . 'view';
 
         if (! empty($controller)) {
-            $start = (strpos($controller, $featDir.'\\') ?: 0) + strlen($featDir.'\\');
+            $start = (strpos($controller, $featDir . '\\') ?: 0) + strlen($featDir . '\\');
             $end = strpos($controller, '\\Controllers');
 
-            /** @var int $end */
-            $currentFeatureView = self::$featurePath.'/'
-                .str_replace('\\', '/', substr($controller, $start, $end - $start))
-                .'/view';
+            if (is_bool($end)) {
+                $end = $start;
+            }
+
+            $currentFeatureView = self::$featurePath . '/' . str_replace('\\', '/', substr($controller, $start, $end - $start)) . '/view';
 
             return array_unique([$currentFeatureView, $commonView]);
         }

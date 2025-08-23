@@ -4,26 +4,34 @@ declare(strict_types=1);
 
 namespace Swew\Framework\AppTest;
 
-use Exception;
+use LogicException;
 use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Http\ResponseWrapper;
-use Swew\Framework\Router\RouteHelper;
 use Swew\Framework\SwewApp;
 
 class AppTest
 {
-    public SwewApp $app;
+    public readonly SwewApp $app;
 
     public string $content = '';
 
-    public function __construct(SwewApp|string $app)
+    /**
+     * Сохраняем путь до класса что бы при тестировании можно было указать App только один раз
+     */
+    private static string $appClassPath = '';
+
+    public function __construct(SwewApp|string|null $app = null)
     {
         $_COOKIE = [];
 
         $this->removeSingletons();
 
         putenv('APP_IS_TEST=true');
+
+        if (empty($app) && self::$appClassPath !== '') {
+            $app = self::$appClassPath;
+        }
 
         if (is_string($app) && class_exists($app)) {
             /** @var SwewApp $instance */
@@ -33,8 +41,16 @@ class AppTest
             $this->app = $app;
         }
 
+        if ($this->app === null) {
+            throw new LogicException('Add the application class to the constructor "new AppTest(App::class);"');
+        }
+
+        self::$appClassPath = get_class($this->app);
+
         $env = EnvContainer::getInstance();
         $env->set('__TEST__', true);
+
+        $this->app->load();
     }
 
     public function removeSingletons(): void
@@ -50,30 +66,17 @@ class AppTest
     }
 
     /**
-     * @throws Exception
-     */
-    public function addRoute(array|RouteHelper $route): static
-    {
-        if (is_null($this->app->router)) {
-            throw new \LogicException('Router not initialized');
-        }
-
-        $this->app->router->addRoute($route);
-        $this->app->router->validate();
-
-        return $this;
-    }
-
-    /**
      * @param  mixed  $post
      *
      * @psalm-param array{CONTENT_TYPE?: 'application/json;charset=UTF-8', HTTP_ACCEPT?: 'application/json;charset=UTF-8'} $server
      */
     public function call(string $method, string $uri, array $post = [], array $server = []): static
     {
-        if ($this->app->router === null || count($this->app->router->routes) === 0) {
-            throw new \LogicException('Router not initialized: need use addRoute() method');
+        if ($this->app->router === null) {
+            throw new \LogicException('Router not initialized: need use route(...) function');
         }
+
+        res()->setTestEnv(true);
 
         $old = json_encode([
             $_SERVER,
@@ -102,7 +105,7 @@ class AppTest
         return $this;
     }
 
-    public function ajax(string $method, string $uri, $post = []): static
+    public function ajax(string $method, string $uri, array $post = []): static
     {
         return $this->call($method, $uri, $post, [
             'CONTENT_TYPE' => 'application/json;charset=UTF-8',

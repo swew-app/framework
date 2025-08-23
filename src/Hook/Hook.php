@@ -8,9 +8,7 @@ class Hook
 {
     private static array $callbackList = [];
 
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 
     public static function on(HK $hookKey, \Closure $callback): void
     {

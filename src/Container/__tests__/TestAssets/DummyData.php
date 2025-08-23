@@ -5,23 +5,11 @@ namespace Swew\Framework\Container\__tests__\TestAssets;
 class DummyData
 {
     /**
-     * @var DummyName
-     */
-    private DummyName $name;
-
-    /**
-     * @var mixed
-     */
-    private $time;
-
-    /**
      * @param  DummyName  $name
      * @param  mixed|null  $time
      */
-    public function __construct(DummyName $name, $time = null)
+    public function __construct(private readonly DummyName $name, private readonly mixed $time = null)
     {
-        $this->name = $name;
-        $this->time = $time;
     }
 
     /**
@@ -35,7 +23,7 @@ class DummyData
     /**
      * @return mixed
      */
-    public function getTime()
+    public function getTime(): mixed
     {
         return $this->time;
     }

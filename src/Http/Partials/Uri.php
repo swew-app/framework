@@ -19,37 +19,37 @@ use Psr\Http\Message\UriInterface;
  */
 class Uri implements UriInterface
 {
-    private const SCHEMES = ['http' => 80, 'https' => 443];
+    private const array SCHEMES = ['http' => 80, 'https' => 443];
 
-    private const CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
+    private const string CHAR_UNRESERVED = 'a-zA-Z0-9_\-\.~';
 
-    private const CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
+    private const string CHAR_SUB_DELIMS = '!\$&\'\(\)\*\+,;=';
 
     /** @var string Uri scheme. */
-    private $scheme = '';
+    private string $scheme = '';
 
     /** @var string Uri user info. */
-    private $userInfo = '';
+    private string $userInfo = '';
 
     /** @var string Uri host. */
-    private $host = '';
+    private string $host = '';
 
     /** @var int|null Uri port. */
-    private $port;
+    private ?int $port = null;
 
     /** @var string Uri path. */
-    private $path = '';
+    private string $path = '';
 
     /** @var string Uri query string. */
-    private $query = '';
+    private string $query = '';
 
     /** @var string Uri fragment. */
-    private $fragment = '';
+    private string $fragment = '';
 
     public function __construct(string $uri = '')
     {
         if ('' !== $uri) {
-            if (false === $parts = \parse_url($uri)) {
+            if (false === ($parts = \parse_url($uri))) {
                 throw new \InvalidArgumentException(\sprintf('Unable to parse URI: "%s"', $uri));
             }
 
@@ -131,11 +131,11 @@ class Uri implements UriInterface
      */
     public function withScheme($scheme): self
     {
-        if (!\is_string($scheme)) {
+        if (! \is_string($scheme)) {
             throw new \InvalidArgumentException('Scheme must be a string');
         }
 
-        if ($this->scheme === $scheme = \strtr($scheme, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')) {
+        if ($this->scheme === ($scheme = \strtr($scheme, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'))) {
             return $this;
         }
 
@@ -172,11 +172,11 @@ class Uri implements UriInterface
      */
     public function withHost($host): self
     {
-        if (!\is_string($host)) {
+        if (! \is_string($host)) {
             throw new \InvalidArgumentException('Host must be a string');
         }
 
-        if ($this->host === $host = \strtr($host, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz')) {
+        if ($this->host === ($host = \strtr($host, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'))) {
             return $this;
         }
 
@@ -191,7 +191,7 @@ class Uri implements UriInterface
      */
     public function withPort($port): self
     {
-        if ($this->port === $port = $this->filterPort($port)) {
+        if ($this->port === ($port = $this->filterPort($port))) {
             return $this;
         }
 
@@ -206,7 +206,7 @@ class Uri implements UriInterface
      */
     public function withPath($path): self
     {
-        if ($this->path === $path = $this->filterPath($path)) {
+        if ($this->path === ($path = $this->filterPath($path))) {
             return $this;
         }
 
@@ -221,7 +221,7 @@ class Uri implements UriInterface
      */
     public function withQuery($query): self
     {
-        if ($this->query === $query = $this->filterQueryAndFragment($query)) {
+        if ($this->query === ($query = $this->filterQueryAndFragment($query))) {
             return $this;
         }
 
@@ -236,7 +236,7 @@ class Uri implements UriInterface
      */
     public function withFragment($fragment): self
     {
-        if ($this->fragment === $fragment = $this->filterQueryAndFragment($fragment)) {
+        if ($this->fragment === ($fragment = $this->filterQueryAndFragment($fragment))) {
             return $this;
         }
 
@@ -292,10 +292,10 @@ class Uri implements UriInterface
      */
     private static function isNonStandardPort(string $scheme, int $port): bool
     {
-        return !isset(self::SCHEMES[$scheme]) || $port !== self::SCHEMES[$scheme];
+        return ! isset(self::SCHEMES[$scheme]) || $port !== self::SCHEMES[$scheme];
     }
 
-    private function filterPort(int|null $port): ?int
+    private function filterPort(?int $port): ?int
     {
         if (null === $port) {
             return null;
@@ -310,16 +310,16 @@ class Uri implements UriInterface
 
     private function filterPath(string $path): string
     {
-        return \preg_replace_callback('/(?:[^' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMS . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/', [__CLASS__, 'rawurlencodeMatchZero'], $path);
+        return \preg_replace_callback('/(?:[^' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMS . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/', self::rawurlencodeMatchZero(...), $path);
     }
 
     private function filterQueryAndFragment(string $str): string
     {
-        return \preg_replace_callback('/(?:[^' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMS . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/', [__CLASS__, 'rawurlencodeMatchZero'], $str);
+        return \preg_replace_callback('/(?:[^' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMS . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/', self::rawurlencodeMatchZero(...), $str);
     }
 
     private static function rawurlencodeMatchZero(array $match): string
     {
-        return \rawurlencode($match[0]);
+        return \rawurlencode((string) $match[0]);
     }
 }

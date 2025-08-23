@@ -5,21 +5,16 @@ declare(strict_types=1);
 namespace Swew\Framework\Env;
 
 use Swew\Framework\Base\AbstractCacheState;
-use Swew\Framework\Router\Router;
 use Swew\Framework\Support\Arr;
 
 final class EnvContainer extends AbstractCacheState
 {
-    private static ?EnvContainer $instance = null;
+    private static ?self $instance = null;
 
     private array $envVars = [];
 
     private function __construct()
     {
-        if (self::$instance) {
-            return;
-        }
-
         self::$instance = $this;
 
         $this->loadGlobalEnvs();
@@ -59,7 +54,7 @@ final class EnvContainer extends AbstractCacheState
         return Arr::get($this->envVars, $key) ?? $default;
     }
 
-    public function set(string $key, string|int|float|bool|null|Router $value): void
+    public function set(string $key, string|int|float|bool|null $value): void
     {
         $this->envVars[$key] = $value;
 
@@ -88,7 +83,7 @@ final class EnvContainer extends AbstractCacheState
     public function loadFromFile(string $filePath): void
     {
         if (! is_readable($filePath) || is_dir($filePath)) {
-            throw new \Exception("Env file path exception: '$filePath' ");
+            throw new \Exception("Env file path exception: '{$filePath}' ");
         }
 
         $fileContent = file_get_contents($filePath);
@@ -120,10 +115,11 @@ final class EnvContainer extends AbstractCacheState
         $val = trim($val);
 
         if (empty($key)) {
-            throw new \Exception("Passed empty 'key' in '$str'");
+            throw new \Exception("Passed empty 'key' in '{$str}'");
         }
+
         if (empty($val)) {
-            throw new \Exception("Passed empty 'value' in '$str'");
+            throw new \Exception("Passed empty 'value' in '{$str}'");
         }
 
         $this->set($key, $this->convert($val));
@@ -149,10 +145,7 @@ final class EnvContainer extends AbstractCacheState
 
     private function stripQuotes(string $value): string
     {
-        if (
-            ($value[0] === '"' && str_ends_with($value, '"'))
-            || ($value[0] === "'" && str_ends_with($value, "'"))
-        ) {
+        if ($value[0] === '"' && str_ends_with($value, '"') || $value[0] === "'" && str_ends_with($value, "'")) {
             return substr($value, 1, -1);
         }
 

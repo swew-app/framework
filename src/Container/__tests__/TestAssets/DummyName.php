@@ -5,16 +5,10 @@ namespace Swew\Framework\Container\__tests__\TestAssets;
 class DummyName
 {
     /**
-     * @var string
-     */
-    private string $name;
-
-    /**
      * @param  string  $name
      */
-    public function __construct(string $name = 'Test Name')
+    public function __construct(private string $name = 'Test Name')
     {
-        $this->name = $name;
     }
 
     /**

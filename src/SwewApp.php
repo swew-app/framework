@@ -4,62 +4,39 @@ declare(strict_types=1);
 
 namespace Swew\Framework;
 
-use Exception;
+use LogicException;
+use Swew\Framework\CacheManager\CacheManager;
 use Swew\Framework\Container\Container;
 use Swew\Framework\Env\EnvContainer;
-use Swew\Framework\Hook\HK;
-use Swew\Framework\Hook\Hook;
 use Swew\Framework\Http\RequestWrapper;
 use Swew\Framework\Http\ResponseWrapper;
-use Swew\Framework\Manager\AppMiddlewareManager;
 use Swew\Framework\Manager\FeatureManager;
 use Swew\Framework\Middleware\MiddlewarePipeline;
-use Swew\Framework\Router\Router;
-use Throwable;
+use Swew\Router\MatchedRouterMiddleware;
+use Swew\Router\Router;
 
 abstract class SwewApp
 {
-    public readonly bool $DEV;
+    public Container $container;
 
-    public string $host = '';
+    public EnvContainer $env;
+
+    protected string $cacheDir = '';
 
     public ?Router $router = null;
-
-    public readonly EnvContainer $env;
-
-    public readonly Container $container;
-
-    protected string $rootDir = '';
-
-    protected string $envFilePath;
-
-    // cache preload files,on init: env,container
-    protected ?string $cacheDir = null;
-
-    protected string $preloadClass = '';
-
-    protected string $containerAutoloadConfigDir = '';
-
-    /**
-     * Path to the features folder
-     *
-     * @example
-     *  $features = __DIR__ . '/../Features';
-     */
-    protected string $features = '';
 
     /**
      * Path to router files
      *
      * @example
      *  $routers = [
-     *      __DIR__ . '/../router/router.php',
-     * ];
+     *    __DIR__ . '/../Features/Common/routes.php',
+     *  ];
      */
     protected array $routeFiles = [];
 
     /**
-     * @example
+     * @example:
      *  $middlewares = [
      *    'auth' => /Features/Common/Middleware/AuthMiddleware::class,
      *  ];
@@ -69,181 +46,76 @@ abstract class SwewApp
     /**
      * List of Middleware names that apply to all routers
      *
-     * @example
+     * @example:
      *  $globalMiddlewares = [ 'auth' ];
      */
     protected array $globalMiddlewares = [];
 
-    public function __construct()
-    {
-        if (! empty($this->preloadClass)) {
-            if (class_exists($this->preloadClass)) {
-                new $this->preloadClass();
-            } else {
-                throw new \LogicException("Pass class to preload, '$this->preloadClass' not class");
-            }
-        }
-
-        RequestWrapper::removeInstance();
-        ResponseWrapper::removeInstance();
-
-        Hook::call(HK::beforeInit, $this);
-
-        $this->env = env();
-        $this->env->loadGlobalEnvs();
-        $this->container = container();
-
-        if (! empty($this->containerAutoloadConfigDir)) {
-            $this->container->loadConfigFiles($this->containerAutoloadConfigDir);
-        }
-
-        $IS_TEST = (bool) $this->env->get('__TEST__', false);
-
-        if ($this->cacheDir !== null && ! $IS_TEST) {
-            $this->env->useCache(true, $this->cacheDir.'/env_cache.php');
-            $this->container->useCache(true, $this->cacheDir.'/container_cache.php');
-        }
-
-        if (
-            ! empty($this->envFilePath) &&
-            ! $this->env->get('__LOADED_ENV_FILE__', false)
-        ) {
-            // If we use cache, this block will be skipped
-            $this->env->loadFromFile($this->envFilePath);
-            $this->env->set('__LOADED_ENV_FILE__', true);
-        }
-
-        $this->env->set('APP_ROOT', realpath($this->rootDir));
-
-        $this->DEV = (bool) $this->env->get('APP_IS_DEV', false) || $IS_TEST;
-
-        $this->host = $this->env->get('host', '');
-
-        res()->setTestEnv($IS_TEST);
-
-        if (! $IS_TEST) {
-            set_exception_handler(function (Throwable $e) {
-                $this->exceptionHandler($e);
-            });
-        }
-
-        $this->initRouter();
-
-        FeatureManager::setFeaturePath($this->features);
-
-        $this->init();
-    }
+    protected string $containerAutoloadConfigDir = '';
 
     /**
-     * Метод для запуска после инициализцаии приложения, но до начала работы
+     * File with cache configs
+     *
+     * @example:
+     * ```
+     * <?php
+     * // $cacheConfigFile = __DIR__ . '/cache.php';
+     * return [
+     *     'router' => [
+     *         'enabled' => true,
+     *         'file' => 'router.cache',
+     *     ],
+     * ];
+     * ```
      */
-    public function init(): void
-    {
-    }
+    protected string $cacheConfigFile = '';
 
     final public function run(): void
     {
-        Hook::call(HK::beforeRun, $this);
+        RequestWrapper::removeInstance();
+        ResponseWrapper::removeInstance();
 
-        $this->env->set('$router', $this->router);
+        $routeMiddleware = $this->getRouteMiddleware();
 
-        $route = $this->findRoute();
-
-        if ($route === null) {
-            $this->makeErrorPage(404, 'Page not found.');
-        } else {
-            FeatureManager::setController($route['class']);
-
-            Hook::call(HK::beforeHandlePipeline);
-
-            $this->runPipeline($route);
-
-            Hook::call(HK::afterHandlePipeline);
-
-            $statusCode = res()->getStatusCode();
-
-            if ($statusCode < 300 || $statusCode >= 400) {
-                // Non redirect
-                res()->getBody()->write(FeatureManager::getPreparedResponse());
-            }
-
-            if ($statusCode >= 500) {
-                $this->makeErrorPage($statusCode);
-            }
+        if ($routeMiddleware->status > 299) {
+            // TODO: Not found or invalid
+            return;
         }
 
-        Hook::call(HK::beforeSend);
-
-        res()->send();
-
-        Hook::call(HK::afterSend);
-    }
-
-    /**
-     * @throws Exception
-     */
-    private function initRouter(): void
-    {
-        $this->router = new Router(
-            Router::getRoutesFromPaths($this->routeFiles),
-            $this->host
-        );
-
-        if ($this->cacheDir) {
-            $this->router->useCache($this->cacheDir.'/route.cache');
-        }
-
-        $basePath = (string) $this->env->get('APP_BASE_PATH', '/');
-        $this->router->setBasePath($basePath);
-
-        if ($this->DEV) {
-            $this->router->validate();
-        }
-    }
-
-    private function findRoute(): array|null
-    {
-        $req = RequestWrapper::new();
-
-        if (is_null($this->router)) {
-            return null;
-        }
-
-        $routeItem = $this->router->getRoute(
-            $req->getMethod(),
-            $req->getUri()->getPath()
-        );
-
-        if (empty($routeItem['class']) || empty($routeItem['method'])) {
-            return null;
-        }
-
-        /** @var array $attr */
-        $attr = $routeItem['params'];
-
-        foreach ($attr as $k => $v) {
-            $req->withAttribute($k, $v);
-        }
-
-        return $routeItem;
-    }
-
-    private function runPipeline(array $route): void
-    {
-        $appMiddlewareManager = new AppMiddlewareManager(
+        $middlewares = array_filter(
             $this->middlewares,
-            $this->globalMiddlewares
+            fn (string $key) => in_array($key, $routeMiddleware->middlewares),
+            ARRAY_FILTER_USE_KEY,
         );
 
-        $middlewares = $appMiddlewareManager->getMiddlewaresForApp(
-            $route['class'],
-            $route['method'],
-            $route['middlewares'] ?? []
-        );
+        $middlewares['_'] = $routeMiddleware;
 
         $pipeline = new MiddlewarePipeline($middlewares);
 
         $pipeline->handle(req()); // Run Middlewares
+
+        $statusCode = res()->getStatusCode();
+
+        if ($statusCode < 300 || $statusCode >= 400) {
+            // Non redirect
+            res()->getBody()->write(
+                FeatureManager::getPreparedResponse($routeMiddleware->result),
+            );
+        }
+
+        if ($statusCode >= 500) {
+            $this->makeErrorPage($statusCode);
+        }
+    }
+
+    public function load(): self
+    {
+        $this->loadCache();
+        $this->loadEnv();
+        $this->loadContainer();
+        $this->loadRouter();
+
+        return $this;
     }
 
     /**
@@ -253,19 +125,103 @@ abstract class SwewApp
     {
         if ($status === 404) {
             res('Page not found')
-                ->withStatus($status)
-                ->view('404.php');
+                ->withStatus($status);
+
+            // ->view('404.php');
         }
 
         if ($status >= 500) {
             res('Page not found')
-                ->withStatus($status)
-                ->view('500.php');
+                ->withStatus($status);
+
+            // ->view('500.php');
         }
     }
 
-    public function exceptionHandler(Throwable $exception): void
+    public function exceptionHandler(\Throwable $exception): void
     {
         throw $exception;
+    }
+
+    protected function loadCache(): void
+    {
+        if ($this->cacheConfigFile === '') {
+            return;
+        }
+
+        /** @var array */
+        $cacheConfigFile = require_once $this->cacheConfigFile;
+
+        $cache = CacheManager::getInstance();
+        $cache->setCacheDir($this->cacheDir);
+
+        foreach ($cache as $key => $value) {
+            $cache->setFile($key, $value['file'], $value['enabled']);
+        }
+    }
+
+    protected function loadEnv(): void
+    {
+        $cache = CacheManager::getInstance();
+
+        $this->env = env();
+
+        if ($cache->getFile('env')) {
+            $this->env->useCache(true, $cache->getFile('env'));
+        }
+    }
+
+    protected function loadContainer(): void
+    {
+        $cache = CacheManager::getInstance();
+
+        $this->container = container();
+
+        if ($cache->getFile('container')) {
+            $this->container->useCache(true, $cache->getFile('container'));
+        }
+
+        if ($this->containerAutoloadConfigDir !== '') {
+            $this->container->loadConfigFiles($this->containerAutoloadConfigDir);
+        }
+    }
+
+    protected function loadRouter(): void
+    {
+        $cache = CacheManager::getInstance();
+
+        $this->router = Router::getInstance();
+
+        $basePath = (string) $this->env->get('APP_BASE_PATH', '/');
+        $this->router->setGlobalPrefix($basePath);
+
+        $this->router->setCache($cache->getFile('router'));
+
+        if (! $this->router->hasCache()) {
+            $this->router
+                ->addMiddlewares(array_keys($this->middlewares))
+                ->globalMiddleware(...$this->globalMiddlewares);
+
+            foreach ($this->routeFiles as $filePath) {
+                require_once $filePath;
+            }
+        }
+    }
+
+    protected function getRouteMiddleware(): MatchedRouterMiddleware
+    {
+        if (is_null($this->router)) {
+            throw new LogicException('Router not loaded.');
+        }
+
+        $req = RequestWrapper::new();
+
+        $middleware = $this->router->match($req->getMethod(), $req->getUri()->getPath());
+
+        foreach ($middleware->params as $k => $v) {
+            $req->withAttribute($k, $v);
+        }
+
+        return $middleware;
     }
 }

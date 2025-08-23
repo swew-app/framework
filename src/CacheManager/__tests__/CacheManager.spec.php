@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Swew\Framework\CacheManager;
 
-beforeEach(function () {
+beforeEach(function (): void {
     CacheManager::removeInstance();
 });
 
-afterAll(function () {
+afterAll(function (): void {
     $cache = CacheManager::getInstance();
     $cache->instanceCache(false); // clear self cache
 });
@@ -16,7 +16,7 @@ afterAll(function () {
 it('Cache File Scenarios', function (): void {
     $cache = CacheManager::getInstance();
 
-    $name ='_router.cache';
+    $name = '_router.cache';
     $expected = __DIR__ . DIRECTORY_SEPARATOR . $name;
 
     $cache->setCacheDir(__DIR__);
@@ -49,7 +49,7 @@ it('Cache File Scenarios', function (): void {
     expect($cache->getFile('view'), 'Disabled for Single')->toBe(null);
 });
 
-it('Check that the global cache is loaded and its values are not overwritten', function () {
+it('Check that the global cache is loaded and its values are not overwritten', function (): void {
     $cache = CacheManager::getInstance();
 
     // Remove cache file

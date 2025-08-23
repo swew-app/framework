@@ -21,7 +21,7 @@ class ExampleController
         $arr = req()->input();
 
         res(
-            implode(', ', $arr)
+            implode(', ', $arr),
         );
     }
 }

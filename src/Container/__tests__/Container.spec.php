@@ -10,7 +10,7 @@ use Swew\Framework\Container\__tests__\TestAssets\DummyEmpty;
 use Swew\Framework\Container\__tests__\TestAssets\DummyName;
 use Swew\Framework\Container\Container;
 
-it('SetAndGetScalarDefinition', function () {
+it('SetAndGetScalarDefinition', function (): void {
     $container = new Container();
 
     $container->set($id = 'integer', $definition = 5);
@@ -26,7 +26,7 @@ it('SetAndGetScalarDefinition', function () {
     expect($definition)->toBe($container->get($id));
 });
 
-it('SetAndGetArrayDefinition', function () {
+it('SetAndGetArrayDefinition', function (): void {
     $container = new Container();
 
     $container->set($id = 'empty', $definition = []);
@@ -35,50 +35,56 @@ it('SetAndGetArrayDefinition', function () {
     $container->set($id = 'array', $definition = ['array']);
     expect($definition)->toBe($container->get($id));
 
-    $container->set($id = 'nested', $definition = [
-        'nested' => [
-            'scalar' => [
-                'integer' => 5,
-                'float' => 3.7,
-                'boolean' => false,
-                'string' => 'string',
-            ],
-            'not_scalar' => [
-                'object' => new StdClass(),
-                'array' => ['array'],
-                'closure' => fn () => null,
+    $container->set(
+        $id = 'nested',
+        $definition = [
+            'nested' => [
+                'scalar' => [
+                    'integer' => 5,
+                    'float' => 3.7,
+                    'boolean' => false,
+                    'string' => 'string',
+                ],
+                'not_scalar' => [
+                    'object' => new StdClass(),
+                    'array' => ['array'],
+                    'closure' => fn (): null => null,
+                ],
             ],
         ],
-    ]);
+    );
     expect($definition)->toBe($container->get($id));
 });
 
-it('SetAndGetArrayWithPath', function () {
+it('SetAndGetArrayWithPath', function (): void {
     $container = new Container();
 
-    $container->set($id = 'subData', $definition = [
-        'nested' => [
-            'scalar' => [
-                'integer' => 5,
-                'float' => 3.7,
-                'boolean' => false,
-                'string' => 'Leo',
-            ],
-            'not_scalar' => [
-                'object' => new StdClass(),
-                'array' => ['array'],
-                'closure' => fn () => null,
+    $container->set(
+        $id = 'subData',
+        $definition = [
+            'nested' => [
+                'scalar' => [
+                    'integer' => 5,
+                    'float' => 3.7,
+                    'boolean' => false,
+                    'string' => 'Leo',
+                ],
+                'not_scalar' => [
+                    'object' => new StdClass(),
+                    'array' => ['array'],
+                    'closure' => fn (): null => null,
+                ],
             ],
         ],
-    ]);
+    );
 
     expect($container->get('subData.nested.scalar.string'))->toBe('Leo');
 
-    expect(fn () => $container->get('subData.nested.wrong path'))
+    expect(fn (): mixed => $container->get('subData.nested.wrong path'))
         ->toThrow('`subData.nested.wrong path` is not set in container and is not a class name.');
 });
 
-it('SetAndGetObjectAndClosureDefinitionBasicUsage', function () {
+it('SetAndGetObjectAndClosureDefinitionBasicUsage', function (): void {
     $container = new Container();
 
     $container->set($id = DummyData::class, $definition = new DummyData(new DummyName()));
@@ -88,14 +94,14 @@ it('SetAndGetObjectAndClosureDefinitionBasicUsage', function () {
     expect($container->get(DummyData::class))->toBeInstanceOf(DummyData::class);
 });
 
-it('GetSameObject', function () {
+it('GetSameObject', function (): void {
     $container = new Container();
 
     class InvokeFunction
     {
-        public function __invoke()
+        public function __invoke(): \Swew\Framework\Container\__tests__\TestAssets\DummyData
         {
-            return new DummyData((new DummyName('John')), microtime(true));
+            return new DummyData(new DummyName('John'), microtime(true));
         }
     }
 
@@ -110,12 +116,10 @@ it('GetSameObject', function () {
     expect($instance1)->toBe($instance2);
 });
 
-it('GetNewObject', function () {
+it('GetNewObject', function (): void {
     $container = new Container();
 
-    $container->set(DummyData::class, function () {
-        return new DummyData(new DummyName('John'), microtime(true));
-    });
+    $container->set(DummyData::class, fn(): \Swew\Framework\Container\__tests__\TestAssets\DummyData => new DummyData(new DummyName('John'), microtime(true)));
 
     expect($instance1 = $container->getNew(DummyData::class))->not()->toBeNull();
     expect($instance2 = $container->getNew(DummyData::class))->not()->toBeNull();
@@ -127,7 +131,7 @@ it('GetNewObject', function () {
     expect($instance1->getName()->get())->toBe($instance2->getName()->get());
 });
 
-it('ConstructorWithPassDefinitions', function () {
+it('ConstructorWithPassDefinitions', function (): void {
     $container = new Container([
         $integerId = 'integer' => $integerDefinition = 5,
         $floatId = 'float' => $floatDefinition = 3.7,
@@ -135,7 +139,7 @@ it('ConstructorWithPassDefinitions', function () {
         $stringId = 'string' => $stringDefinition = 'string',
         $arrayId = 'array' => $arrayDefinition = ['array'],
         $objectId = 'object' => $objectDefinition = new StdClass(),
-        $closureId = 'closure' => fn () => null,
+        $closureId = 'closure' => fn (): null => null,
     ]);
 
     expect($integerDefinition)->toBe($container->get($integerId));
@@ -148,7 +152,7 @@ it('ConstructorWithPassDefinitions', function () {
     expect(is_callable($container->get($closureId)))->toBe(true);
 });
 
-it('SetMultiple', function () {
+it('SetMultiple', function (): void {
     $container = new Container();
     $definitions = [
         $integerId = 'integer' => $integerDefinition = 5,
@@ -157,7 +161,7 @@ it('SetMultiple', function () {
         $stringId = 'string' => $stringDefinition = 'string',
         $arrayId = 'array' => $arrayDefinition = ['array'],
         $objectId = 'object' => $objectDefinition = new StdClass(),
-        $closureId = 'closure' => fn () => null,
+        $closureId = 'closure' => fn (): null => null,
     ];
 
     $container->setMultiple($definitions);
@@ -172,7 +176,7 @@ it('SetMultiple', function () {
     expect(is_callable($container->get($closureId)))->toBe(true);
 });
 
-it('Has', function () {
+it('Has', function (): void {
     $container = new Container();
 
     $container->set('definitionId', 'definition');
@@ -181,10 +185,9 @@ it('Has', function () {
     expect($container->has('definitionNotExist'))->toBeFalse();
 });
 
-it('AutoWiring', function () {
+it('AutoWiring', function (): void {
     $container = new Container();
     $autoWiring = $container->get(AutoWiring::class);
-
 
     expect($autoWiring->getDummyData())->toBeInstanceOf(DummyData::class);
     expect($autoWiring->getDummyData()->getName())->toBeInstanceOf(DummyName::class);
@@ -198,18 +201,17 @@ it('AutoWiring', function () {
     expect('string')->toBe($autoWiring->getString());
 });
 
-it('ContainerLoadFilesFromDir', function () {
+it('ContainerLoadFilesFromDir', function (): void {
     $container = new Container();
     $container->loadConfigFiles(__DIR__ . '/TestConfigFiles');
 
     expect($container->get('db-config.name'))->toBe('best_test_bd');
 });
 
-it('Cache', function () {
+it('Cache', function (): void {
     $container = new Container();
     $item1 = $container->get(AutoWiringSimple::class);
     $item2 = $container->get(AutoWiringSimple::class);
-
 
     expect($item1)->toBe($item2);
 
@@ -222,25 +224,25 @@ it('Cache', function () {
 });
 
 /*
-# Test only for manual checking cache
-it('Cache To File', function () {
-    $container = new Container();
-
-    $container->useCache(
-        true,
-        __DIR__ . DIRECTORY_SEPARATOR . 'cache_for_test.php'
-    );
-
-    $item1 = $container->get(AutoWiringSimple::class);
-    $item2 = $container->get(AutoWiringSimple::class);
-
-    expect($item1)->toBe($item2);
-
-    expect($container->getCacheData())
-        ->toMatchArray([
-            DummyName::class => ['Test Name'],
-            DummyEmpty::class => [],
-            AutoWiringSimple::class => [DummyName::class, DummyEmpty::class]
-        ]);
-});
-//*/
+ * # Test only for manual checking cache
+ * it('Cache To File', function () {
+ * $container = new Container();
+ *
+ * $container->useCache(
+ * true,
+ * __DIR__ . DIRECTORY_SEPARATOR . 'cache_for_test.php'
+ * );
+ *
+ * $item1 = $container->get(AutoWiringSimple::class);
+ * $item2 = $container->get(AutoWiringSimple::class);
+ *
+ * expect($item1)->toBe($item2);
+ *
+ * expect($container->getCacheData())
+ * ->toMatchArray([
+ * DummyName::class => ['Test Name'],
+ * DummyEmpty::class => [],
+ * AutoWiringSimple::class => [DummyName::class, DummyEmpty::class]
+ * ]);
+ * });
+ * //*/

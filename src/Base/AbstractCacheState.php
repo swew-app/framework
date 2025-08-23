@@ -22,7 +22,7 @@ abstract class AbstractCacheState
     public function __destruct()
     {
         if ($this->isUseCache && $this->isNeedWriteCache) {
-            if (empty($this->cacheFilePath)) {
+            if ($this->cacheFilePath === '') {
                 throw new \Error("Set cache file '{$this->cacheFilePath}' ");
             }
             $this->writeCacheFile();
@@ -46,14 +46,14 @@ abstract class AbstractCacheState
 
     public function clearCache(): void
     {
-        if (!empty($this->cacheFilePath) && file_exists($this->cacheFilePath)) {
+        if (! empty($this->cacheFilePath) && file_exists($this->cacheFilePath)) {
             unlink($this->cacheFilePath);
         }
     }
 
     private function writeCacheFile(): void
     {
-        $content = "<?php\n\ndeclare(strict_types=1);\n\nreturn " . var_export($this->getCacheData(), true) . ";\n";
+        $content = "<?php\ndeclare(strict_types=1);\nreturn " . var_export($this->getCacheData(), true) . ";\n";
 
         $hash1 = md5($content);
         $hash2 = is_readable($this->cacheFilePath) ? md5(file_get_contents($this->cacheFilePath)) : '';
@@ -71,13 +71,13 @@ abstract class AbstractCacheState
 
         $cacheFilePath = $this->cacheFilePath;
 
-        $data = (function () use ($cacheFilePath) {
+        $data = (function () use ($cacheFilePath): array {
             try {
                 if (file_exists($cacheFilePath)) {
                     $data = include $cacheFilePath;
 
-                    if (!is_array($data)) {
-                        throw new \Error();
+                    if (! is_array($data)) {
+                        throw new \Exception();
                     }
 
                     return $data;
@@ -86,7 +86,7 @@ abstract class AbstractCacheState
                 $this->isNeedWriteCache = true;
 
                 return [];
-            } catch (\Error $e) {
+            } catch (\Exception) {
                 $this->clearCache();
 
                 return [];

@@ -11,7 +11,10 @@
     ],
     "config": {
         "sort-packages": true,
-        "optimize-autoloader": true
+        "optimize-autoloader": true,
+        "allow-plugins": {
+            "carthage-software/mago": true
+        }
     },
     "autoload": {
         "psr-4": {
@@ -21,22 +24,36 @@
             "src/Functions.php"
         ],
         "exclude-from-classmap": [
-            "__tests__",
-            "spec",
-            "/Tests/",
-            "/test/",
-            "/tests/"
+            "src/**/__tests__/",
+            "src/**/__test__/",
+            "src/AppTest",
+            "tests/"
         ]
     },
     "autoload-dev": {
         "psr-4": {
-            "Swew\\Testing\\": "tests/"
+            "Swew\\AppTest\\": "src/AppTest",
+            "Swew\\Testing\\Integration\\": "tests/Integration"
         }
     },
     "repositories": [
         {
             "type": "path",
             "url": "../test",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../dd",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "../router",
             "options": {
                 "symlink": true
             }
@@ -47,27 +64,39 @@
     "require": {
         "ext-json": "*",
         "php": ">=8.4",
-        "nikic/fast-route": "^v1.3.0",
         "psr/container": "^2.0.2",
-        "psr/http-message": "^1.1.0",
-        "psr/http-server-middleware": "^1.0.2"
+        "psr/http-message": "^2.0",
+        "psr/http-server-middleware": "^1.0.2@dev",
+        "swew/router": "*"
     },
     "require-dev": {
-        "laravel/pint": "v1.10.0",
-        "phpstan/phpstan": "^1.12.13",
+        "carthage-software/mago": "^0.26.1",
+        "phpstan/phpstan": "^2.1.22",
         "psalm/phar": "^5.26.1",
-        "swew/dd": "^1.4.2",
+        "rector/rector": "^2.1.4",
+        "swew/dd": "*",
         "swew/test": "*"
     },
     "scripts": {
-        "test": "t",
+        "post-package-install": [
+            "composer mago:install-binary"
+        ],
+        "mago:fmt": "mago fmt && mago lint --fix --potentially-unsafe --fmt",
+        "mago:lint": "mago lint --minimum-level=note",
+        "rector": "vendor/bin/rector process --no-ansi",
+        "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G --level=3",
         "static": "./vendor/psalm/phar/psalm.phar --no-cache",
-        "stan": "vendor/bin/phpstan analyse src --level=3",
-        "code-check": "./vendor/bin/pint",
-        "check": [
-            "@static",
-            "@stan",
-            "@code-check"
+        "release": [
+            "composer qa"
+        ],
+        "test": "t",
+        "qa": [
+            "composer mago:fmt",
+            "composer rector",
+            "composer test -- -short",
+            "composer mago:lint",
+            "composer phpstan",
+            "composer static"
         ]
     }
 }

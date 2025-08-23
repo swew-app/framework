@@ -7,6 +7,7 @@ CacheManager - класс для управления путями до кэше
 Сохранение пути файла кэша
 
 ```php
+<?php
 
 $cache = CacheManager::getInstance();
 $cache->setCacheDir('../cache_dir');
@@ -32,6 +33,8 @@ $cache->getFile('router'); // null
 Будет восстанавливаться при загрузке. После выставления кэширования, больше добавить новое значение будет нельзя.
 
 ```php
+<?php
+
 $cache = CacheManager::getInstance();
 
 if ($app->IS_DEV) { // Будт аккуратен!!!

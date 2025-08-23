@@ -97,6 +97,7 @@ class Container extends AbstractCacheState implements ContainerInterface
      * @return mixed
      * @throws Exception
      */
+    #[\Override]
     public function get(string $id): mixed
     {
         if ($this->hasInstance($id)) {
@@ -139,6 +140,7 @@ class Container extends AbstractCacheState implements ContainerInterface
      * @param string $id
      * @return bool
      */
+    #[\Override]
     public function has(string $id): bool
     {
         return array_key_exists($id, $this->definitions);
@@ -283,7 +285,15 @@ class Container extends AbstractCacheState implements ContainerInterface
 
         $files = glob($path, GLOB_ERR);
 
+        if ($files === false) {
+            return;
+        }
+
         foreach ($files as $file) {
+            if (! file_exists($file)) {
+                continue;
+            }
+
             $name = basename($file, '.php');
 
             $data = require $file;
@@ -311,7 +321,7 @@ class Container extends AbstractCacheState implements ContainerInterface
 
     private function getCacheItem(string $className): object
     {
-        $args = array_map(function ($key) {
+        $args = array_map(function (string $key) {
             if (class_exists($key)) {
                 return $this->get($key);
             }
@@ -320,6 +330,9 @@ class Container extends AbstractCacheState implements ContainerInterface
         }, $this->cachedData[$className]);
 
         try {
+            if (! class_exists($className)) {
+                throw new ContainerException("Class '{$className}' does not exist");
+            }
             return new $className(...$args);
         } catch (Exception $e) {
             $this->clearCache();

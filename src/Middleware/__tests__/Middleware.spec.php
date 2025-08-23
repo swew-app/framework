@@ -13,6 +13,7 @@ use Swew\Framework\Middleware\MiddlewarePipeline;
 it('Pipe process handler', function (): void {
     class MiddlewareOne implements MiddlewareInterface
     {
+        #[\Override]
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
             $resp = $handler->handle($request);
@@ -23,6 +24,7 @@ it('Pipe process handler', function (): void {
 
     class MiddlewareTwo implements MiddlewareInterface
     {
+        #[\Override]
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
             $resp = $handler->handle($request);
@@ -33,6 +35,7 @@ it('Pipe process handler', function (): void {
 
     class ControllerHandler implements MiddlewareInterface
     {
+        #[\Override]
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
             return new Response(301);
@@ -57,6 +60,7 @@ it('Pipe process handler', function (): void {
 it('Pipe process handler with cancel', function (): void {
     class CancelMiddlewareOne implements MiddlewareInterface
     {
+        #[\Override]
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
             $resp = $handler->handle($request);
@@ -67,6 +71,7 @@ it('Pipe process handler with cancel', function (): void {
 
     class AuthMiddlewareOne implements MiddlewareInterface
     {
+        #[\Override]
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
             // Cancel Middleware - the next ones shouldn't work out.
@@ -80,6 +85,7 @@ it('Pipe process handler with cancel', function (): void {
 
     class CancelMiddlewareTwo implements MiddlewareInterface
     {
+        #[\Override]
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
             $resp = $handler->handle($request);
@@ -90,6 +96,7 @@ it('Pipe process handler with cancel', function (): void {
 
     class CancelControllerHandler implements MiddlewareInterface
     {
+        #[\Override]
         public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
         {
             return new Response(301);

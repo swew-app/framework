@@ -72,7 +72,7 @@
     "require-dev": {
         "carthage-software/mago": "^0.26.1",
         "phpstan/phpstan": "^2.1.22",
-        "psalm/phar": "^5.26.1",
+        "psalm/phar": ">=5.26.1",
         "rector/rector": "^2.1.4",
         "swew/dd": "*",
         "swew/test": "*"
@@ -85,7 +85,7 @@
         "mago:lint": "mago lint --minimum-level=note",
         "rector": "vendor/bin/rector process --no-ansi",
         "phpstan": "vendor/bin/phpstan analyse src tests --memory-limit=1G --level=3",
-        "static": "./vendor/psalm/phar/psalm.phar --no-cache",
+        "static": "./vendor/psalm/phar/psalm.phar --no-cache --show-info=true",
         "release": [
             "composer qa"
         ],
@@ -93,10 +93,10 @@
         "qa": [
             "composer mago:fmt",
             "composer rector",
-            "composer test -- -short",
             "composer mago:lint",
             "composer phpstan",
-            "composer static"
+            "composer static",
+            "composer test -- -short"
         ]
     }
 }

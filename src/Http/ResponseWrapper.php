@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Swew\Framework\Http;
 
 use Exception;
+use RuntimeException;
 use Swew\Framework\Http\Partials\Stream;
 
 use function function_exists;
@@ -201,8 +202,15 @@ final class ResponseWrapper extends Response
     {
         if (is_string($raw)) {
             $handler = fopen($raw, 'r');
-            $this->viewRaw = stream_get_contents($handler);
-            fclose($handler);
+            if ($handler === false) {
+                throw new RuntimeException("Failed to open file: {$raw}");
+            }
+
+            try {
+                $this->viewRaw = stream_get_contents($handler);
+            } finally {
+                fclose($handler);
+            }
         } else {
             $this->viewRaw = stream_get_contents($raw);
         }

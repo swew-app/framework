@@ -19,9 +19,13 @@ final class CacheManager
     private function __construct()
     {
         if ($this->hasInstanceCache()) {
+            if (! file_exists($this->instanceCacheFilePath)) {
+                return;
+            }
+
             $data = require $this->instanceCacheFilePath;
 
-            if (!is_array($data)) {
+            if (! is_array($data)) {
                 return;
             }
 
@@ -99,7 +103,7 @@ final class CacheManager
     {
         $item = \array_key_exists($key, $this->state) ? $this->state[$key] : null;
 
-        if ($item === null || !$item['enabled']) {
+        if ($item === null || ! $item['enabled']) {
             return null;
         }
 

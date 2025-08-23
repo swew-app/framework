@@ -46,7 +46,7 @@ it('SetAndGetArrayDefinition', function (): void {
                     'string' => 'string',
                 ],
                 'not_scalar' => [
-                    'object' => new StdClass(),
+                    'object' => new stdClass(),
                     'array' => ['array'],
                     'closure' => fn (): null => null,
                 ],
@@ -70,7 +70,7 @@ it('SetAndGetArrayWithPath', function (): void {
                     'string' => 'Leo',
                 ],
                 'not_scalar' => [
-                    'object' => new StdClass(),
+                    'object' => new stdClass(),
                     'array' => ['array'],
                     'closure' => fn (): null => null,
                 ],
@@ -138,7 +138,7 @@ it('ConstructorWithPassDefinitions', function (): void {
         $booleanId = 'boolean' => $booleanDefinition = false,
         $stringId = 'string' => $stringDefinition = 'string',
         $arrayId = 'array' => $arrayDefinition = ['array'],
-        $objectId = 'object' => $objectDefinition = new StdClass(),
+        $objectId = 'object' => $objectDefinition = new stdClass(),
         $closureId = 'closure' => fn (): null => null,
     ]);
 
@@ -160,7 +160,7 @@ it('SetMultiple', function (): void {
         $booleanId = 'boolean' => $booleanDefinition = false,
         $stringId = 'string' => $stringDefinition = 'string',
         $arrayId = 'array' => $arrayDefinition = ['array'],
-        $objectId = 'object' => $objectDefinition = new StdClass(),
+        $objectId = 'object' => $objectDefinition = new stdClass(),
         $closureId = 'closure' => fn (): null => null,
     ];
 

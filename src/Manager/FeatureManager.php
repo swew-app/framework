@@ -55,13 +55,15 @@ final class FeatureManager
 
     // Templates for response
 
-    public static function getPreparedResponse(mixed $dataFromRoute): string|array|bool
+    public static function getPreparedResponse(mixed $dataFromRoute): string
     {
-        if (res()->getRaw()) {
-            return res()->getRaw();
+        $raw = res()->getRaw();
+
+        if (is_string($raw)) {
+            return $raw;
         }
 
-        $data = res()->getStoredData() ?: $dataFromRoute;
+        $data = res()->getStoredData() ?? $dataFromRoute;
 
         $viewName = res()->getViewFileName();
 
@@ -96,7 +98,7 @@ final class FeatureManager
             throw new \LogicException('Empty response');
         }
 
-        return $data ?: '';
+        return (string) ($data !== false ? $data : '');
     }
 
     /**
@@ -157,13 +159,14 @@ final class FeatureManager
         return null;
     }
 
+    #[\Deprecated]
     public static function getFeaturesViewPaths(): array
     {
         $controller = self::$controller;
         $featDir = basename(self::$featurePath);
         $commonView = self::$featurePath . DIRECTORY_SEPARATOR . 'Common' . DIRECTORY_SEPARATOR . 'view';
 
-        if (! empty($controller)) {
+        if ($controller !== null) {
             $start = (strpos($controller, $featDir . '\\') ?: 0) + strlen($featDir . '\\');
             $end = strpos($controller, '\\Controllers');
 

@@ -58,9 +58,9 @@ class Uri implements UriInterface
             $this->userInfo = $parts['user'] ?? '';
             $this->host = isset($parts['host']) ? \strtr($parts['host'], 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz') : '';
             $this->port = isset($parts['port']) ? $this->filterPort($parts['port']) : null;
-            $this->path = isset($parts['path']) ? $this->filterPath($parts['path']) : '';
-            $this->query = isset($parts['query']) ? $this->filterQueryAndFragment($parts['query']) : '';
-            $this->fragment = isset($parts['fragment']) ? $this->filterQueryAndFragment($parts['fragment']) : '';
+            $this->path = isset($parts['path']) ? ($this->filterPath($parts['path']) ?? '') : '';
+            $this->query = isset($parts['query']) ? ($this->filterQueryAndFragment($parts['query']) ?? '') : '';
+            $this->fragment = isset($parts['fragment']) ? ($this->filterQueryAndFragment($parts['fragment']) ?? '') : '';
             if (isset($parts['pass'])) {
                 $this->userInfo .= ':' . $parts['pass'];
             }
@@ -72,11 +72,13 @@ class Uri implements UriInterface
         return self::createUriString($this->scheme, $this->getAuthority(), $this->path, $this->query, $this->fragment);
     }
 
+    #[\Override]
     public function getScheme(): string
     {
         return $this->scheme;
     }
 
+    #[\Override]
     public function getAuthority(): string
     {
         if ('' === $this->host) {
@@ -95,46 +97,49 @@ class Uri implements UriInterface
         return $authority;
     }
 
+    #[\Override]
     public function getUserInfo(): string
     {
         return $this->userInfo;
     }
 
+    #[\Override]
     public function getHost(): string
     {
         return $this->host;
     }
 
+    #[\Override]
     public function getPort(): ?int
     {
         return $this->port;
     }
 
+    #[\Override]
     public function getPath(): string
     {
         return $this->path;
     }
 
+    #[\Override]
     public function getQuery(): string
     {
         return $this->query;
     }
 
+    #[\Override]
     public function getFragment(): string
     {
         return $this->fragment;
     }
 
     /**
-     * @param $scheme
+     * @param string $scheme
      * @return $this
      */
-    public function withScheme($scheme): self
+    #[\Override]
+    public function withScheme(string $scheme): self
     {
-        if (! \is_string($scheme)) {
-            throw new \InvalidArgumentException('Scheme must be a string');
-        }
-
         if ($this->scheme === ($scheme = \strtr($scheme, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'))) {
             return $this;
         }
@@ -146,11 +151,12 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $user
-     * @param $password
+     * @param string $user
+     * @param string|null $password
      * @return $this
      */
-    public function withUserInfo($user, $password = null): self
+    #[\Override]
+    public function withUserInfo(string $user, ?string $password = null): self
     {
         $info = $user;
         if (null !== $password && '' !== $password) {
@@ -167,15 +173,12 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $host
+     * @param string $host
      * @return $this
      */
-    public function withHost($host): self
+    #[\Override]
+    public function withHost(string $host): self
     {
-        if (! \is_string($host)) {
-            throw new \InvalidArgumentException('Host must be a string');
-        }
-
         if ($this->host === ($host = \strtr($host, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'))) {
             return $this;
         }
@@ -186,10 +189,11 @@ class Uri implements UriInterface
     }
 
     /**
-     * @param $port
+     * @param int|null $port
      * @return $this
      */
-    public function withPort($port): self
+    #[\Override]
+    public function withPort(?int $port): self
     {
         if ($this->port === ($port = $this->filterPort($port))) {
             return $this;
@@ -204,13 +208,14 @@ class Uri implements UriInterface
      * @param $path
      * @return $this
      */
-    public function withPath($path): self
+    #[\Override]
+    public function withPath(string $path): self
     {
         if ($this->path === ($path = $this->filterPath($path))) {
             return $this;
         }
 
-        $this->path = $path;
+        $this->path = $path ?? '';
 
         return $this;
     }
@@ -219,13 +224,14 @@ class Uri implements UriInterface
      * @param $query
      * @return $this
      */
-    public function withQuery($query): self
+    #[\Override]
+    public function withQuery(string $query): self
     {
         if ($this->query === ($query = $this->filterQueryAndFragment($query))) {
             return $this;
         }
 
-        $this->query = $query;
+        $this->query = $query ?? '';
 
         return $this;
     }
@@ -234,13 +240,14 @@ class Uri implements UriInterface
      * @param $fragment
      * @return $this
      */
-    public function withFragment($fragment): self
+    #[\Override]
+    public function withFragment(string $fragment): self
     {
         if ($this->fragment === ($fragment = $this->filterQueryAndFragment($fragment))) {
             return $this;
         }
 
-        $this->fragment = $fragment;
+        $this->fragment = $fragment ?? '';
 
         return $this;
     }
@@ -308,12 +315,12 @@ class Uri implements UriInterface
         return self::isNonStandardPort($this->scheme, $port) ? $port : null;
     }
 
-    private function filterPath(string $path): string
+    private function filterPath(string $path): ?string
     {
         return \preg_replace_callback('/(?:[^' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMS . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/', self::rawurlencodeMatchZero(...), $path);
     }
 
-    private function filterQueryAndFragment(string $str): string
+    private function filterQueryAndFragment(string $str): ?string
     {
         return \preg_replace_callback('/(?:[^' . self::CHAR_UNRESERVED . self::CHAR_SUB_DELIMS . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/', self::rawurlencodeMatchZero(...), $str);
     }

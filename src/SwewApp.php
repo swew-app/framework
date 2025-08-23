@@ -72,19 +72,17 @@ abstract class SwewApp
 
     final public function run(): void
     {
-        RequestWrapper::removeInstance();
-        ResponseWrapper::removeInstance();
-
         $routeMiddleware = $this->getRouteMiddleware();
 
         if ($routeMiddleware->status > 299) {
             // TODO: Not found or invalid
+            throw new \Exception('TODO: catch error page');
             return;
         }
 
         $middlewares = array_filter(
             $this->middlewares,
-            fn (string $key) => in_array($key, $routeMiddleware->middlewares),
+            fn (string $key): bool => in_array($key, $routeMiddleware->middlewares, true),
             ARRAY_FILTER_USE_KEY,
         );
 
@@ -114,6 +112,9 @@ abstract class SwewApp
         $this->loadEnv();
         $this->loadContainer();
         $this->loadRouter();
+
+        RequestWrapper::removeInstance();
+        ResponseWrapper::removeInstance();
 
         return $this;
     }
@@ -150,12 +151,13 @@ abstract class SwewApp
         }
 
         /** @var array */
+        /** @psalm-suppress UnresolvableInclude */
         $cacheConfigFile = require_once $this->cacheConfigFile;
 
         $cache = CacheManager::getInstance();
         $cache->setCacheDir($this->cacheDir);
 
-        foreach ($cache as $key => $value) {
+        foreach ($cacheConfigFile as $key => $value) {
             $cache->setFile($key, $value['file'], $value['enabled']);
         }
     }
@@ -166,6 +168,7 @@ abstract class SwewApp
 
         $this->env = env();
 
+        /** @psalm-suppress RiskyTruthyFalsyComparison */
         if ($cache->getFile('env')) {
             $this->env->useCache(true, $cache->getFile('env'));
         }
@@ -177,6 +180,7 @@ abstract class SwewApp
 
         $this->container = container();
 
+        /** @psalm-suppress RiskyTruthyFalsyComparison */
         if ($cache->getFile('container')) {
             $this->container->useCache(true, $cache->getFile('container'));
         }
@@ -190,6 +194,7 @@ abstract class SwewApp
     {
         $cache = CacheManager::getInstance();
 
+        /* @mago-expect analysis/undefined-function-or-method */
         $this->router = Router::getInstance();
 
         $basePath = (string) $this->env->get('APP_BASE_PATH', '/');
@@ -203,6 +208,7 @@ abstract class SwewApp
                 ->globalMiddleware(...$this->globalMiddlewares);
 
             foreach ($this->routeFiles as $filePath) {
+                /** @psalm-suppress UnresolvableInclude */
                 require_once $filePath;
             }
         }

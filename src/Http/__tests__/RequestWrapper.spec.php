@@ -7,8 +7,8 @@ use Swew\Framework\Http\RequestWrapper;
 it('RequestWrapper mapTo from Object', function (): void {
     class ModelStub
     {
-        public string $name;
-        public int $age;
+        public string $name = '';
+        public int $age = 0;
     }
 
     RequestWrapper::removeInstance();
@@ -27,8 +27,8 @@ it('RequestWrapper mapTo from Object', function (): void {
 it('RequestWrapper mapTo from className', function (): void {
     class ModelStub2
     {
-        public string $name;
-        public int $age;
+        public string $name = '';
+        public int $age = 0;
     }
 
     RequestWrapper::removeInstance();

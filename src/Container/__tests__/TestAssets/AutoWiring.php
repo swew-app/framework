@@ -2,7 +2,7 @@
 
 namespace Swew\Framework\Container\__tests__\TestAssets;
 
-class AutoWiring
+readonly class AutoWiring
 {
     /**
      * @param  DummyData  $dummyData
@@ -10,9 +10,12 @@ class AutoWiring
      * @param  int  $int
      * @param  string  $string
      */
-    public function __construct(private readonly DummyData $dummyData, private readonly array $array, private readonly int $int = 100, private readonly string $string = 'string')
-    {
-    }
+    public function __construct(
+        private DummyData $dummyData,
+        private array $array,
+        private int $int = 100,
+        private string $string = 'string',
+    ) {}
 
     /**
      * @return DummyData

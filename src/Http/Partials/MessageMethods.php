@@ -22,16 +22,18 @@ class MessageMethods implements MessageInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getProtocolVersion(): string
     {
         return $this->protocol;
     }
 
     /**
-     * @param $version
+     * @param string $version
      * @return $this
      */
-    public function withProtocolVersion($version): self
+    #[\Override]
+    public function withProtocolVersion(string $version): self
     {
         if ($this->protocol === $version) {
             return $this;
@@ -45,6 +47,7 @@ class MessageMethods implements MessageInterface
     /**
      * @return array<array-key, string[]>
      */
+    #[\Override]
     public function getHeaders(): array
     {
         return $this->headers;
@@ -54,6 +57,7 @@ class MessageMethods implements MessageInterface
      * @param string $name
      * @return bool
      */
+    #[\Override]
     public function hasHeader(string $name): bool
     {
         return isset($this->headerNames[$this->normalize($name)]);
@@ -63,6 +67,7 @@ class MessageMethods implements MessageInterface
      * @param string $name
      * @return array<array-key, string>
      */
+    #[\Override]
     public function getHeader(string $name): array
     {
         $name = $this->normalize($name);
@@ -76,17 +81,18 @@ class MessageMethods implements MessageInterface
         return $this->headers[$name];
     }
 
+    #[\Override]
     public function getHeaderLine(string $name): string
     {
         return \implode(', ', $this->getHeader($name));
     }
 
     /**
-     * @param string $name
      * @param string|array<array-key, string> $value
      * @return $this
      */
-    public function withHeader(string $name, $value): self
+    #[\Override]
+    public function withHeader(string $name, mixed $value): self
     {
         $normalized = $this->normalize($name);
 
@@ -108,7 +114,8 @@ class MessageMethods implements MessageInterface
      * @param array<array-key, string>|string $value
      * @return $this
      */
-    public function withAddedHeader($name, $value): self
+    #[\Override]
+    public function withAddedHeader(string $name, mixed $value): self
     {
         if (! is_array($value)) {
             $value = [$value];
@@ -117,11 +124,7 @@ class MessageMethods implements MessageInterface
         /** @var  array<array-key, string> $list */
         $list = $this->getHeader($name);
 
-        if (is_array($value)) {
-            $list = array_merge($list, $value);
-        } else {
-            $list[] = $value;
-        }
+        $list = array_merge($list, $value);
 
         $this->withHeader($name, $list);
 
@@ -129,10 +132,11 @@ class MessageMethods implements MessageInterface
     }
 
     /**
-     * @param $name
+     * @param string $name
      * @return $this
      */
-    public function withoutHeader($name): self
+    #[\Override]
+    public function withoutHeader(string $name): self
     {
         $normalized = $this->normalize($name);
 
@@ -147,6 +151,7 @@ class MessageMethods implements MessageInterface
         return $this;
     }
 
+    #[\Override]
     public function getBody(): StreamInterface
     {
         if (null === $this->stream) {
@@ -160,6 +165,7 @@ class MessageMethods implements MessageInterface
      * @param StreamInterface $body
      * @return $this
      */
+    #[\Override]
     public function withBody(StreamInterface $body): self
     {
         if ($body === $this->stream) {

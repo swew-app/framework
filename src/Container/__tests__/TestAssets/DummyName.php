@@ -7,9 +7,9 @@ class DummyName
     /**
      * @param  string  $name
      */
-    public function __construct(private string $name = 'Test Name')
-    {
-    }
+    public function __construct(
+        private string $name = 'Test Name',
+    ) {}
 
     /**
      * @return string

@@ -12,7 +12,7 @@ use Swew\Framework\SwewApp;
 
 class AppTest
 {
-    public readonly SwewApp $app;
+    public SwewApp $app;
 
     public string $content = '';
 
@@ -29,7 +29,7 @@ class AppTest
 
         putenv('APP_IS_TEST=true');
 
-        if (empty($app) && self::$appClassPath !== '') {
+        if (($app === null || $app === '') && self::$appClassPath !== '') {
             $app = self::$appClassPath;
         }
 
@@ -39,13 +39,11 @@ class AppTest
             $this->app = $instance;
         } elseif ($app instanceof SwewApp) {
             $this->app = $app;
-        }
-
-        if ($this->app === null) {
+        } else {
             throw new LogicException('Add the application class to the constructor "new AppTest(App::class);"');
         }
 
-        self::$appClassPath = get_class($this->app);
+        self::$appClassPath = $this->app::class;
 
         $env = EnvContainer::getInstance();
         $env->set('__TEST__', true);
@@ -66,14 +64,16 @@ class AppTest
     }
 
     /**
-     * @param  mixed  $post
-     *
-     * @psalm-param array{CONTENT_TYPE?: 'application/json;charset=UTF-8', HTTP_ACCEPT?: 'application/json;charset=UTF-8'} $server
+     * @param array<string, scalar|array|null> $post
+     * @param array{
+     *     CONTENT_TYPE?: 'application/json;charset=UTF-8',
+     *     HTTP_ACCEPT?: 'application/json;charset=UTF-8'
+     * } $server
      */
     public function call(string $method, string $uri, array $post = [], array $server = []): static
     {
         if ($this->app->router === null) {
-            throw new \LogicException('Router not initialized: need use route(...) function');
+            throw new LogicException('Router not initialized: need use route(...) function');
         }
 
         res()->setTestEnv(true);
@@ -83,6 +83,10 @@ class AppTest
             $_POST,
             $_REQUEST,
         ]);
+
+        if ($old === false) {
+            throw new LogicException('Failed to encode server data');
+        }
 
         $_SERVER['REQUEST_METHOD'] = strtoupper($method);
         $_SERVER['REQUEST_URI'] = $uri;
@@ -121,5 +125,10 @@ class AppTest
     public function getRequest(): RequestWrapper
     {
         return req();
+    }
+
+    public function getApp(): SwewApp
+    {
+        return $this->app;
     }
 }

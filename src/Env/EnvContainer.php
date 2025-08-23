@@ -61,6 +61,9 @@ final class EnvContainer extends AbstractCacheState
         $this->addCacheItem($key, $value);
     }
 
+    /**
+     * @param null|scalar $value
+     */
     private function addCacheItem(string $key, mixed $value): void
     {
         $this->cachedData[$key] = $value;
@@ -88,12 +91,20 @@ final class EnvContainer extends AbstractCacheState
 
         $fileContent = file_get_contents($filePath);
 
+        if ($fileContent === false) {
+            throw new \Exception("Failed to read file: '{$filePath}'");
+        }
+
         $this->parse($fileContent);
     }
 
     public function parse(string $text): void
     {
         $lines = preg_split('/\n/', $text);
+
+        if ($lines === false) {
+            return;
+        }
 
         foreach ($lines as $line) {
             $str = $this->getStringWithoutComment($line);
@@ -110,7 +121,13 @@ final class EnvContainer extends AbstractCacheState
 
     private function addVarByString(string $str): void
     {
-        [$key, $val] = explode('=', $str, 2);
+        $parts = explode('=', $str, 2);
+
+        if (count($parts) !== 2) {
+            throw new \Exception("Invalid format in '{$str}', expected 'key=value'");
+        }
+
+        [$key, $val] = $parts;
         $key = trim($key);
         $val = trim($val);
 

@@ -110,11 +110,13 @@ class Response extends MessageMethods implements ResponseInterface
         $this->protocol = $version;
     }
 
+    #[\Override]
     public function getStatusCode(): int
     {
         return $this->statusCode;
     }
 
+    #[\Override]
     public function withStatus(int $code, string $reasonPhrase = ''): self
     {
         if ($code < 100 || $code > 599) {
@@ -130,6 +132,7 @@ class Response extends MessageMethods implements ResponseInterface
         return $this;
     }
 
+    #[\Override]
     public function getReasonPhrase(): string
     {
         return $this->reasonPhrase;

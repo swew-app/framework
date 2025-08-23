@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Middleware;
 
+use LogicException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -25,7 +26,13 @@ final class MiddlewarePipeline implements MiddlewareInterface, RequestHandlerInt
         foreach ($middlewares as $middleware) {
             if (is_string($middleware)) {
                 // Is class string
-                $this->pipe(new $middleware());
+                /** @psalm-suppress InvalidStringClass */
+                $middlewareItem = new $middleware();
+
+                if (! ($middlewareItem instanceof MiddlewareInterface)) {
+                    throw new LogicException("Pipeline: '{$middleware}' is not instance of MiddlewareInterface");
+                }
+                $this->pipe($middlewareItem);
             } else {
                 // Is object
                 $this->pipe($middleware);
@@ -41,11 +48,13 @@ final class MiddlewarePipeline implements MiddlewareInterface, RequestHandlerInt
      * Executes the internal pipeline, passing $handler as the "final
      * handler" in cases when the pipeline exhausts itself.
      */
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         return $handler->handle($request);
     }
 
+    #[\Override]
     public function handle(\Swew\Framework\Http\RequestWrapper|ServerRequestInterface $request): ResponseInterface
     {
         if (! $this->queue->isEmpty()) {

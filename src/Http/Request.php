@@ -74,11 +74,13 @@ class Request extends MessageMethods implements ServerRequestInterface
         $this->withParsedBody($_REQUEST);
     }
 
+    #[\Override]
     public function getRequestTarget(): string
     {
         return $this->requestTarget;
     }
 
+    #[\Override]
     public function withRequestTarget($requestTarget): self
     {
         $this->requestTarget = $requestTarget;
@@ -86,6 +88,7 @@ class Request extends MessageMethods implements ServerRequestInterface
         return $this;
     }
 
+    #[\Override]
     public function getMethod(): string
     {
         return $this->method;
@@ -94,6 +97,7 @@ class Request extends MessageMethods implements ServerRequestInterface
     /**
      * @throws InvalidArgumentException
      */
+    #[\Override]
     public function withMethod(string $method): self
     {
         $this->method = strtoupper($method);
@@ -101,11 +105,13 @@ class Request extends MessageMethods implements ServerRequestInterface
         return $this;
     }
 
+    #[\Override]
     public function getUri(): UriInterface
     {
         return $this->uri;
     }
 
+    #[\Override]
     public function withUri(UriInterface $uri, $preserveHost = false): self
     {
         if ($uri === $this->uri) {
@@ -121,16 +127,22 @@ class Request extends MessageMethods implements ServerRequestInterface
         return $this;
     }
 
+    #[\Override]
     public function getServerParams(): array
     {
         return $this->serverParams;
     }
 
+    #[\Override]
     public function getCookieParams(): array
     {
         return $this->cookieParams;
     }
 
+    /**
+     * @psalm-suppress LessSpecificReturnStatement
+     */
+    #[\Override]
     public function withCookieParams(array $cookies): self
     {
         $this->cookieParams = $cookies;
@@ -138,11 +150,16 @@ class Request extends MessageMethods implements ServerRequestInterface
         return $this;
     }
 
+    #[\Override]
     public function getQueryParams(): array
     {
         return $this->queryParams;
     }
 
+    /**
+     * @psalm-suppress LessSpecificReturnStatement
+     */
+    #[\Override]
     public function withQueryParams(array $query): self
     {
         $this->queryParams = $query;
@@ -150,11 +167,16 @@ class Request extends MessageMethods implements ServerRequestInterface
         return $this;
     }
 
+    #[\Override]
     public function getUploadedFiles(): array
     {
         return $this->uploadedFiles;
     }
 
+    /**
+     * @psalm-suppress LessSpecificReturnStatement
+     */
+    #[\Override]
     public function withUploadedFiles(array $uploadedFiles): self
     {
         $this->uploadedFiles = $uploadedFiles;
@@ -162,17 +184,26 @@ class Request extends MessageMethods implements ServerRequestInterface
         return $this;
     }
 
+    #[\Override]
     public function getParsedBody(): array|object|null
     {
         return $this->parsedBody;
     }
 
     /**
+     * @return static
+     *
      * @throws InvalidArgumentException
+     *
+     * @psalm-suppress LessSpecificReturnStatement
+     *
+     * @psalm-suppress RedundantCondition
+     *
      */
-    public function withParsedBody($data): self
+    #[\Override]
+    public function withParsedBody(mixed $data): self
     {
-        if (! \is_array($data) && ! \is_object($data) && null !== $data) {
+        if (! \is_array($data) && ! \is_object($data) && $data !== null) {
             throw new InvalidArgumentException('First parameter to withParsedBody MUST be object, array or null');
         }
 
@@ -181,11 +212,13 @@ class Request extends MessageMethods implements ServerRequestInterface
         return $this;
     }
 
+    #[\Override]
     public function getAttributes(): array
     {
         return $this->attributes;
     }
 
+    #[\Override]
     public function getAttribute($name, $default = null): mixed
     {
         if (false === \array_key_exists($name, $this->attributes)) {
@@ -195,6 +228,7 @@ class Request extends MessageMethods implements ServerRequestInterface
         return $this->attributes[$name];
     }
 
+    #[\Override]
     public function withAttribute($name, $value): self
     {
         $this->attributes[$name] = $value;
@@ -202,6 +236,7 @@ class Request extends MessageMethods implements ServerRequestInterface
         return $this;
     }
 
+    #[\Override]
     public function withoutAttribute($name): self
     {
         if (! array_key_exists($name, $this->attributes)) {

@@ -7,7 +7,7 @@ namespace Swew\Framework\Base;
 abstract class AbstractCacheState
 {
     /**
-     * @var array<string, array>
+     * @var array<string, mixed>
      */
     protected array $cachedData = [];
 
@@ -56,7 +56,8 @@ abstract class AbstractCacheState
         $content = "<?php\ndeclare(strict_types=1);\nreturn " . var_export($this->getCacheData(), true) . ";\n";
 
         $hash1 = md5($content);
-        $hash2 = is_readable($this->cacheFilePath) ? md5(file_get_contents($this->cacheFilePath)) : '';
+        $fileContents = is_readable($this->cacheFilePath) ? file_get_contents($this->cacheFilePath) : '';
+        $hash2 = $fileContents !== false ? md5($fileContents) : '';
 
         if ($hash1 !== $hash2) {
             file_put_contents($this->cacheFilePath, $content);

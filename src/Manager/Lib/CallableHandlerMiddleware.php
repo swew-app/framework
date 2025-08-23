@@ -9,16 +9,15 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Swew\Framework\Base\BaseDTO;
 use Swew\Framework\Http\Response;
 
 readonly class CallableHandlerMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private Closure $callback,
-    ) {
-    }
+    ) {}
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $cb = $this->callback;
@@ -28,7 +27,7 @@ readonly class CallableHandlerMiddleware implements MiddlewareInterface
             return $result;
         }
 
-        if (is_string($result) || $result instanceof BaseDTO) {
+        if (is_string($result)) {
             return res($result);
         }
 

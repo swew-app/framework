@@ -2,15 +2,16 @@
 
 namespace Swew\Framework\Container\__tests__\TestAssets;
 
-class DummyData
+readonly class DummyData
 {
     /**
      * @param  DummyName  $name
      * @param  mixed|null  $time
      */
-    public function __construct(private readonly DummyName $name, private readonly mixed $time = null)
-    {
-    }
+    public function __construct(
+        private DummyName $name,
+        private mixed $time = null,
+    ) {}
 
     /**
      * @return DummyName

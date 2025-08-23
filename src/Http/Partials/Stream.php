@@ -8,7 +8,6 @@ use Psr\Http\Message\StreamInterface;
 
 class Stream implements StreamInterface
 {
-    /** @var resource|null A resource reference */
     private static mixed $stream = null;
 
     private bool $seekable = false;
@@ -122,20 +121,18 @@ class Stream implements StreamInterface
         return $this->getContents();
     }
 
+    #[\Override]
     public function close(): void
     {
-        if (! is_null(Stream::$stream)) {
-            /** @var resource $stream */
+        if (isset(Stream::$stream)) {
             $stream = Stream::$stream;
-
-            if (is_resource($stream)) {
-                fclose($stream);
-                Stream::$stream = null;
-            }
-            $this->detach();
+            fclose($stream);
+            Stream::$stream = null;
         }
+        $this->detach();
     }
 
+    #[\Override]
     public function detach(): mixed
     {
         if (! isset(Stream::$stream)) {
@@ -163,6 +160,7 @@ class Stream implements StreamInterface
         return $this->uri;
     }
 
+    #[\Override]
     public function getSize(): ?int
     {
         if (null !== $this->size) {
@@ -188,6 +186,7 @@ class Stream implements StreamInterface
         return null;
     }
 
+    #[\Override]
     public function tell(): int
     {
         if (! isset(Stream::$stream)) {
@@ -201,16 +200,19 @@ class Stream implements StreamInterface
         return $result;
     }
 
+    #[\Override]
     public function eof(): bool
     {
         return ! isset(Stream::$stream) || \feof(Stream::$stream);
     }
 
+    #[\Override]
     public function isSeekable(): bool
     {
         return $this->seekable;
     }
 
+    #[\Override]
     public function seek($offset, $whence = \SEEK_SET): void
     {
         if (! isset(Stream::$stream)) {
@@ -226,16 +228,19 @@ class Stream implements StreamInterface
         }
     }
 
+    #[\Override]
     public function rewind(): void
     {
         $this->seek(0);
     }
 
+    #[\Override]
     public function isWritable(): bool
     {
         return $this->writable;
     }
 
+    #[\Override]
     public function write(string $string): int
     {
         if (! isset(Stream::$stream)) {
@@ -256,11 +261,13 @@ class Stream implements StreamInterface
         return $result;
     }
 
+    #[\Override]
     public function isReadable(): bool
     {
         return $this->readable;
     }
 
+    #[\Override]
     public function read($length): string
     {
         if (! isset(Stream::$stream)) {
@@ -278,6 +285,7 @@ class Stream implements StreamInterface
         return $result;
     }
 
+    #[\Override]
     public function getContents(): string
     {
         if (! isset(Stream::$stream)) {
@@ -293,10 +301,11 @@ class Stream implements StreamInterface
         return $contents;
     }
 
+    #[\Override]
     public function getMetadata($key = null): mixed
     {
         if (! isset(Stream::$stream)) {
-            return $key ? null : [];
+            return $key !== null ? null : [];
         }
 
         $meta = \stream_get_meta_data(Stream::$stream);

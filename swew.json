@@ -7,7 +7,7 @@
             "logo": true,
             "color": true,
             "traceReverse": true,
-            "clear": true,
+            "clear": false,
             "short": false
         }
     }

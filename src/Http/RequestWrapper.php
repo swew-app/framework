@@ -24,6 +24,7 @@ final class RequestWrapper extends Request
         array $serverParams = [],
     ) {
         if ($method === '') {
+            /** @psalm-suppress RiskyTruthyFalsyComparison */
             if (empty($_SERVER['REQUEST_METHOD'])) {
                 throw new Exception('Empty "REQUEST_METHOD"');
             }
@@ -31,6 +32,7 @@ final class RequestWrapper extends Request
         }
 
         if ($uri === '') {
+            /** @psalm-suppress RiskyTruthyFalsyComparison */
             if (empty($_SERVER['REQUEST_URI'])) {
                 throw new Exception('Empty "REQUEST_URI"');
             }
@@ -91,14 +93,14 @@ final class RequestWrapper extends Request
             $data += $body;
         }
 
-        if ($key) {
+        if ($key !== null && $key !== '' && $default !== null) {
             return $data[$key] ?? $default;
         }
 
         return $data;
     }
 
-    public function mapTo(object|string $item): object
+    public function mapTo(object|string $item): string|object
     {
         if (gettype($item) === 'string' && class_exists($item)) {
             $item = new $item();
@@ -110,6 +112,7 @@ final class RequestWrapper extends Request
             throw new \LogicException('Passed invalid data from request');
         }
 
+        /** @var object $item */
         $data = array_merge(Obj::getPublicVars($item), $data);
 
         foreach ($data as $key => $value) {
@@ -125,6 +128,7 @@ final class RequestWrapper extends Request
     {
         $contentType = $_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_X_REQUESTED_WITH'] ?? '';
 
+        /** @psalm-suppress RedundantCast */
         $contentType = strtolower((string) $contentType);
 
         return str_contains($contentType, 'json') || str_contains($contentType, 'javascript') || str_contains($contentType, 'xmlhttprequest');

@@ -9,6 +9,7 @@ use Swew\Framework\CacheManager\CacheManager;
 use Swew\Framework\Container\Container;
 use Swew\Framework\Env\EnvContainer;
 use Swew\Framework\Http\RequestWrapper;
+use Swew\Framework\Http\Response;
 use Swew\Framework\Http\ResponseWrapper;
 use Swew\Framework\Manager\FeatureManager;
 use Swew\Framework\Middleware\MiddlewarePipeline;
@@ -74,8 +75,9 @@ abstract class SwewApp
     {
         $routeMiddleware = $this->getRouteMiddleware();
 
-        if ($routeMiddleware->status > 299) {
+        if ($routeMiddleware->status > 299 || $routeMiddleware->status < 200) {
             // TODO: Not found or invalid
+            // Добавить ответ 404
             throw new \Exception('TODO: catch error page');
             return;
         }
@@ -96,14 +98,21 @@ abstract class SwewApp
 
         if ($statusCode < 300 || $statusCode >= 400) {
             // Non redirect
-            res()->getBody()->write(
-                FeatureManager::getPreparedResponse($routeMiddleware->result),
-            );
+
+            if ($routeMiddleware->result !== null && $routeMiddleware->result instanceof Response) {
+                res()->replaceResponseWithSavedHeader($routeMiddleware->result);
+            } else {
+                res()->getBody()->write(
+                    FeatureManager::getPreparedResponse($routeMiddleware->result),
+                );
+            }
         }
 
         if ($statusCode >= 500) {
             $this->makeErrorPage($statusCode);
         }
+
+        res()->send();
     }
 
     public function load(): self

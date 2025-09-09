@@ -53,11 +53,6 @@ function container(string $id = ''): mixed
     return $container->get($id);
 }
 
-function url(string $routeName, array $params = []): string
-{
-    return env('$router')->url($routeName, $params);
-}
-
 // #region [ helpers ]
 
 function public_path(string $path = ''): string

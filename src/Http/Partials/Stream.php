@@ -6,6 +6,9 @@ namespace Swew\Framework\Http\Partials;
 
 use Psr\Http\Message\StreamInterface;
 
+// TODO: Заменить на GuzzleHttp\Psr7\Stream
+// https://packagist.org/packages/guzzlehttp/psr7
+
 class Stream implements StreamInterface
 {
     private static mixed $stream = null;

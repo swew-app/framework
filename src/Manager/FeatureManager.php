@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Swew\Framework\Manager;
 
+use Swew\Framework\Http\Response;
 use Swew\Framework\Manager\TemplateParser\AbstractTemplateParser;
 
 final class FeatureManager
@@ -69,7 +70,7 @@ final class FeatureManager
 
         if (is_null($data) && empty($viewName)) {
             if (res()->getStatusCode() >= 300) {
-                $data = [];
+                $data = '';
             } else {
                 throw new \LogicException('Empty response');
             }
@@ -88,17 +89,14 @@ final class FeatureManager
         } else {
             $filePath = self::getView($viewName);
 
-            $data = self::render(
-                $filePath,
-                array_merge(res()->getViewData(), ['data' => $data]),
-            );
+            $data = self::render($filePath, array_merge(res()->getViewData(), ['data' => $data]));
         }
 
         if (env('__TEST__') && $data === null) {
-            throw new \LogicException('Empty response');
+            throw new \LogicException('Empty response.');
         }
 
-        return (string) ($data !== false ? $data : '');
+        return (string) ($data ?? '');
     }
 
     /**
@@ -130,18 +128,10 @@ final class FeatureManager
         }
 
         if (isset(self::$templateParser[$extension])) {
-            return self::$templateParser[$extension]->render(
-                self::getFeaturesViewPaths(),
-                $filepath,
-                $data,
-            );
+            return self::$templateParser[$extension]->render(self::getFeaturesViewPaths(), $filepath, $data);
         }
 
-        return self::$templateParser['*']->render(
-            self::getFeaturesViewPaths(),
-            $filepath,
-            $data,
-        );
+        return self::$templateParser['*']->render(self::getFeaturesViewPaths(), $filepath, $data);
     }
 
     public static function findMatchingExtension(string $filename): ?string

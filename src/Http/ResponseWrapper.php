@@ -69,7 +69,7 @@ final class ResponseWrapper extends Response
     public function sendHeaders(): void
     {
         foreach ($this->cookies as $name => $data) {
-            $name = htmlspecialchars($name);
+            $name = htmlspecialchars((string) $name);
             $value = htmlspecialchars((string) $data['value']);
 
             if (! $this->isTest) {
@@ -221,5 +221,14 @@ final class ResponseWrapper extends Response
     public function getRaw(): string|bool
     {
         return $this->viewRaw;
+    }
+
+    public function replaceResponseWithSavedHeader(Response $res): void
+    {
+        foreach ($res->getHeaders() as $name => $values) {
+            $this->withHeader($name, $values);
+        }
+
+        $this->withBody($res->getBody());
     }
 }

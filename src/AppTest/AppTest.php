@@ -28,6 +28,7 @@ class AppTest
         $this->removeSingletons();
 
         putenv('APP_IS_TEST=true');
+        putenv('__TEST__=true');
 
         if (($app === null || $app === '') && self::$appClassPath !== '') {
             $app = self::$appClassPath;
@@ -130,5 +131,10 @@ class AppTest
     public function getApp(): SwewApp
     {
         return $this->app;
+    }
+
+    public function getMethcedRoute(): ?array
+    {
+        return $this->app->router?->matchedRoute;
     }
 }
